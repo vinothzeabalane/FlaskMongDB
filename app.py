@@ -259,4 +259,4 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host=app.config['FLASK_HOST'], port=app.config['FLASK_PORT'], threaded=True)
+    app.run(debug=False, host=app.config['FLASK_HOST'], port=app.config['FLASK_PORT'], threaded=True)
