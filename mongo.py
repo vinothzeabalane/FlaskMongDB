@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import gridfs
 
 
 class MongoDB:
@@ -51,6 +52,18 @@ class MongoDB:
         l1 = []
         try:
             res = self.db.users.find({}, {"_id":0})
+            for i in res:
+                l1.append(i)
+            return l1
+                
+        except Exception as e:
+            print(e)
+
+    def bpt_list(self):
+        l1 = []
+        try:
+            fs = gridfs.GridFS(self.db, collection='fs')
+            res = fs.list()
             for i in res:
                 l1.append(i)
             return l1

@@ -1,7 +1,10 @@
 import os
 from flask import Flask, flash, redirect, render_template, request, session, url_for
-
+import gridfs
+import pandas
 import mongo
+from pymongo import MongoClient
+from gridfs import GridFSBucket
 
 app = Flask(__name__, static_url_path='/static')
 app.config.from_pyfile('config.cfg')
@@ -185,6 +188,30 @@ def users():
             return render_template('users.html',users=user_list,groups=grouplist,user=session['user'],is_admin = access_right)
         else:
             return render_template('login.html', error = "Your Session Expired")
+    except Exception as e:
+        print(e)
+
+@app.route('/view_bpt', methods=['GET', 'POST'])
+def view_bpt():
+    try:
+        if request.form:
+            report = request.form.getlist('chk')
+            client = MongoClient("mongodb://localhost:27017/")
+            db = client['openstack']
+            fs = GridFSBucket(db)
+            grid_out = fs.open_download_stream_by_name(report[0])
+            data = pandas.read_excel(grid_out)
+            return data.to_html()
+    except Exception as e:
+        print(e)
+
+
+
+@app.route('/bpt', methods=['GET'])
+def bpt():
+    try:
+        bpt_list = get_mongo_connection().bpt_list()     
+        return render_template('bpt.html',bpt=bpt_list)
     except Exception as e:
         print(e)
         
