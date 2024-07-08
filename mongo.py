@@ -62,10 +62,17 @@ class MongoDB:
     def bpt_list(self):
         l1 = []
         try:
-            fs = gridfs.GridFS(self.db, collection='fs')
-            res = fs.list()
-            for i in res:
-                l1.append(i)
+            client = MongoClient("127.0.0.1", 27017)
+            db = client.openstack 
+            fs = gridfs.GridFS(db)
+
+            col = db.fs.files.find()
+            for i in col:
+                print(i)
+                if 'filename' not in i:
+                    continue
+                l1.append({'name': i['filename'], 'date': i['metadata'] or None})
+            print ("BootProfileTime list:  {}".format(l1))
             return l1
                 
         except Exception as e:

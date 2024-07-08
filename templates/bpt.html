@@ -99,12 +99,17 @@
                         <tr>
                                <th>Select</th>
                                <th>Report</th>
+                               <th>Date</th>
                         </tr>
                          
                     {% for value in bpt %}
                     <tr>
-                        <td><input type="checkbox" name="chk" value={{value}} /></td>
-                        <td>{{value}}</td>
+                        {% for k,v in value.items() %}
+                            {% if k == 'name' %}
+                            <td><input type="checkbox" name="chk" value={{v}} /></td>
+                            {% endif %}
+                        <td>{{v}}</td>
+                        {% endfor %}
                     </tr>
                     {% endfor %}
 
