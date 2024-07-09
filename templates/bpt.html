@@ -2,139 +2,199 @@
 <!--[if lt IE 7]>
 <html class="no-js lt-ie9 lt-ie8 lt-ie7">
    <![endif]-->
-<!--[if IE 7]>
+   <!--[if IE 7]>
    <html class="no-js lt-ie9 lt-ie8">
       <![endif]-->
-<!--[if IE 8]>
+      <!--[if IE 8]>
       <html class="no-js lt-ie9">
          <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js">
-<!--<![endif]-->
-
-<head>
-    <meta charset="utf-8">
-    <title>Boot Profile Time: Report</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,200,400,500,600" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-    <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
-</head>
-
-<body>
-    <header class="site-header">
-        <div class="main-header" style="padding-top: 0px;padding-bottom: 0px; height: 120px;">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4 col-sm-6 col-xs-8">
-                        <div class="logo">
-                            <h1 style="height: 110px;>
+         <!--[if gt IE 8]><!-->
+         <html class="no-js">
+            <!--<![endif]-->
+            <head>
+               <meta charset="utf-8">
+               <title>Boot Profile Time: Report</title>
+               <meta name="description" content="">
+               <meta name="viewport" content="width=device-width, initial-scale=1">
+               <meta name="viewport" content="width=device-width">
+               <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,200,400,500,600" rel="stylesheet">
+               <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+               <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+               <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
+               <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
+               <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+               <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
+            </head>
+            <body>
+               <header class="site-header">
+                  <div class="main-header" style="padding-top: 0px;padding-bottom: 0px; height: 120px;">
+                     <div class="container">
+                        <div class="row">
+                           <div class="col-md-4 col-sm-6 col-xs-8">
+                              <div class="logo">
+                                 <h1 style="height: 110px;>
                                     <a href="#"> <img
-                                       src="{{ url_for('static', filename='img/flask.jpg') }}"
-                                       height="150" width="150" alt="Flask" />
+                                    src="{{ url_for('static', filename='img/flask.jpg') }}"
+                                    height="150" width="150" alt="Flask" />
                                     </a>
                                  </h1>
+                              </div>
+                              <!-- /.logo -->
+                           </div>
+                           <!-- /.col-md-4 -->
+                           <div class="pull-right" style="height: 50px; padding-top: 60px;>
+                              <ul class="menu">
+                              {% if user %}
+                              <img src="{{ url_for('static', filename='img/user.jpg') }}" alt="User" width="30" height="30">
+                              <a>{{user}}<a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="{{ url_for('logout') }}"> <span class="glyphicon glyphicon-log-out"></span> Log out </a></a>
+                              {% endif %}
+                              </ul>
+                           </div>
                         </div>
-                        <!-- /.logo -->
-                    </div>
-                    <!-- /.col-md-4 -->
-                    <div class="pull-right" style="height: 50px; padding-top: 60px;>
-                        <ul class="menu">
-                            {% if user %}
-                            	<img src="{{ url_for('static', filename='img/user.jpg') }}" alt="User" width="30" height="30">
-                            	<a>{{user}}<a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="{{ url_for('logout') }}"> <span class="glyphicon glyphicon-log-out"></span> Log out </a></a>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.container -->
-        </div>
-        <!-- /.main-header -->
-        <div class="main-nav">
-            <div class="container">
-                <div class="row">
-                    <div>
-                        <div class="list-menu">
-                            <ul>
-                                <li><a href="{{ url_for('dashboard') }}">My Dashboard</a></li>
-                                {% if is_admin %}
-                                <li><a href="{{ url_for('groups') }}">Groups</a></li>
-                                <li><a href="{{ url_for('users') }}">Users</a></li>
-                                {% endif %}
-                                <li><a href="{{ url_for('bpt') }}">Boot Profile Time</a></li>
-                                <li><a href="{{ url_for('account') }}">My Account</a></li>
-                            </ul>
+                        <!-- /.row -->
+                     </div>
+                     <!-- /.container -->
+                  </div>
+                  <!-- /.main-header -->
+                  <div class="main-nav">
+                     <div class="container">
+                        <div class="row">
+                           <div>
+                              <div class="list-menu">
+                                 <ul>
+                                    <li><a href="{{ url_for('dashboard') }}">My Dashboard</a></li>
+                                    {% if is_admin %}
+                                    <li><a href="{{ url_for('groups') }}">Groups</a></li>
+                                    <li><a href="{{ url_for('users') }}">Users</a></li>
+                                    {% endif %}
+                                    <li><a href="{{ url_for('bpt') }}">Boot Profile Time</a></li>
+                                    <li><a href="{{ url_for('account') }}">My Account</a></li>
+                                 </ul>
+                              </div>
+                              <!-- /.list-menu -->
+                           </div>
+                           <!-- /.col-md-6 -->
                         </div>
-                        <!-- /.list-menu -->
-                    </div>
-                    <!-- /.col-md-6 -->
-                </div>
-                <!-- /.row -->
-            </div>
-        </div>
-        <!-- /.container -->
-        <!-- /.main-nav -->
-        
-        <style>
-			table, th, td {
-    		border: 1px solid black;
-    		padding-left: 10px;
-    		padding-right: 10px;
-    		text-align: center;
-			}
-	   </style>
-    </header>
-    <!-- /.site-header -->
-    <div class="row">
-        <div class="container">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <span class="heading">Availabe Report</span>
-                </div>
-                <div class="panel-body grey-color">
-                    <div class="row" style="padding-left: 25px;">
-                        <form action="{{ url_for('view_bpt') }}" method="post">
-						<table id="table table-striped" width="350px">
-                        <tr>
-                               <th>Select</th>
-                               <th>Report</th>
-                               <th>Date</th>
-                        </tr>
-                         
-                    {% for value in bpt %}
-                    <tr>
-                        {% for k,v in value.items() %}
-                            {% if k == 'name' %}
-                            <td><input type="checkbox" name="chk" value={{v}} /></td>
-                            {% endif %}
-                        <td>{{v}}</td>
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-
-						</table>
-						<br>
-						<button type="submit" class="signupbtn">Submit</button>
-						</form>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div>
-    </div>
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.easing-1.3.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-</body>
-
-</html>
+                        <!-- /.row -->
+                     </div>
+                  </div>
+                  <!-- /.container -->
+                  <!-- /.main-nav -->
+                  <style>
+                     table, th, td {
+                     border: 1px solid black;
+                     padding-left: 10px;
+                     padding-right: 10px;
+                     text-align: center;
+                     }
+                  </style>
+                  <style>
+                     #myInput {
+                     background-image: url('/css/searchicon.png'); /* Add a search icon to input */
+                     background-position: 10px 12px; /* Position the search icon */
+                     background-repeat: no-repeat; /* Do not repeat the icon image */
+                     width: 50%; /* Full-width */
+                     font-size: 16px; /* Increase font-size */
+                     padding: 12px 20px 12px 40px; /* Add some padding */
+                     border: 1px solid #ddd; /* Add a grey border */
+                     margin-bottom: 12px; /* Add some space below the input */
+                     }
+                     #myTable {
+                     border-collapse: collapse; /* Collapse borders */
+                     width: 100%; /* Full-width */
+                     border: 1px solid #ddd; /* Add a grey border */
+                     font-size: 18px; /* Increase font-size */
+                     }
+                     #myTable th, #myTable td {
+                     text-align: left; /* Left-align text */
+                     padding: 12px; /* Add padding */
+                     }
+                     #myTable tr {
+                     /* Add a bottom border to all table rows */
+                     border-bottom: 1px solid #ddd;
+                     }
+                     #myTable tr.header, #myTable tr:hover {
+                     /* Add a grey background color to the table header and on hover */
+                     background-color: #f1f1f1;
+                     }
+                  </style>
+               </header>
+               <!-- /.site-header -->
+               <div class="row">
+                  <div class="container">
+                     <div class="panel panel-default">
+                        <div class="panel-heading">
+                           <span class="heading">Available Report</span>
+                        </div>
+                        <div class="panel-body grey-color">
+                           <div class="row" style="padding-left: 25px; margin-right: 5px;">
+                              <form action="{{ url_for('view_bpt') }}" method="post">
+                                 <!-- <form action="{{ url_for('view_bpt') }}" method="post" onsubmit="checkSelection();">  -->
+                                 <div align="right">
+                                    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for reports.." title="Type in a report name">
+                                 </div>
+                                 <table id="myTable">
+                                    <tbody>
+                                       <tr class="header">
+                                          <th style="width:20%;">Select</th>
+                                          <th style="width:60%;">Report</th>
+                                          <th style="width:20%;">Date</th>
+                                       </tr>
+                                    </tbody>
+                                    {% for value in bpt %}
+                                    <tr>
+                                       {% for k,v in value.items() %}
+                                       {% if k == 'name' %}
+                                       <td><input type="checkbox" name="chk" value={{v}} /></td>
+                                       {% endif %}
+                                       <td>{{v}}</td>
+                                       {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                 </table>
+                                 <br>
+                                 <button type="submit" class="signupbtn">Submit</button>
+                              </form>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div>
+               </div>
+               <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+               <script src="{{ url_for('static', filename='js/jquery.easing-1.3.js') }}"></script>
+               <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+               <script>
+                  // function checkSelection(){
+                  //   var array = []
+                  // var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+                  // if(checkboxes.length> 1){
+                  //   alert("Please select only one option at a time!");
+                  //   return;
+                  // }
+                  // }
+                        
+                      function myFunction() {
+                          var input, filter, table, tr, td, i, txtValue;
+                          input = document.getElementById("myInput");
+                          filter = input.value.toUpperCase();
+                          table = document.getElementById("myTable");
+                          tr = table.getElementsByTagName("tr");
+                          for (i = 1; i < tr.length; i++) {
+                            td = tr[i]
+                          //   td = tr[i].textContent
+                            if (td){
+                              txtValue = td.textContent|| td.innerText;
+                              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                tr[i].style.display = "";
+                              } else {
+                                tr[i].style.display = "none";
+                              }
+                            }       
+                          }
+                        }
+                        
+               </script>
+            </body>
+         </html>

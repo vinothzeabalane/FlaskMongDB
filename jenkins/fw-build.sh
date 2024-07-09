@@ -16,6 +16,9 @@ cd /home/jenkins/repos/trenton/prod/hud/debug/hwfwprep-kv7/build/eeprom; ls;
 echo "********************** FW Build binary Ended ******************"
 
 
-cd /mnt/udrive/ozeabalx/ps-bootprofile; sudo rm -r *
+cd; cd /home/remlab;
+cd; cd /mnt/udrive/ozeabalx/ps-bootprofile; 
+pwd; ls;
+sudo rm -r *
 sudo cp -r /home/jenkins/repos/trenton/prod/hud/debug/hwfwprep-kv7/build/eeprom /mnt/udrive/ozeabalx/ps-bootprofile
 sudo cp -r /home/jenkins/repos/trenton/prod/hud/debug/hwfwprep-kv7/build/unified_image/unified_image.bin /mnt/udrive/ozeabalx/ps-bootprofile
