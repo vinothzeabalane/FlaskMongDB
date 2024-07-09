@@ -145,7 +145,7 @@
                                     <tr>
                                        {% for k,v in value.items() %}
                                        {% if k == 'name' %}
-                                       <td><input type="checkbox" name="chk" value={{v}} /></td>
+                                       <td><input type="checkbox" onchange="checkSelection(this);" name="chk" value={{v}} /></td>
                                        {% endif %}
                                        <td>{{v}}</td>
                                        {% endfor %}
@@ -166,15 +166,14 @@
                <script src="{{ url_for('static', filename='js/jquery.easing-1.3.js') }}"></script>
                <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
                <script>
-                  // function checkSelection(){
-                  //   var array = []
-                  // var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
-                  // if(checkboxes.length> 1){
-                  //   alert("Please select only one option at a time!");
-                  //   return;
-                  // }
-                  // }
-                        
+                  function checkSelection(cBox){
+                  var array = []
+                  var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+                  if(checkboxes.length> 1){
+                    alert("Please select only one option at a time!");
+                    cBox.checked = false;
+                  }
+                  }
                       function myFunction() {
                           var input, filter, table, tr, td, i, txtValue;
                           input = document.getElementById("myInput");
@@ -194,7 +193,6 @@
                             }       
                           }
                         }
-                        
                </script>
             </body>
          </html>
