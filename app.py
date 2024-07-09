@@ -210,8 +210,10 @@ def view_bpt():
 @app.route('/bpt', methods=['GET'])
 def bpt():
     try:
+        grouplist = get_mongo_connection().groups_list()
+        access_right = get_access_user()
         bpt_list = get_mongo_connection().bpt_list()     
-        return render_template('bpt.html',bpt=bpt_list)
+        return render_template('bpt.html',bpt=bpt_list,groups=grouplist,user=session['user'],is_admin = access_right)
     except Exception as e:
         print(e)
         
