@@ -136,17 +136,19 @@
                                  <table id="myTable">
                                     <tbody>
                                        <tr class="header">
-                                          <th style="width:20%;">Select</th>
+                                          <th style="width:5%;">Items</th>
+                                          <th style="width:5%;">Select</th>
                                           <th style="width:60%;">Report</th>
-                                          <th style="width:20%;">Date</th>
+                                          <th style="width:30%;">Date</th>
                                        </tr>
                                     </tbody>
                                     {% for value in bpt %}
                                     <tr>
+                                       <td>{{loop.index}}</td>  
                                        {% for k,v in value.items() %}
                                        {% if k == 'name' %}
                                        <td><input type="checkbox" onchange="checkSelection(this);" name="chk" value={{v}} /></td>
-                                       {% endif %}
+                                       {% endif %}      
                                        <td>{{v}}</td>
                                        {% endfor %}
                                     </tr>
