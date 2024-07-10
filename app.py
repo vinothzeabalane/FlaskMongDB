@@ -1,10 +1,11 @@
 import os
-from flask import Flask, flash, redirect, render_template, request, session, url_for
+from flask import Flask, flash, redirect, render_template, request, session, url_for, send_file
 import gridfs
 import pandas
 import mongo
 from pymongo import MongoClient
 from gridfs import GridFSBucket
+from pathlib import Path
 
 app = Flask(__name__, static_url_path='/static')
 app.config.from_pyfile('config.cfg')
@@ -205,6 +206,26 @@ def view_bpt():
     except Exception as e:
         print(e)
 
+# @app.route('/download_bpt', methods=['GET', 'POST'])
+# def download_bpt():
+#     try:
+#         if request.form:
+#             report = request.form.getlist('chk')
+#             client = MongoClient("mongodb://localhost:27017/")
+#             db = client['openstack']
+#             fs = gridfs.GridFS(db)
+#             data = db.fs.files.find_one({'filename': report[0]})
+#             outputdata = fs.get(data['_id']).read()
+#             data = pandas.read_excel(outputdata)
+#             path = Path.home() / 'Downloads'
+#             filename = "sai.csv"
+#             fullpath = os.path.join(path, filename)
+#             with open(fullpath, "wb") as file: 
+#                 file.write(outputdata) 
+#             #res = send_file(fullpath, as_attachment=True, attachment_filename = 'sai.csv' )
+#             return redirect(url_for('bpt'))
+#     except Exception as e:
+#         print(e)
 
 
 @app.route('/bpt', methods=['GET'])
