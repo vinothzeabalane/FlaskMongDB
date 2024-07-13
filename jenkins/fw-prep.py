@@ -150,7 +150,9 @@ class FirmwarePrep(object):
             time.sleep(20)
             self.paramiko_GKG('rm -r /home/remlab/cmdline.cfg ')
             self.paramiko_GKG(command="lspci | grep -i Non-Volatile")
+            time.sleep(20)
             res = self.paramiko_GKG(command="sudo nvme list")
+            print ("The Output of res:{}".format(res))
             print (" kill the thread ")
             self.paramiko_GKG(command="kill $(ps aux | grep '[d]ev/ttyACM0' | awk '{print $2}')")
             if "/dev/nvme0n1" in str([res]):
