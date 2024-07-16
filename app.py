@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, redirect, render_template, request, session, url_for, send_file
+from flask import Flask, flash, redirect, render_template, request, session, url_for, send_file, jsonify
 import gridfs
 import pandas
 import mongo
@@ -196,7 +196,7 @@ def users():
 def view_bpt():
     try:
         if request.form:
-            report = request.form.getlist('chk')
+            report = request.form.getlist('view')
             client = MongoClient("mongodb://localhost:27017/")
             db = client['openstack']
             fs = GridFSBucket(db)
@@ -210,7 +210,7 @@ def view_bpt():
 # def download_bpt():
 #     try:
 #         if request.form:
-#             report = request.form.getlist('chk')
+#             report = request.form.getlist('download')
 #             client = MongoClient("mongodb://localhost:27017/")
 #             db = client['openstack']
 #             fs = gridfs.GridFS(db)
@@ -291,6 +291,21 @@ def logout():
     session.pop('password', None)
     return render_template('login.html')
 
+#example code
+@app.route('/data')
+def data():
+    data = [{'id': 1, 'name': 'John Doe', 'email': 'johndoe@example.com'},
+    {'id': 2, 'name': 'Jane Doe', 'email': 'janedoe@example.com'},
+    {'id': 3, 'name': 'kane Doe', 'email': 'kanedoe@example.com'},
+    {'id': 4, 'name': 'lane Doe', 'email': 'lanedoe@example.com'},
+    {'id': 5, 'name': 'mane Doe', 'email': 'manedoe@example.com'},
+    {'id': 6, 'name': 'nane Doe', 'email': 'nanedoe@example.com'},
+    {'id': 7, 'name': 'oane Doe', 'email': 'oanedoe@example.com'},
+    {'id': 8, 'name': 'pane Doe', 'email': 'panedoe@example.com'},
+    {'id': 9, 'name': 'qane Doe', 'email': 'qanedoe@example.com'},
+    {'id': 10, 'name': 'rane Doe', 'email': 'ranedoe@example.com'},
+    {'id': 11, 'name': 'sane Doe', 'email': 'sanedoe@example.com'},]
+    return render_template('data.html', data=data)
 
 @app.errorhandler(404)
 def page_not_found(e):
