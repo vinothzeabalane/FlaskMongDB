@@ -171,15 +171,12 @@
                
                
                function changeFormAttr(selValue){
-                  //alert(selValue.name);
-                  if(selValue.name == "view"){
-                     document.getElementById("frmbpt").setAttribute("target","_blank");
-                     document.getElementById("frmbpt").setAttribute("action","{{ url_for('view_bpt') }}");
-                  }
-                  else{
-                     document.getElementById("frmbpt").setAttribute("target","_self");
-                     document.getElementById("frmbpt").setAttribute("action","{{ url_for('download_bpt') }}");
-                  }
+                   //alert(selValue.name);
+                  var sData = selValue.name;
+                  var sTarget = sData == "view"  ? "_blank" : "_self";
+                  var sAction = sData == "view"  ? "{{ url_for('view_bpt') }}" : "{{ url_for('download_bpt') }}";                 
+                  document.getElementById("frmbpt").setAttribute("target",sTarget);
+                  document.getElementById("frmbpt").setAttribute("action",sAction);               
                }
 
                   function checkSelection(cBox){
