@@ -202,30 +202,29 @@ def view_bpt():
             fs = GridFSBucket(db)
             grid_out = fs.open_download_stream_by_name(report[0])
             data = pandas.read_excel(grid_out)
-            return data.to_html()
+            return render_template('view_bpt.html', excelData = data.to_html())
     except Exception as e:
         print(e)
 
-# @app.route('/download_bpt', methods=['GET', 'POST'])
-# def download_bpt():
-#     try:
-#         if request.form:
-#             report = request.form.getlist('download')
-#             client = MongoClient("mongodb://localhost:27017/")
-#             db = client['openstack']
-#             fs = gridfs.GridFS(db)
-#             data = db.fs.files.find_one({'filename': report[0]})
-#             outputdata = fs.get(data['_id']).read()
-#             data = pandas.read_excel(outputdata)
-#             path = Path.home() / 'Downloads'
-#             filename = "sai.csv"
-#             fullpath = os.path.join(path, filename)
-#             with open(fullpath, "wb") as file: 
-#                 file.write(outputdata) 
-#             #res = send_file(fullpath, as_attachment=True, attachment_filename = 'sai.csv' )
-#             return redirect(url_for('bpt'))
-#     except Exception as e:
-#         print(e)
+@app.route('/download_bpt', methods=['GET', 'POST'])
+def download_bpt():
+    try:
+        if request.form:
+            report = request.form.getlist('download')
+            client = MongoClient("mongodb://localhost:27017/")
+            db = client['openstack']
+            fs = gridfs.GridFS(db)
+            data = db.fs.files.find_one({'filename': report[0]})
+            outputdata = fs.get(data['_id']).read()
+            data = pandas.read_excel(outputdata)
+            path = Path.home() / 'Downloads'
+            filename = report[0]+'.csv'
+            fullpath = os.path.join(path, filename)
+            with open(fullpath, "wb") as file: 
+                file.write(outputdata) 
+            return send_file(fullpath , as_attachment = True)        
+    except Exception as e:
+        print(e)
 
 
 @app.route('/bpt', methods=['GET'])

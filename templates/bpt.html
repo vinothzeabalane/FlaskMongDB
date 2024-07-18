@@ -128,7 +128,7 @@
                         </div>
                         <div class="panel-body grey-color">
                            <div class="row" style="padding-left: 25px; margin-right: 5px;">
-                              <form action="{{ url_for('view_bpt') }}" method="post" onsubmit="checkSelection();">  
+                              <form id="frmbpt" action="{{ url_for('view_bpt') }}" method="post" target="_blank">  
                                  <div align="right">
                                     <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for reports.." title="Type in a report name">
                                  </div>
@@ -148,16 +148,14 @@
                                        {% for k,v in value.items() %}
                                        <td>{{v}}</td>
                                        {% if k == 'name' %}                                            
-                                       <td><button name="view" title="View" value={{v}} onclick="viewPage(this);">View</button></td>
-                                       <td><button name="download" title="Download" value={{v}} onclick="downloadPage(this);">Download</button></td>
+                                       <td><button name="view" title="View" value={{v}} type="submit" onclick="changeFormAttr(this)">View</button></td>
+                                       <td><button name="download" title="Download" value={{v}} type="submit" onclick="changeFormAttr(this)">Download</button></td>
                                        {% endif %}                                       
                                        {% endfor %}
                                     </tr>
                                     {% endfor %}
                                  </table>
-                                 <br>
-                                 <input type="checkbox" style="display: none;" value="" id="chbox" name="chk"/>
-                                 <button id="btnSubmit" type="submit" class="signupbtn" style="display: none;">Submit</button>
+                                 <br>                                                         
                               </form>
                            </div>
                         </div>
@@ -169,18 +167,20 @@
                <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
                <script src="{{ url_for('static', filename='js/jquery.easing-1.3.js') }}"></script>
                <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-               <script>
-
-                  function viewPage(selValue){          
-                     document.getElementsByName("chk").value = selValue.value;    
-                     //alert(document.getElementsByName("chk").value);
-                     document.getElementById("btnSubmit").click();
+               <script>     
+               
+               
+               function changeFormAttr(selValue){
+                  //alert(selValue.name);
+                  if(selValue.name == "view"){
+                     document.getElementById("frmbpt").setAttribute("target","_blank");
+                     document.getElementById("frmbpt").setAttribute("action","{{ url_for('view_bpt') }}");
                   }
-
-                  function downloadPage(selValue){
-                     document.getElementsByName("chk").value = selValue.value;    
-                     document.getElementById("btnSubmit").click();
+                  else{
+                     document.getElementById("frmbpt").setAttribute("target","_self");
+                     document.getElementById("frmbpt").setAttribute("action","{{ url_for('download_bpt') }}");
                   }
+               }
 
                   function checkSelection(cBox){
                   var array = []
