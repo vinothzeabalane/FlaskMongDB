@@ -6,6 +6,7 @@ import mongo
 from pymongo import MongoClient
 from gridfs import GridFSBucket
 from pathlib import Path
+from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__, static_url_path='/static')
 app.config.from_pyfile('config.cfg')
@@ -323,4 +324,6 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=False, host=app.config['FLASK_HOST'], port=app.config['FLASK_PORT'], threaded=True)
+    http_server = WSGIServer(('localhost', 5000), app)
+    http_server.serve_forever()
+    # app.run(debug=True, host=app.config['FLASK_HOST'], port=app.config['FLASK_PORT'], threaded=True)
