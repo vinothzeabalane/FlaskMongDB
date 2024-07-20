@@ -23,7 +23,7 @@
                <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
                <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
                <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-               <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
+               <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>               
             </head>
             <body>
                <header class="site-header">
@@ -87,6 +87,9 @@
                      padding-right: 10px;
                      text-align: center;
                      }
+                     th {
+                        background-color: lightblue;
+                     }
                   </style>
                   <style>
                      #myInput {
@@ -115,14 +118,18 @@
                      }
                      #myTable tr.header, #myTable tr:hover {
                      /* Add a grey background color to the table header and on hover */
-                     background-color: #f1f1f1;
+                     background-color: #818aa2;
+                     color: white;
                      }
                    
                      label {
                         float: left;
                         clear: none;
                         display: block;
-                        padding: 0px 1em 0px 8px;
+                        padding: 0px 1em 0px 8px;                        
+                        /* border-color: rgb(20, 21, 20);
+                        background-color: #818aa2;
+                        border-radius: 100px; */
                      }
                      
                      input[type=radio],
@@ -130,15 +137,14 @@
                         float: left;
                         clear: none;
                         margin: 2px 0 0 2px;
-                        width: 30px;
+                        width: 20px;
                         height: 20px;
+                        accent-color: rgb(67, 111, 163);                        
+                        border-radius: 50%;
+                        background: #e8e8e8;                       
+                        border: 3px solid #FFF;
                      }
-
-                     button {
-                        background-color: #2a80b9;
-                        color:#ddd;
-                     }
-
+                   
                      .filter-container {
                         display: flex;
                         flex-wrap: wrap;
@@ -147,6 +153,11 @@
                         .filter {
                         flex: 0 0 50%;
                         padding: 10px;
+                        }
+
+                        select {
+                           color: #222;
+                           width: 50px !important;
                         }
 
                 </style>
@@ -162,7 +173,7 @@
                            <div class="row" style="padding-left: 25px; margin-right: 5px;">
                               <form id="frmbpt" action="{{ url_for('view_bpt') }}" method="post" target="_blank">  
                                  <div class="filter-container">
-                                    <div class="filter" style="width: 20%;">
+                                     <!-- <div class="filter" style="width: 20%;">
                                     <input type="radio" id="chkspi" name="chkflow" value="spi" onchange="filterTable(this)" />
                                     <label for="spi">SPI Flow</label>
                                     <input type="radio" id="chkeb0" name="chkflow" value="eb0"  onchange="filterTable(this)"/>
@@ -172,44 +183,60 @@
                                     </div>
                                     <div class="filter">                           
                                     <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for reports.." title="Type in a report name">
-                                    </div>
+                                    </div> -->
+                                    <div class="filter" style="width: 20%;">
+                                       <input type="radio" id="chkspi" name="chkflow" value="spi"  />
+                                       <label for="spi">SPI Flow</label>
+                                       <input type="radio" id="chkeb0" name="chkflow" value="eb0" />
+                                       <label for="eb0">EB0 Flow</label>
+                                       <input type="radio" id="chkall" name="chkflow" value="all"  checked/>
+                                       <label for="all">All</label>  
+                                       </div>
                                  </div>
                                  <table id="myTable">
-                                    <tbody>
-                                       <tr class="header">
+                                    <thead>
+                                       <tr>
                                           <th style="width:5%;">Items</th>                                         
                                           <th style="width:50%;">Report</th>                                         
                                           <th style="width:5%;">View</th>
                                           <th style="width:5%;">Download</th>
-                                          <th style="width:20%;">Date</th>
                                           <th style="width:15%;">Commit ID</th>
+                                          <th style="width:20%;">Date</th>                                         
+                                          <th style="display: none;">Flow</th>
                                        </tr>
-                                    </tbody>
+                                    </thead>
+                                    <tbody>
                                     {% for value in bpt %}
+                                    {% if value != None %}    
                                     <tr>
                                        <td>{{loop.index}}</td>                                                                                   
                                        {% for k,v in value.items() %}                                      
                                        {% if k == 'name' %}     
                                        <td>{{v}}</td>                                       
-                                       <td><button name="view" title="View" value={{v}} type="submit" onclick="changeFormAttr(this)">View</button></td>
-                                       <td><button name="download" title="Download" value={{v}} type="submit" onclick="changeFormAttr(this)">Download</button></td>
+                                       <td><button name="view" class="btn-primary" title="View" value={{v}} type="submit" onclick="changeFormAttr(this)">View</button></td>
+                                       <td><button name="download" class="btn-primary" title="Download" value={{v}} type="submit" onclick="changeFormAttr(this)">Download</button></td>
                                        {% endif %}    
-                                       {% if k == 'data' %}                                        
+                                       {% if k == 'data' %}          
+                                       <td>{{v.commit_id}}</td>                                  
                                        {% if (v.is_spiflow == True) %}
-                                       <td class="spi">{{v.date}}</td>   
+                                       <td class="spi">{{v.date}}</td>
+                                       <td style="display: none;">spi</td>      
                                        {% elif (v.is_eb0flow == True) %}
-                                       <td class="eb0">{{v.date}}</td>                                                                             
+                                       <td class="eb0">{{v.date}}</td> 
+                                       <td style="display: none;">eb0</td>                                                                              
                                        {% else %}
                                        <td class="all">{{v.date}}</td>
-                                       {% endif %}   
-                                       <td>{{v.commit_id}}</td>                           
+                                       <td style="display: none;">all</td>  
+                                       {% endif %}                                                                
                                        {% endif %}                                                                              
                                        {% endfor %}
                                     </tr>
+                                    {% endif %}
                                     {% endfor %}
+                                 </tbody>
                                  </table>
                                  <br>                                                         
-                              </form>
+                              </form>                         
                            </div>
                         </div>
                      </div>
@@ -220,6 +247,9 @@
                <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
                <script src="{{ url_for('static', filename='js/jquery.easing-1.3.js') }}"></script>
                <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+               <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+               <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+               <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
                <script>     
                
                
@@ -232,54 +262,79 @@
                   document.getElementById("frmbpt").setAttribute("action",sAction);               
                }
 
-                  function checkSelection(cBox){
-                  var array = []
-                  var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
-                  if(checkboxes.length> 1){
-                    alert("Please select only one option at a time!");
-                    cBox.checked = false;
-                  }
-                  }
+                  // function checkSelection(cBox){
+                  // var array = []
+                  // var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+                  // if(checkboxes.length> 1){
+                  //   alert("Please select only one option at a time!");
+                  //   cBox.checked = false;
+                  // }
+                  // }
 
-                  function filterTable(sOption){
-                     var sValue, table, tr, td;
-                     sValue = sOption.value;
-                     //alert(sValue);
-                     table = document.getElementById("myTable");
-                     tr = table.getElementsByTagName("tr"); 
+                  // function filterTable(sOption){
+                  //    var sValue, table, tr, td;
+                  //    sValue = sOption.value;
+                  //    //alert(sValue);
+                  //    table = document.getElementById("myTable");
+                  //    tr = table.getElementsByTagName("tr"); 
                    
-                        for (i = 1; i < tr.length; i++) {
-                           //debugger;
-                            td = tr[i].cells[4];                        
-                            if (td) {                              
-                              if (td.className == sValue) {
-                                tr[i].style.display = "";
-                              } else {
-                                tr[i].style.display = ( sValue == 'all'? "": "none");
-                              }
-                            }       
-                          }                                           
-                  }
+                  //       for (i = 1; i < tr.length; i++) {
+                  //          //debugger;
+                  //           td = tr[i].cells[4];                        
+                  //           if (td) {                              
+                  //             if (td.className == sValue) {
+                  //               tr[i].style.display = "";
+                  //             } else {
+                  //               tr[i].style.display = ( sValue == 'all'? "": "none");
+                  //             }
+                  //           }       
+                  //         }                                           
+                  // }
 
-                      function myFunction() {
-                          var input, filter, table, tr, td, i, txtValue;
-                          input = document.getElementById("myInput");
-                          filter = input.value.toUpperCase();
-                          table = document.getElementById("myTable");
-                          tr = table.getElementsByTagName("tr");
-                          for (i = 1; i < tr.length; i++) {
-                            td = tr[i];
-                          //   td = tr[i].textContent
-                            if (td){
-                              txtValue = td.textContent|| td.innerText;
-                              if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                                tr[i].style.display = "";
-                              } else {
-                                tr[i].style.display = "none";
-                              }
-                            }       
-                          }
-                        }
+                     //  function myFunction() {
+                        //   var input, filter, table, tr, td, i, txtValue;
+                        //   input = document.getElementById("myInput");
+                        //   filter = input.value.toUpperCase();
+                        //   table = document.getElementById("myTable");
+                        //   tr = table.getElementsByTagName("tr");
+                        //   for (i = 1; i < tr.length; i++) {
+                        //     td = tr[i];
+                        //   //   td = tr[i].textContent
+                        //     if (td){
+                        //       txtValue = td.textContent|| td.innerText;
+                        //       if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        //         tr[i].style.display = "";
+                        //       } else {
+                        //         tr[i].style.display = "none";
+                        //       }
+                        //     }       
+                        //   }
+                        // }
+
+                        $(document).ready(function() {
+                          // alert('hi');
+                          var table = $("#myTable").DataTable({                                                    
+                           "pageLength": 10,
+                           lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
+                          });    
+                          
+                          $('input:radio').on('change', function () {
+                           //build a regex filter string with an or(|) condition
+                           var flowtype = $('input:radio[name="chkflow"]:checked').map(function() {
+                           return '^' + this.value + '$';
+                           }).get().join('|');
+                           
+                           //alert(flowtype);
+
+                           //filter in column 1, with an regex, no smart filtering, not case sensitive
+                           if(flowtype != '^all$')
+                              table.column(6).search(flowtype, true, false).draw();
+                           else                              
+                              table.column(6).search( '^.+$', true, false ).draw();                           
+                         });  
+
+                        });                        
+
                </script>
             </body>
          </html>
