@@ -178,10 +178,11 @@
                                     <tbody>
                                        <tr class="header">
                                           <th style="width:5%;">Items</th>                                         
-                                          <th style="width:60%;">Report</th>                                         
+                                          <th style="width:50%;">Report</th>                                         
                                           <th style="width:5%;"></th>
                                           <th style="width:5%;"></th>
-                                          <th style="width:25%;">Date</th>
+                                          <th style="width:20%;">Date</th>
+                                          <th style="width:15%;">Commit ID</th>
                                        </tr>
                                     </tbody>
                                     {% for value in bpt %}
@@ -200,7 +201,8 @@
                                        <td class="eb0">{{v.date}}</td>                                                                             
                                        {% else %}
                                        <td class="all">{{v.date}}</td>
-                                       {% endif %}                             
+                                       {% endif %}   
+                                       <td>{{v.commit_id}}</td>                           
                                        {% endif %}                                                                              
                                        {% endfor %}
                                     </tr>
