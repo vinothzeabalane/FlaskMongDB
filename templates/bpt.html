@@ -117,6 +117,16 @@
                      /* Add a grey background color to the table header and on hover */
                      background-color: #f1f1f1;
                      }
+
+                     input[type="radio"] {
+                        width: 30px;
+                        height: 20px;
+                     }
+
+                     button {
+                        background-color: #2a80b9;
+                        color:#ddd;
+                     }
                   </style>
                </header>
                <!-- /.site-header -->
@@ -129,7 +139,13 @@
                         <div class="panel-body grey-color">
                            <div class="row" style="padding-left: 25px; margin-right: 5px;">
                               <form id="frmbpt" action="{{ url_for('view_bpt') }}" method="post" target="_blank">  
-                                 <div align="right">
+                                 <div>
+                                    <input type="radio" id="chkspi" name="chkflow" value="spi" onchange="filterTable(this)" />
+                                    <label for="spi">SPI Flow</label>
+                                    <input type="radio" id="chkeb0" name="chkflow" value="eb0"  onchange="filterTable(this)"/>
+                                    <label for="eb0">EB0 Flow</label>
+                                    <input type="radio" id="chkall" name="chkflow" value="all"  onchange="filterTable(this)" checked/>
+                                    <label for="all">All</label>                                 
                                     <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for reports.." title="Type in a report name">
                                  </div>
                                  <table id="myTable">
@@ -145,12 +161,21 @@
                                     {% for value in bpt %}
                                     <tr>
                                        <td>{{loop.index}}</td>                                                                                   
-                                       {% for k,v in value.items() %}
-                                       <td>{{v}}</td>
-                                       {% if k == 'name' %}                                            
+                                       {% for k,v in value.items() %}                                      
+                                       {% if k == 'name' %}     
+                                       <td>{{v}}</td>                                       
                                        <td><button name="view" title="View" value={{v}} type="submit" onclick="changeFormAttr(this)">View</button></td>
                                        <td><button name="download" title="Download" value={{v}} type="submit" onclick="changeFormAttr(this)">Download</button></td>
-                                       {% endif %}                                       
+                                       {% endif %}    
+                                       {% if k == 'data' %}                                        
+                                       {% if (v.is_spiflow == True) %}
+                                       <td class="spi">{{v.date}}</td>   
+                                       {% elif (v.is_eb0flow == True) %}
+                                       <td class="eb0">{{v.date}}</td>                                                                             
+                                       {% else %}
+                                       <td class="all">{{v.date}}</td>
+                                       {% endif %}                             
+                                       {% endif %}                                                                              
                                        {% endfor %}
                                     </tr>
                                     {% endfor %}
@@ -187,6 +212,27 @@
                     cBox.checked = false;
                   }
                   }
+
+                  function filterTable(sOption){
+                     var sValue, table, tr, td;
+                     sValue = sOption.value;
+                     //alert(sValue);
+                     table = document.getElementById("myTable");
+                     tr = table.getElementsByTagName("tr"); 
+                   
+                        for (i = 1; i < tr.length; i++) {
+                           //debugger;
+                            td = tr[i].cells[4];                        
+                            if (td) {                              
+                              if (td.className == sValue) {
+                                tr[i].style.display = "";
+                              } else {
+                                tr[i].style.display = ( sValue == 'all'? "": "none");
+                              }
+                            }       
+                          }                                           
+                  }
+
                       function myFunction() {
                           var input, filter, table, tr, td, i, txtValue;
                           input = document.getElementById("myInput");
@@ -194,7 +240,7 @@
                           table = document.getElementById("myTable");
                           tr = table.getElementsByTagName("tr");
                           for (i = 1; i < tr.length; i++) {
-                            td = tr[i]
+                            td = tr[i];
                           //   td = tr[i].textContent
                             if (td){
                               txtValue = td.textContent|| td.innerText;

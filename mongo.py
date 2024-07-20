@@ -71,7 +71,7 @@ class MongoDB:
                 print(i)
                 if 'filename' not in i:
                     continue
-                l1.append({'name': i['filename'], 'date': i['metadata'] or None})
+                l1.append({'name': i['filename'], 'data': i['metadata'] or None})
             print ("BootProfileTime list:  {}".format(l1))
             return l1
                 
