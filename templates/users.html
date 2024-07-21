@@ -164,27 +164,27 @@
                             <div class="panel-body grey-color">
                                 <div class="row">
                                     <label><b style="padding-left: 20px; color: black;">UserName</b></label>
-                                    <input type="text" name="username" style="width: 322px;margin-left: 25px;" required>
+                                    <input type="text" name="username" style="width: 30%;margin-left: 25px;" required>
 
                                     <label><b style="padding-left: 20px; color: black;">Password</b></label>
-                                    <input type="password" name="password" style="width: 322px;margin-left: 25px;" required>
+                                    <input type="password" name="password" style="width: 30%;margin-left: 25px;" required>
                                     <br>
                                     <br>
 
                                     <label><b style="padding-left: 20px; color: black;">Group Name</b></label>
 
-                                    <select style="width: 18%;margin-left: 10px;" name="group">
-                                        <option value=none>Select Group</option>
+                                    <select style="width: 30%;margin-left: 10px;" name="group" required>
+                                        <option value="">Select Group</option>
                                         {% for value in groups %}
                                         <option value={{value}}>{{value}}</option>
                                         {% endfor %}
                                     </select>
 
-                                    <label><b style="padding-left: 172px;color: black;">Admin user?</b></label>
+                                    <label><b style="color: black;padding-left: 20px;">Admin user?</b></label>
                                     <input type="checkbox" name="is_admin" value="True">
                                     <br>
 
-                                    <button type="submit" class="btn btn-primary login-button" style="margin-left: 50%;">Submit</button>
+                                    <button type="submit" class="btn btn-primary login-button" style="margin-left: 44%;">Submit</button>
 
                                 </div>
                             </div>
