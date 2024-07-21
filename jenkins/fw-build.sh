@@ -22,3 +22,8 @@ pwd; ls;
 sudo rm -r *
 sudo cp -r /home/jenkins/repos/trenton/prod/hud/debug/hwfwprep-kv7/build/eeprom /mnt/udrive/ozeabalx/ps-bootprofile
 sudo cp -r /home/jenkins/repos/trenton/prod/hud/debug/hwfwprep-kv7/build/unified_image/unified_image.bin /mnt/udrive/ozeabalx/ps-bootprofile
+
+cd; cd /home/jenkins/repos/trenton
+git config --global --add safe.directory /home/jenkins/repos/trenton
+git show HEAD~1 --pretty=format:"%h" --no-patch > /home/remlab/commit_id.txt
+cp -r /home/remlab/commit_id.txt /mnt/udrive/ozeabalx/ps-bootprofile/
