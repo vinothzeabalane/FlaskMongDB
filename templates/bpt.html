@@ -89,7 +89,17 @@
                      }
                      th {
                         background-color: lightblue;
+                        color: black;
                      }
+
+                     select{
+                padding: 7px 10px;
+            }
+
+            input.text{
+               width: 322px;
+               margin-left: 25px;               
+            }
                   </style>
                   <style>
                      #myInput {
@@ -110,7 +120,8 @@
                      }
                      #myTable th, #myTable td {
                      text-align: left; /* Left-align text */
-                     padding: 12px; /* Add padding */
+                     padding: 5px; /* Add padding */
+                     font-size: 14px;
                      }
                      #myTable tr {
                      /* Add a bottom border to all table rows */
@@ -126,8 +137,8 @@
                         float: left;
                         clear: none;
                         display: block;
-                        padding: 0px 1em 0px 8px;                        
-                        /* border-color: rgb(20, 21, 20);
+                         /*padding: 0px 1em 0px 8px;                        
+                        border-color: rgb(20, 21, 20);
                         background-color: #818aa2;
                         border-radius: 100px; */
                      }
@@ -153,12 +164,17 @@
                         .filter {
                         flex: 0 0 50%;
                         padding: 10px;
+                        margin-left: -8px;
                         }
 
                         select {
                            color: #222;
                            width: 50px !important;
                         }
+
+                        input[type="search"] {                    
+                     padding: 7px 10px;             
+                  }  
 
                 </style>
                </header>
@@ -186,23 +202,23 @@
                                     </div> -->
                                     <div class="filter" style="width: 20%;">
                                        <input type="radio" id="chkspi" name="chkflow" value="spi"  />
-                                       <label for="spi">SPI Flow</label>
+                                       <label for="spi" style="padding: 0px 1em 0px 8px;">SPI Flow</label>
                                        <input type="radio" id="chkeb0" name="chkflow" value="eb0" />
-                                       <label for="eb0">EB0 Flow</label>
+                                       <label for="eb0" style="padding: 0px 1em 0px 8px;">EB0 Flow</label>
                                        <input type="radio" id="chkall" name="chkflow" value="all"  checked/>
-                                       <label for="all">All</label>  
+                                       <label for="all" style="padding: 0px 1em 0px 8px;">All</label>  
                                        </div>
                                  </div>
                                  <table id="myTable">
                                     <thead>
                                        <tr>
-                                          <th style="width:5%;">Items</th>                                         
-                                          <th style="width:50%;">Report</th>                                         
-                                          <th style="width:5%;">View</th>
-                                          <th style="width:5%;">Download</th>
-                                          <th style="width:15%;">Commit ID</th>
-                                          <th style="width:20%;">Date</th>                                         
-                                          <th style="display: none;">Flow</th>
+                                          <th>ITEMS</th>                                         
+                                          <th>REPORT</th>                                         
+                                          <th>VIEW</th>
+                                          <th>DOWNLOAD</th>
+                                          <th>COMMIT ID</th>
+                                          <th>DATE</th>                                         
+                                          <th style="display: none;">FLOW</th>
                                        </tr>
                                     </thead>
                                     <tbody>
@@ -213,8 +229,8 @@
                                        {% for k,v in value.items() %}                                      
                                        {% if k == 'name' %}     
                                        <td>{{v}}</td>                                       
-                                       <td><button name="view" class="btn-primary" title="View" value={{v}} type="submit" onclick="changeFormAttr(this)">View</button></td>
-                                       <td><button name="download" class="btn-primary" title="Download" value={{v}} type="submit" onclick="changeFormAttr(this)">Download</button></td>
+                                       <td><button name="view" class="btn btn-primary login-button" title="View" value={{v}} type="submit" onclick="changeFormAttr(this)">View</button></td>
+                                       <td><button name="download" class="btn btn-primary login-button" title="Download" value={{v}} type="submit" onclick="changeFormAttr(this)">Download</button></td>
                                        {% endif %}    
                                        {% if k == 'data' %}          
                                        <td>{{v.commit_id}}</td>                                  
@@ -335,6 +351,6 @@
 
                         });                        
 
-               </script>
+               </script>            
             </body>
          </html>
