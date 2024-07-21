@@ -122,11 +122,38 @@
             input[type="search"] {
                 padding: 7px 10px;
             }
+
+            .alert {
+                padding: 20px;
+                background-color: #f44336;
+                margin-top: 20px;
+                color: white;
+            }
+            .closebtn {
+                margin-left: 15px;
+                color: white;
+                font-weight: bold;
+                float: right;
+                font-size: 22px;
+                line-height: 20px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+            .closebtn:hover {
+                color: black;
+            }
 	   </style>
     </header>
     <!-- /.site-header -->
     <div class="row">
         <div class="container">
+            {% if warning %}
+	        <div class="alert">
+	  			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+	  			<strong style="color: #3c0606;">Warning!</strong> User Name already exits .
+			</div>
+		    {% endif %}
             <form action="{{ url_for('create_user') }}" method="post">
                 <div class="row">
                     <div class="col-md-12" style="padding-left: 11px;">

@@ -15,6 +15,13 @@ class MongoDB:
             return res
         except Exception as e:
             print(e)
+
+    def check_user_name(self,user):
+        try:
+            res = self.db.users.find_one({"username":str(user)})
+            return res
+        except Exception as e:
+            print(e)
             
     def check_access_right(self,user):
         try:

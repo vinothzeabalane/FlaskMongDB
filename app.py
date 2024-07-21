@@ -97,8 +97,14 @@ def create_user():
     try:
         name = request.form['username']
         password = request.form["password"]
+        access_right = get_access_user()
+        grouplist = get_mongo_connection().groups_list()
+        user_list = get_mongo_connection().users_list()
         group = request.form["group"]
         admin = request.form.get("is_admin") or False
+
+        if get_mongo_connection().check_user_name(user=name):
+            return render_template("users.html",warning=True,users=user_list,groups=grouplist,user=session['user'],is_admin = access_right)
     
         val={"username":str(name),"group":group,"password":str(password),"is_admin":admin}
         
@@ -244,6 +250,6 @@ def index():
 
 
 if __name__ == "__main__":
-    http_server = WSGIServer(('localhost', 5000), app)
-    http_server.serve_forever()
-    # app.run(debug=True, host=app.config['FLASK_HOST'], port=app.config['FLASK_PORT'], threaded=True)
+    # http_server = WSGIServer(('localhost', 5000), app)
+    # http_server.serve_forever()
+    app.run(debug=True, host=app.config['FLASK_HOST'], port=app.config['FLASK_PORT'], threaded=True)
