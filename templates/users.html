@@ -223,7 +223,11 @@
                                         {% endif %}  
                                         <td>{{value.username}}</td>
                                         <td>{{value.group}}</td>
+                                        {% if (user == value.username) %} 
                                         <td>{{value.password}}</td>
+                                        {% else %} 
+                                        <td>xxxxx</td>
+                                        {% endif %} 
                                         {% if (value.is_admin) == "True"  %} <td>Yes</td>  {% else %} <td>No</td> {% endif %}
                                 	{% endif %}                                    
                                     {% endfor %}

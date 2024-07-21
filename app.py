@@ -25,11 +25,13 @@ def account_update():
         if session.get("user"):
             oldpass = request.form["oldpass"]
             newpass = request.form["newpass"]
+            access_right = get_access_user()
             res = get_mongo_connection().update_password(session['user'],oldpass,newpass)
             if res:
+                flash('Your password has been updated successfully. Re-login with new password!', 'success')
                 return redirect(url_for('logout'))
             else:
-                return render_template('account.html', error = "Please enter correct Old password")
+                return render_template('account.html',user=session['user'],is_admin = access_right, error = "Please enter correct old password")
         else:
             return render_template('login.html', error = "Your Session Expired")
     except Exception as e:
@@ -251,5 +253,5 @@ def index():
 
 if __name__ == "__main__":
     # http_server = WSGIServer(('localhost', 5000), app)
-    # http_server.serve_forever()
+    # http_server.serve_forever()    
     app.run(debug=True, host=app.config['FLASK_HOST'], port=app.config['FLASK_PORT'], threaded=True)
