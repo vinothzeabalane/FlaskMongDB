@@ -24,6 +24,47 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
+    <style>
+                     #grpTable {
+                     border-collapse: collapse; /* Collapse borders */
+                     width: 100%; /* Full-width */                     
+                     font-size: 18px; /* Increase font-size */
+                     }
+                     #grpTable th, #grpTable td {
+                     text-align: left; /* Left-align text */
+                     padding: 5px; /* Add padding */
+                     font-size: 14px;
+                     }
+                     #grpTable tr {
+                     /* Add a bottom border to all table rows */
+                     border-bottom: 1px solid #ddd;
+                     }
+                     #grpTable tr.header, #grpTable tr:hover {
+                     /* Add a grey background color to the table header and on hover */
+                     background-color: #818aa2;
+                     color: white;
+                     }
+
+                     table, th, td {
+                     border: 1px solid black;
+                     padding-left: 10px;
+                     padding-right: 10px;
+                     text-align: center;
+                     }
+                     th {
+                        background-color: lightblue;
+                        color: black;
+                     }
+
+                    select{
+                        padding: 7px 10px;
+                        width: 41%;
+                    }
+
+                    input[type="search"] {
+                        padding: 7px 10px;
+                    }
+    </style>
 </head>
 
 <body>
@@ -84,36 +125,29 @@
         
 
         <style>
-			table, th, td {
-    		border: 1px solid black;
-    		padding-left: 10px;
-    		padding-right: 10px;
-    		text-align: center;
-    		
-    		
-			}
-			
+						
 			.alert {
-    padding: 20px;
-    background-color: #f44336;
-    margin-top: 20px;
-    color: white;
-}
+                padding: 20px;
+                background-color: #f44336;
+                margin-top: 20px;
+                color: white;
+            }
 
-.closebtn {
-    margin-left: 15px;
-    color: white;
-    font-weight: bold;
-    float: right;
-    font-size: 22px;
-    line-height: 20px;
-    cursor: pointer;
-    transition: 0.3s;
-}
+            .closebtn {
+                margin-left: 15px;
+                color: white;
+                font-weight: bold;
+                float: right;
+                font-size: 22px;
+                line-height: 20px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
 
-.closebtn:hover {
-    color: black;
-}
+            .closebtn:hover {
+                color: black;
+            }
+        
 	   </style>
 
     </header>
@@ -136,8 +170,8 @@
                             <div class="panel-body grey-color">
                                 <div class="row">
                                     <label><b style="padding-left: 20px; color: black;">Group Name</b></label>
-                                    <input type="text" name="name" style="width: 322px;" required>
-                                    <button type="submit" class="signupbtn" style="margin-left:20px">submit</button>
+                                    <input type="text" name="name" style="width: 322px;margin-left: 25px;" required>
+                                    <button type="submit" class="btn btn-primary login-button" style="margin-top: 0px;">Submit</button>
                                 </div>
                             </div>
                         </div>
@@ -149,38 +183,51 @@
                 <div class="panel-heading">
                     <span class="heading">Existing Groups</span>
                 </div>
-                <div class="panel-body grey-color">
+                <div class="panel-body grey-color" style="padding: 35px;">
                     <div class="row">
  						<form action="{{ url_for('update_group') }}" method="post">
-						<table id="table table-striped" width="350px" style="margin-left: 20px;">
-						
+						<table id="grpTable">
+						<thead>
 						          <tr>
-                             			<th>Select</th>
+                                        <th style="width:2%">Select</th>
 	                                    <th>Name</th>
 								  </tr>
-						
+                        </thead>
+                        <tbody>
 						 	{% for value in groups %}
+                            {% if value != None %}    
 							<tr>
 								<td><input type="checkbox" name="chk" value={{value}} /></td>
-								<td><input type="text" value={{value}} name="value" readonly/></td>
+								<td>{{value}}</td>
 							</tr>
-							
-							{% endfor %}
-						</table>
+                            {% endif %}     
+                            {% endfor %}
+                        </tbody>							
+						</table>                      
 						<br>
-						<button type="submit" class="signupbtn" style="margin-left:10px">Delete</button>
+						<button type="submit" class="btn btn-primary login-button">Delete</button>
 						</form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <div>
     </div>
     <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.easing-1.3.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <script>
+        $(document).ready(function() {
+           //alert('hi');
+           $("#grpTable").DataTable({                                                             
+           "pageLength": 5,
+           lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
+           });   
+       });
+   </script>
 </body>
-
 </html>
