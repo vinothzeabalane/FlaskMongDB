@@ -86,12 +86,12 @@ for i in range(len(df.columns)):
             worksheet.write(entry_position, 0, entry[entry_count])
             entry_count += 1
             entry_position += 4
-        elif res == 1 and entry_position > 5 and str(val.obj[i][j]).startswith('start') or str(val.obj[i][j]).startswith('time') :
+        elif res == 1 and entry_position > 1 and str(val.obj[i][j]).startswith('start') or str(val.obj[i][j]).startswith('time') :
             worksheet.write(count, 0, "        ")
             print ("entry_position: {}".format(entry_position))
             worksheet.write(entry_position - 1 , 0, "        ")
         
-        worksheet.write(count, res, str(val.obj[i][j]).replace(",", ""))
+        worksheet.write(count, res, val.obj[i][j])
         
         if str(val.obj[i][j]).startswith('time elapsed in ss.ms.us'):
             count += 1
@@ -101,6 +101,7 @@ for i in range(len(df.columns)):
         count += 1
 
 worksheet.write(0, 0, "Boot Entry")
+# worksheet.write(2, 0, "        ")
 worksheet.freeze_panes(0, 1)  # Freeze from the second column (B) onwards
 
 # Close workbook
