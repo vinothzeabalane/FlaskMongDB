@@ -1,10 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html class="no-js">
 <head>
-        <title>Display Excel</title>
+        <meta charset="utf-8">
+        <title>Report</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,200,400,500,600" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+        <style>			
+                table {
+                border-collapse: collapse; /* Collapse borders */
+                width: 100%; /* Full-width */                     
+                font-size: 18px; /* Increase font-size */
+                }
+                table th, table td {
+                text-align: left; /* Left-align text */
+                padding: 5px; /* Add padding */
+                font-size: 14px;
+                }
+                table tr {
+                /* Add a bottom border to all table rows */
+                border-bottom: 1px solid #ddd;
+                }
+                
+                #DataTables_Table_0_wrapper {
+                width: 98%;
+                padding-left: 2%;
+                }
+
+                table tr.header, table.dataTable tbody tr:hover {
+                /* Add a grey background color to the table header and on hover */
+                background-color: #c2f164;
+                color: rgb(24, 59, 174);
+                font-weight: bold;
+                }
+
+                table, th, td {
+                border: 1px solid black;
+                /* padding-left: 10px;
+                padding-right: 10px; */
+                text-align: center;
+                }
+                th {
+                   background-color: lightblue;
+                   color: black;
+                }
+
+                select {
+                        padding: 7px 10px;
+                        width: 41%;
+                }
+
+                input[type="search"] {
+                        padding: 7px 10px;
+                }
+
+        </style>
 </head>
 <body>
-        <h2>View BPT</h2>
+        <h2>Boot Profile Time Report</h2>
+        <br/>
         {{ excelData | safe }}
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+        <script>
+             $(document).ready(function() {
+                //alert('hi');
+                $("table").DataTable({                                                    
+                "pageLength": 5,
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
+                });   
+            });
+        </script>
 </body>
 </html>
