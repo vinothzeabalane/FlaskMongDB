@@ -28,7 +28,7 @@ def account_update():
             access_right = get_access_user()
             res = get_mongo_connection().update_password(session['user'],oldpass,newpass)
             if res:
-                flash('Your password has been updated successfully. Re-login with new password!', 'success')
+                flash('Your password has been updated successfully. <br/><br/> Re-login with new password!', 'success')
                 return redirect(url_for('account'))
             else:
                 return render_template('account.html',user=session['user'],is_admin = access_right, error = "Please enter correct old password")
@@ -254,4 +254,4 @@ def index():
 if __name__ == "__main__":
     # http_server = WSGIServer(('localhost', 5000), app)
     # http_server.serve_forever()    
-    app.run(debug=False, host=app.config['FLASK_HOST'], port=app.config['FLASK_PORT'], threaded=True)
+    app.run(debug=True, host=app.config['FLASK_HOST'], port=app.config['FLASK_PORT'], threaded=True)
