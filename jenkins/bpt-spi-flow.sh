@@ -26,7 +26,7 @@ echo -e "selectdev 1\ntc-unlock\ntc-boot-profile\nexit" > /home/remlab/cmdline.c
 # Loop to execute commands 5 times
 for (( i = 1; i <= 5; i++ ))
 do
-    echo "Iteration $i"
+    echo "Iteration:  $i " >> "/home/remlab/$filename"
 
     # Setup environment
     cd /home/jenkins/repos/ent_ssd_test/lib/spdk/scripts/ || exit
@@ -55,6 +55,7 @@ do
 done
 
 
+
 today=$(date +"%Y-%m-%d")
 filename="chewy20-8TB-SPI-$today.csv"
 cd; cd /home/remlab;
@@ -62,4 +63,4 @@ sudo cp -r chewy20-8TB-SPI-$today.csv /mnt/udrive/ozeabalx/ps-bootprofile
 
 
 cd; cd /home/remlab;
-sudo rm -r chewy20-8TB*
+sudo rm -r chewy20-*.csv

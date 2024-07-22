@@ -19,9 +19,14 @@ echo "********************** FW Build binary Ended ******************"
 cd; cd /home/remlab;
 cd; cd /mnt/udrive/ozeabalx/ps-bootprofile; 
 pwd; ls;
-sudo rm -r *
-sudo cp -r /home/jenkins/repos/trenton/prod/hud/debug/hwfwprep-kv7/build/eeprom /mnt/udrive/ozeabalx/ps-bootprofile
-sudo cp -r /home/jenkins/repos/trenton/prod/hud/debug/hwfwprep-kv7/build/unified_image/unified_image.bin /mnt/udrive/ozeabalx/ps-bootprofile
+rm -r * || true
+
+
+cp -r /home/jenkins/repos/trenton/prod/hud/debug/hwfwprep-kv7/build/eeprom /mnt/udrive/ozeabalx/ps-bootprofile
+cp -r /home/jenkins/repos/trenton/prod/hud/debug/hwfwprep-kv7/build/unified_image/unified_image.bin /mnt/udrive/ozeabalx/ps-bootprofile
+cd; cd /mnt/udrive/ozeabalx/ps-bootprofile; 
+touch -f last_updated.txt
+date '+Current Date: %F' > last_updated.txt
 
 cd; cd /home/jenkins/repos/trenton
 git config --global --add safe.directory /home/jenkins/repos/trenton
