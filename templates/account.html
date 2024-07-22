@@ -24,8 +24,23 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
-
+<title>Flask Pop-up Example</title>
+    <style>
+        /* Style for pop-up container */
+        .popup-container {
+            display: none; /* Hide pop-up by default */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+</style>
 <body>
     <header class="site-header">
         <div class="main-header" style="padding-top: 0px;padding-bottom: 0px; height: 120px;">
@@ -86,9 +101,17 @@
     <div class="row">
         <div class="container">
                      
-                            {% if error %}
-                            <p class="error"><strong>{{ error }}</strong></p>
-                            {% endif %}
+            {% if error %}
+            <p class="error"><strong>{{ error }}</strong></p>
+            {% endif %}
+            
+            {% for mesg in get_flashed_messages() %}
+            <h4>{{ mesg }}</h4>
+            {% endfor %}
+
+            {% if get_flashed_messages() %}
+            <button onclick="reloadAndRedirect()"  class="btn btn-primary login-button" style="margin-left: 40%;">OK</button>
+            {% endif %}
 
             <form action="{{ url_for('account_update') }}" method="post">
                 <div class="row">
@@ -122,6 +145,15 @@
     <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.easing-1.3.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script>
+        function reloadAndRedirect() {
+            // Reload the current page
+            window.location.reload();
+
+            // Redirect to a different URL after reloading
+            window.location.href = '/logout';  // Replace with your desired URL
+        }
+    </script>
 </body>
 
 </html>
