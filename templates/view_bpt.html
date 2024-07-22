@@ -11,7 +11,16 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-        <style>			
+        <style>	
+                .main-nav{
+                        height: 10%;
+                }	
+                
+                h4 {                
+                padding-top: 15px;
+                padding-left: 20px;
+                color: white;
+                }
                 table {
                 border-collapse: collapse; /* Collapse borders */
                 width: 100%; /* Full-width */                     
@@ -62,7 +71,9 @@
         </style>
 </head>
 <body>
-        <h2>Boot Profile Time Report</h2>
+        <div class="main-nav"> 
+              <h4> BOOT PROFILE TIME REPORT</h4>
+        </div>
         <br/>
         {{ excelData | safe }}
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
