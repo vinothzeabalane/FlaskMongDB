@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
 </head>
 
@@ -83,11 +83,11 @@
         </div>
         <!-- /.container -->
         <!-- /.main-nav -->
-        
-        <style>			
+
+        <style>
                      #userTable {
                      border-collapse: collapse; /* Collapse borders */
-                     width: 100%; /* Full-width */                     
+                     width: 100%; /* Full-width */
                      font-size: 18px; /* Increase font-size */
                      }
                      #userTable th, #userTable td {
@@ -151,7 +151,7 @@
                 cursor: pointer;
                 margin-right: 15%;
                 margin-top: 10px;
-            }   
+            }
 	   </style>
     </header>
     <!-- /.site-header -->
@@ -159,12 +159,12 @@
         <div class="container">
             {% if warning %}
 	        <div class="alert">
-	  			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+	  			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
 	  			<strong style="color: #3c0606;">Warning!</strong> User Name already exits .
-			</div>		   
+			</div>
             {% else %}
             <p class="error" id="sMsg"></p>
-            {% endif %}  
+            {% endif %}
             <form id="frmAdd" action="{{ url_for('create_user') }}" method="post" autocomplete='off'>
                 <div class="row">
                     <div class="col-md-12" style="padding-left: 11px;">
@@ -229,29 +229,29 @@
 	                                    <th>UserName</th>
 	                                    <th>Group</th>
 	                                    <th>Password</th>
-	                                    <th>Admin user?</th>
+	                                    <!-- <th>Admin user?</th> -->
 								  </tr>
                                 </thead>
                                 <tbody>
  								{% for value in users %}
-                                {% if value != None %}    
-                                <tr>                                	
+                                {% if value != None %}
+                                <tr>
                                 	{% for k,v in value.items() %}
                                 	{% if k == 'username' %}
-                                        {% if (user != value.username) %} 
-                                		<td><input type="checkbox" name="chk" value={{v}} /></td>                                       
-                                        {% else %} 
-                                        <td><input type="checkbox" name="chk" value={{v}} disabled /></td>  
-                                        {% endif %}  
+                                        {% if (user != value.username) %}
+                                		<td><input type="checkbox" name="chk" value={{v}} /></td>
+                                        {% else %}
+                                        <td><input type="checkbox" name="chk" value={{v}} disabled /></td>
+                                        {% endif %}
                                         <td>{{value.username}}</td>
-                                        <td>{{value.group}}</td>
-                                        {% if (user == value.username) %} 
+                                        <td>{{value.group[0].name}}</td>
+                                        {% if (user == value.username) %}
                                         <td>{{value.password}}</td>
-                                        {% else %} 
+                                        {% else %}
                                         <td>xxxxx</td>
-                                        {% endif %} 
-                                        {% if (value.is_admin) == "True"  %} <td>Yes</td>  {% else %} <td>No</td> {% endif %}
-                                	{% endif %}                                    
+                                        {% endif %}
+                                        <!-- {% if (value.is_admin) == "True"  %} <td>Yes</td>  {% else %} <td>No</td> {% endif %} -->
+                                	{% endif %}
                                     {% endfor %}
                                 </tr>
                                 {% endif %}
@@ -277,31 +277,31 @@
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <script>
-        
+
          $(document).ready(function() {
             $('#sMsg').css('display','none');
-            $('.hideIns').css('color','');  
-            $('.hideIns').css('display','none');           
+            $('.hideIns').css('color','');
+            $('.hideIns').css('display','none');
             //alert('hi');
-            $("#userTable").DataTable({                                                    
+            $("#userTable").DataTable({
             "pageLength": 5,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
-            });   
+            });
         });
 
         $('#txtpwd').on("cut copy paste",function(e) {
                 e.preventDefault();
             });
-        $("#txtpwd").focus(function() {    
+        $("#txtpwd").focus(function() {
             $('.hideIns').css('display','block');
         });
-        $("#txtpwd").blur(function() {    
+        $("#txtpwd").blur(function() {
             $('.hideIns').css('display','none');
         });
 
         function validatePassword(password) {
             // Regular expression to match a strong password
-            var regex = /^(?=.*\d)(?=.*[0-9])(?=.*[A-Z]).{8,}$/;           
+            var regex = /^(?=.*\d)(?=.*[0-9])(?=.*[A-Z]).{8,}$/;
             return regex.test(password);
         }
 
@@ -309,7 +309,7 @@
             var newpwd = $.trim($('#txtpwd').val());
             if (!validatePassword(newpwd)) {
             $('#txtpwd').focus();
-            $('.hideIns').css('color','red');            
+            $('.hideIns').css('color','red');
             return false;
           }
         });
@@ -318,7 +318,7 @@
            var array = []
             var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
             if(checkboxes.length == 0){
-            //alert("Please at least one option to delete!");            
+            //alert("Please at least one option to delete!");
             $('#sMsg').css('display','block');
             $('#sMsg').html('<strong>Please at least one option to delete!</strong>');
             window.scrollTo(0, 0);
