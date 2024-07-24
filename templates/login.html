@@ -59,7 +59,7 @@
                             {% endif %}
                             <label>UserName</label>
                             <div>
-                                <input type="text" name="username" style="width:96%" autocomplete="off" value="" />
+                                <input type="text" tabindex="1" name="username" maxlength="50" style="width:96%" autocomplete="off" value="" />
                             </div>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
                         <div class="col-lg-12">
                             <label>Password</label>
                             <div>
-                                <input type="password" name="password" style="width:96%;" autocomplete="off" value="" />
+                                <input type="password" id="txtpwd" maxlength="20" tabindex="2" name="password" style="width:96%;" autocomplete="off" value="" />
                             </div>
                         </div>
 
@@ -75,7 +75,7 @@
                     <div class="row">
                         <div class="login-footer">
                             <div class="col-lg-11">
-                                <button type="submit" class="btn btn-primary pull-right login-button">Login</button>
+                                <button type="submit" tabindex="3" class="btn btn-primary pull-right login-button">Login</button>
                             </div>
                         </div>
                     </div>
@@ -92,7 +92,12 @@
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
     <script src="{{ url_for('static', filename='js/plugins.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+     $('#txtpwd').on("cut copy paste",function(e) {
+                e.preventDefault();
+            });
+</script>
 </body>
 
 </html>

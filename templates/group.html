@@ -161,8 +161,10 @@
 	  			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
 	  			<strong style="color: #3c0606;">Warning!</strong> Group Name already exits .
 			</div>
-		{% endif %}
-            <form action="{{ url_for('create_group') }}" method="post">
+            {% else %}
+            <p class="error" id="sMsg"></p>
+            {% endif %}  
+            <form id="frmAdd" action="{{ url_for('create_group') }}" method="post">
                 <div class="row">
                     <div class="col-md-12" style="padding-left: 11px;">
                         <div class="panel panel-default">
@@ -172,8 +174,8 @@
                             <div class="panel-body grey-color">
                                 <div class="row">
                                     <label><b style="padding-left: 20px; color: black;">Group Name</b></label>
-                                    <input type="text" name="name" style="width: 322px;margin-left: 25px;" required>
-                                    <button type="submit" class="btn btn-primary login-button" style="margin-top: 0px;">Submit</button>
+                                    <input type="text" tabindex="1" name="name" maxlength="20" style="width: 322px;margin-left: 25px;" required>
+                                    <button type="submit" tabindex="2" class="btn btn-primary login-button" style="margin-top: 0px;">Submit</button>
                                 </div>
                             </div>
                         </div>
@@ -187,7 +189,7 @@
                 </div>
                 <div class="panel-body grey-color" style="padding: 35px;">
                     <div class="row">
- 						<form action="{{ url_for('update_group') }}" method="post">
+ 						<form id="frmTable" action="{{ url_for('update_group') }}" method="post">
 						<table id="grpTable">
 						<thead>
 						          <tr>
@@ -224,12 +226,26 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <script>
         $(document).ready(function() {
+           $('#sMsg').css('display','none');
            //alert('hi');
            $("#grpTable").DataTable({                                                             
            "pageLength": 5,
            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
            });   
        });
+
+       $('#frmTable').submit(function () {
+           var array = []
+            var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+            if(checkboxes.length == 0){
+            //alert("Please at least one option to delete!");                   
+            $('#sMsg').css('display','block');
+            $('#sMsg').html('<strong>Please at least one option to delete!</strong>');
+            window.scrollTo(0, 0);
+            return false;
+            }
+        });
+      
    </script>
 </body>
 </html>

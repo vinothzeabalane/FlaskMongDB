@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">    
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
@@ -51,6 +52,21 @@
         .fade-out.fade {
             opacity: 0;
         }
+        
+        .field-icon {
+            float: right;
+            margin-left: -25px;
+            margin-top: -25px;
+            position: relative;
+            z-index: 2;
+            }
+
+            .toggle-password {
+                float: right;
+                cursor: pointer;
+                margin-right: 30%;
+                margin-top: 10px;
+            }
 </style>
 <body>
     <header class="site-header">
@@ -137,16 +153,33 @@
                             </div>
                             <div class="panel-body grey-color">
                                 <div class="row">
-                                    <label><b style="color: #000000;margin-left: -13px;">Current Password</b></label>
-                                    <input type="text" id="oldpass" name="oldpass" style="width: 40%;margin-left: 5%;" required>
+                                    <label><b style="color: #000000;margin-left: -15px;">Current Password</b></label>
+                                    <input type="password" tabindex="1" pattern="[a-zA-Z0-9!@#$.^*_|]{0,20} onpaste="return false" maxlength="20" id="oldpass" name="oldpass" style="width: 40%;margin-left:6%;" required>
+                                    <span toggle="#oldpass" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                                 </div>
                                 <br/>
                                 <br/>
                                 <div class="row">
-                                    <label><b style="color: black;">New Password</b></label>
-                                    <input type="text" id="newpass" name="newpass" style="width: 40%;margin-left: 6%;" required>   <br><br>                             
+                                    <label><b style="color: black;margin-left: -21px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;New Password</b></label>
+                                    <input type="password" tabindex="2" pattern="[a-zA-Z0-9!@#$.^*_|]{0,20} onpaste="return false" maxlength="20" id="newpass" name="newpass" style="width: 40%;margin-left:6%;" required>
+                                    <span toggle="#newpass" class="fa fa-fw fa-eye field-icon toggle-password"></span><br><br>                                                                 
                                 </div>
-                                    <button type="submit" class="btn btn-primary login-button" style="margin-left: 40%;">Submit</button>                               
+                                <br/>                                
+                                <div class="row">
+                                    <label><b style="color: black;margin-left: -21px;">Confirm Password</b></label>
+                                    <input type="password" tabindex="3" pattern="[a-zA-Z0-9!@#$.^*_|]{0,20} onpaste="return false" maxlength="20" id="conpass" name="conpass" style="width: 40%;margin-left:6%;" required>
+                                    <span toggle="#conpass" class="fa fa-fw fa-eye field-icon toggle-password"></span>   <br><br>                             
+                                </div>
+                                <div id="password_rules" class="row" style="margin-left: 20px;">
+                                    <h4>Passwords must meet these requirements:</h4>
+                                    <ul>
+                                        <li class="password_length">At least 8 characters</li>
+                                        <li class="password_uppercase">At least 1 uppercase letter</li>
+                                        <li class="password_number">At least one number</li>
+                                        <li class="password_match">New Password and Confirmation must match</li>
+                                    </ul>
+                                </div>
+                                    <button type="submit" tabindex="4" class="btn btn-primary login-button" style="margin-left: 40%;">Submit</button>                               
                             </div>
                         </div>
                     </div>
@@ -171,21 +204,77 @@
             window.location.href = '/logout';  // Replace with your desired URL
         }
 
+        // Function to validate password using jQuery
+        function validatePassword(password) {
+            // Regular expression to match a strong password
+            var regex = /^(?=.*\d)(?=.*[0-9])(?=.*[A-Z]).{8,}$/;
+            //(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]
+            //alert(regex.test(password));
+            // var regex = new Array();
+            //     regex.push("[A-Z]"); //Uppercase Alphabet.
+            //     //regex.push("[a-z]"); //Lowercase Alphabet.
+            //     regex.push("[0-9]"); //Digit.
+            //     //regex.push("[!@#$%^&*]"); //Special Character.
+            //     var passed = 0;
+            //     for (var i = 0; i < regex.length; i++) {
+            //         if (new RegExp(regex[i]).test(passwordstrength.value)) {
+            //             passed++;
+            //         }
+            //     }
+            //     if(passed > 3)
+            //     alert("valid");
+            // else
+            // alert("not valid");
+
+            return regex.test(password);
+        }
+
         $('form').submit(function () {
         // validate old and new password are same
         var oldpwd = $.trim($('#oldpass').val());
         var newpwd = $.trim($('#newpass').val());
-
-        // Check condition
-        if (oldpwd  == newpwd) {
+        var conpwd = $.trim($('#conpass').val());
+               
+        // Check condition        
+         if (oldpwd  == newpwd) {
             $('#sMsg').css('display','block');
             $('#sMsg').html('<strong>New password is same as Current Password</strong>');
+            return false;
+          }
+          else if (newpwd  != conpwd) {
+            $('#sMsg').css('display','block');
+            $('#sMsg').html('<strong>New password is not same as Confirm Password</strong>');
+            return false;
+          }      
+          else if (!validatePassword(newpwd)) {
+            $('#sMsg').css('display','block');
+            $('#sMsg').html('<strong>Entered Password is invalid! Please follow the instructions below.</strong>');
             return false;
           }
         });
 
         $(document).ready(function() {
             $('#sMsg').css('display','none');
+        });
+
+        $('#oldpass').on("cut copy paste",function(e) {
+                e.preventDefault();
+            });
+            $('#newpass').on("cut copy paste",function(e) {
+                e.preventDefault();
+            });
+            $('#conpass').on("cut copy paste",function(e) {
+                e.preventDefault();
+            });
+       
+        $(".toggle-password").click(function() {
+        $(this).toggleClass("fa-eye fa-eye-slash");
+        var input = $($(this).attr("toggle"));
+        if (input.attr("type") == "password") {
+        input.attr("type", "text");
+        } else {
+        input.attr("type", "password");
+        }
         });
 
     </script>
