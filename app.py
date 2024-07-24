@@ -64,19 +64,19 @@ def groups():
         print(e)
 
 @app.route('/update_group', methods=['GET', 'POST'])
-def update_group():
-    access_right = get_access_user()
-    grouplist = get_mongo_connection().groups_list()
-    user_list = get_mongo_connection().users_list()
+def update_group():    
     try:
+        access_right = get_access_user()
+        grouplist = get_mongo_connection().groups_list()
+        user_list = get_mongo_connection().users_list()
         if request.form:
             groups = request.form.getlist('chk')
             for i in groups:
                 group_id = get_mongo_connection().check_group(i)
             res =  get_mongo_connection().check_group_in_users(group_id['_id'])
             if res:
-                print("Warning: {} group is linked with Users, please unlink before delete".format(i))
-                return render_template("group.html",error = "Warning: {} group is linked with Users, please unlink before delete".format(i),users=user_list,groups=grouplist,user=session['user'],is_admin = access_right)
+                print("Warning: {} group is linked with one or more users. Please unlink before delete".format(i))
+                return render_template("group.html",warning=True, error = "Warning: {} group is linked with one or more users. Please unlink before delete".format(i),users=user_list,groups=grouplist,user=session['user'],is_admin = access_right)
             res = get_mongo_connection().delete_groups(groups)
         return redirect(url_for('groups'))
     except Exception as e:
