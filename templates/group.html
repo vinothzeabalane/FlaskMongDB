@@ -156,6 +156,13 @@
     <!-- /.site-header -->
     <div class="row">
         <div class="container">
+
+            {% if error %}
+            <p class="error"><strong>{{ error }}</strong></p>
+            {% else %}
+            <p class="error" id="sMsg"></p>
+            {% endif %} 
+            
         {% if warning %}
 	        <div class="alert">
 	  			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 

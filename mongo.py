@@ -24,6 +24,13 @@ class MongoDB:
             return res
         except Exception as e:
             print(e)
+
+    def check_user_by_group(self,group_id):
+        try:
+            res = self.db.users.find_one({"group_id": group_id})
+            return res
+        except Exception as e:
+            print(e)
             
     def check_access_right(self,user):
         try:
@@ -103,9 +110,9 @@ class MongoDB:
         except Exception as e:
             print(e)
 
-    def check_group_by_id(self,group):
+    def check_group_in_users(self,group):
         try:
-            res = self.db.groups.find_one({"_id":str(group)})
+            res = self.db.users.find_one({"group_id":group})
             return res
         except Exception as e:
             print(e)
