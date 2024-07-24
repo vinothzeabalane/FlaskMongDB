@@ -1,6 +1,8 @@
 from pymongo import MongoClient
+from pymongo.errors import DuplicateKeyError
 import gridfs
-
+import random
+import string
 
 class MongoDB:
     
@@ -62,6 +64,19 @@ class MongoDB:
         except Exception as e:
             print(e)
 
+    def users_aggregate(self):
+        l1=[]
+        try:
+            
+            pipeline = [{"$lookup": {"from": "groups","localField": "group_id","foreignField": "_id","as": "group"}}]
+            res = self.db.users.aggregate(pipeline)
+            for i in res:
+                l1.append(i)
+            return l1
+                
+        except Exception as e:
+            print(e)
+
     def bpt_list(self):
         l1 = []
         try:
@@ -87,6 +102,13 @@ class MongoDB:
             return res
         except Exception as e:
             print(e)
+
+    def check_group_by_id(self,group):
+        try:
+            res = self.db.groups.find_one({"_id":str(group)})
+            return res
+        except Exception as e:
+            print(e)
             
     def delete_groups(self,val):
         try:
@@ -103,19 +125,26 @@ class MongoDB:
             return True
         except Exception as e:
             print(e)
+
+    def generate_random_suffix(self,length=3):
+        return ''.join(random.choices(string.digits, k=length))
             
     def set_group(self,group):
-        try:
-            res = self.check_group(group)
-            if not res:
-                res = self.db.groups.insert_one(
-                    {
-                    "name": group
-                    })
-            else:
-                return False
-        except Exception as e:
-            print(e)
+        while True:
+            try:
+                group_id = 'GRP' + '-' + self.generate_random_suffix()
+                self.db.groups.insert_one(
+                        {
+                        "_id":group_id,
+                        "name": group
+                        })
+                print(f"Inserted document with group _id: {group_id}")
+                break                    
+            except DuplicateKeyError:
+                # If DuplicateKeyError occurs, generate a new random suffix and retry
+                print(f"Duplicate _id found, retrying...")
+                continue
+
         return True
     
     def update_password(self,user,oldpass,newpass):

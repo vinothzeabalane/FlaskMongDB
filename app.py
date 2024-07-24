@@ -104,12 +104,12 @@ def create_user():
         user_list = get_mongo_connection().users_list()
         group = request.form["group"]
         admin = request.form.get("is_admin") or False
-
+        group_id = get_mongo_connection().check_group(group)
         if get_mongo_connection().check_user_name(user=name):
             return render_template("users.html",warning=True,users=user_list,groups=grouplist,user=session['user'],is_admin = access_right)
     
-        val={"username":str(name),"group":group,"password":str(password),"is_admin":admin}
-        
+        val={"username":str(name),"group_id":group_id['_id'],"password":str(password),"is_admin":admin}
+
         res = get_mongo_connection().set_user(val)
         return redirect(url_for('users'))
     
@@ -122,9 +122,10 @@ def users():
         if session.get("user"):
             grouplist = get_mongo_connection().groups_list()
             user_list = get_mongo_connection().users_list()
+            user_aggregate_list = get_mongo_connection().users_aggregate()
             access_right = get_access_user()
              
-            return render_template('users.html',users=user_list,groups=grouplist,user=session['user'],is_admin = access_right)
+            return render_template('users.html',users=user_aggregate_list,groups=grouplist,user=session['user'],is_admin = access_right)
         else:
             return render_template('login.html', error = "Your Session Expired")
     except Exception as e:
