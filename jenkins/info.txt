@@ -1,0 +1,5 @@
+To export the database:
+seyon@seyon:/usr/bin$ mongodump --host localhost:27017 --db openstack --out /home/seyon/Desktop/
+
+To login to database:
+seyon@seyon:/usr/bin$ mongosh --host localhost:27017
