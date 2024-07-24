@@ -47,7 +47,7 @@ try:
 
 
     for file in csv_files:
-        filename = os.path.basename(file)
+        filename = str(os.path.basename(file)).replace('.csv','')
         is_file_exit = db.fs.files.find_one({"filename": filename})
         if is_file_exit:
             print('File name already exists')
