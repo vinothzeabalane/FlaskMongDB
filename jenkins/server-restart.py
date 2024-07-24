@@ -16,10 +16,10 @@ def execute_ssh_command(hostname, port, username, password, command):
         # Read the output from the command
         output = stdout.read().decode('utf-8')
         # Print the output
-        print(f"Command executed successfully on {hostname}:\n{output}")
+        print("Command executed successfully on {}:\n{}".format(hostname, output))
 
     except Exception as e:
-        print(f"Error executing the command on {hostname}: {str(e)}")
+        print("Error executing the command on {}: {}".format(hostname, e))
 
     finally:
         # Disconnect from the server
@@ -28,7 +28,7 @@ def execute_ssh_command(hostname, port, username, password, command):
 # Example usage:
 if __name__ == "__main__":
     port = 22  # Default SSH port
-    command = 'hostname; sudo reboot'  # Example command to list files
+    command = 'hostname; sudo reboot'  # Example command to execute
 
     for host in _HOST:
-        execute_ssh_command(hostname = host['ip'], port = port, username = host['login'], password= host['password'], command= command)
+        execute_ssh_command(hostname=host['ip'], port=port, username=host['login'], password=host['password'], command=command)
