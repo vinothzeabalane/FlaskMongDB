@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, redirect, render_template, request, session, url_for, send_file, jsonify
+from flask import Flask, flash, redirect, render_template, request, session, url_for, send_file, jsonify, Response
 import gridfs
 import pandas
 import mongo
@@ -180,9 +180,13 @@ def download_bpt():
             fullpath = os.path.join(path, filename)
             with open(fullpath, "wb") as file: 
                 file.write(outputdata) 
-            return send_file(fullpath , as_attachment = True)        
+            return send_file(fullpath , as_attachment = True)
+              
     except Exception as e:
-        print(e)
+        # Log the error for debugging purposes
+        app.logger.error(f"Error downloading file: {e}")
+        # Return an error response or None
+        return Response(f"Error downloading file: {e}", status=500)
 
 @app.route('/bpt', methods=['GET'])
 def bpt():

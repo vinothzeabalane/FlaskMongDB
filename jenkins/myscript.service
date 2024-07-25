@@ -4,8 +4,10 @@ After=multi-user.target
 
 [Service]
 Type=idle
+User=remlab
 WorkingDirectory=/home/remlab/ps-bpt/FlaskMongDB
-Environment="PATH=/home/remlab/ps-bpt/venv/bin"
+ExecStartPre=/bin/bash -c 'cd /home/remlab/ps-bpt/FlaskMongDB'
+#Environment="PATH=/home/remlab/ps-bpt/venv/bin"
 ExecStart=/bin/bash -c 'source /home/remlab/ps-bpt/venv/bin/activate && python3 /home/remlab/ps-bpt/FlaskMongDB/app.py'
 
 [Install]
@@ -18,6 +20,6 @@ WantedBy=multi-user.target
 
 # Stop, Restart, or Disable as Needed:
 
-sudo systemctl stop file.service
-sudo systemctl restart file.service
-sudo systemctl disable file.service
+sudo systemctl stop myscript.service
+sudo systemctl restart myscript.service
+sudo systemctl disable myscript.service
