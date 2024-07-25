@@ -139,6 +139,8 @@ class MongoDB:
     def set_group(self,group):
         while True:
             try:
+                if self.db.groups.find_one({'name': group}):
+                    return False
                 group_id = 'GRP' + '-' + self.generate_random_suffix()
                 self.db.groups.insert_one(
                         {
