@@ -24,7 +24,8 @@
                <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
                <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
                <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-               <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>               
+               <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+               <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>                             
             </head>
             <body>
                <header class="site-header">
@@ -178,6 +179,33 @@
                      padding: 7px 10px;             
                   }  
 
+                  fieldset {
+                  display: block;
+                  margin-inline-start: 2px;
+                  margin-inline-end: 2px;
+                  padding-block-start: 1.35em;
+                  padding-inline-start: 6.75em;
+                  padding-inline-end: 0.75em;
+                  padding-block-end: 1.625em;
+                  min-inline-size: min-content;
+                  border-width: 2px;
+                  border-style: groove;
+                  border-color: rgb(192, 192, 192);
+                  border-image: initial;
+               }
+
+               /* legend {
+                  display: block;
+                  padding-inline-start: 2px;
+                  padding-inline-end: 2px;
+                  unicode-bidi: isolate;
+                  border-width: initial;
+                  border-style: none;
+                  border-color: initial;
+                  border-image: initial;
+                  width: 50%;
+               } */
+
                 </style>
                </header>
                <!-- /.site-header -->
@@ -190,6 +218,19 @@
                         <div class="panel-body grey-color">
                            <div class="row" style="padding-left: 25px; margin-right: 5px;">
                               <form id="frmbpt" action="{{ url_for('view_bpt') }}" method="post" target="_blank">  
+                                 <fieldset>
+                                 <!-- <legend>Filter with 2 months date range:</legend> -->
+                                 <div class="filter-container">
+                                    <label>From:&nbsp;&nbsp;&nbsp;</label>
+                                    <input id="StartDate" style="width: 25%;" size="16" type="text">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                       <label>To:&nbsp;&nbsp;&nbsp;</label>
+                                    <input id="EndDate" style="width: 25%;" size="16" type="text">
+                                    &nbsp;&nbsp;&nbsp;
+                                    <button type="submit" class="btn btn-primary login-button" id="btnFilter" style="margin-top: 0px;" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
+                                 </div>
+                                 </fieldset>
+                                 <br/>
                                  <div class="filter-container">
                                      <!-- <div class="filter" style="width: 20%;">
                                     <input type="radio" id="chkspi" name="chkflow" value="spi" onchange="filterTable(this)" />
@@ -231,8 +272,8 @@
                                        {% for k,v in value.items() %}                                      
                                        {% if k == 'name' %}     
                                        <td>{{v}}</td>                                       
-                                       <td><button name="view" class="btn btn-primary login-button" title="View" value={{v}} type="submit" onclick="changeFormAttr(this)">View</button></td>
-                                       <td><button name="download" class="btn btn-primary login-button" title="Download" value={{v}} type="submit" onclick="changeFormAttr(this)">Download</button></td>
+                                       <td><button name="view" style="margin-top: 0px;" class="btn btn-primary login-button" title="View" value={{v}} type="submit" onclick="changeFormAttr(this)">View</button></td>
+                                       <td><button name="download" style="margin-top: 0px;" class="btn btn-primary login-button" title="Download" value={{v}} type="submit" onclick="changeFormAttr(this)">Download</button></td>
                                        {% endif %}    
                                        {% if k == 'data' %}          
                                        <td>{{v.commit_id}}</td>                                  
@@ -265,7 +306,9 @@
                <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
                <script src="{{ url_for('static', filename='js/jquery.easing-1.3.js') }}"></script>
                <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-               <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+               <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>               
+               <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+               <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
                <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
                <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
                <script>     
@@ -330,6 +373,20 @@
                         // }
 
                         $(document).ready(function() {
+
+                           $("#StartDate").datepicker({
+                              numberOfMonths: 1,
+                              onSelect: function(selected) {
+                                 $("#EndDate").datepicker("option","minDate", selected)
+                              }
+                           });
+                           $("#EndDate").datepicker({ 
+                              numberOfMonths: 1,
+                              onSelect: function(selected) {
+                                 $("#StartDate").datepicker("option","maxDate", selected)
+                              }
+                           });  
+                           
                           // alert('hi');
                           var table = $("#myTable").DataTable({                                                    
                            "pageLength": 10,
