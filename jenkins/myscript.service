@@ -15,3 +15,9 @@ WantedBy=multi-user.target
 # create  a file in /etc/systemd/system
 
 # to enable a service -  sudo systemctl enable myscript.service
+
+# Stop, Restart, or Disable as Needed:
+
+sudo systemctl stop file.service
+sudo systemctl restart file.service
+sudo systemctl disable file.service
