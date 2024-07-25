@@ -7,11 +7,31 @@ from pymongo import MongoClient
 from gridfs import GridFSBucket
 from pathlib import Path
 from gevent.pywsgi import WSGIServer
+from datetime import timedelta, datetime, timezone
 from bson.objectid import ObjectId
 
 app = Flask(__name__, static_url_path='/static')
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=10)  # Session timeout set to 10 minutes
 app.config.from_pyfile('config.cfg')
 app.secret_key = os.urandom(12)
+
+
+@app.before_request
+def before_request():
+    session.permanent = True
+    app.permanent_session_lifetime = app.config['PERMANENT_SESSION_LIFETIME']
+    if 'last_activity' in session:
+        naive_now = datetime.utcnow()
+        aware_now = naive_now.replace(tzinfo=timezone.utc)
+        last_activity = session.get('last_activity')
+
+        # Ensure last_activity is timezone-aware
+        if last_activity:
+            # Assuming last_activity is a datetime object with timezone information
+            if (aware_now - last_activity).total_seconds() > app.permanent_session_lifetime.total_seconds():
+                session.clear()
+                return render_template('login.html', error = "Your Session Expired")
+    session['last_activity'] = datetime.utcnow()
 
 
 @app.route('/account')
@@ -115,6 +135,7 @@ def create_user():
         grouplist = get_mongo_connection().groups_list()
         # user_list = get_mongo_connection().users_list()
         user_aggregate_list = get_mongo_connection().users_aggregate()
+        group = request.form["group"]
         admin = request.form.get("is_admin") or False
         group_id = get_mongo_connection().check_group(group)
 
@@ -126,7 +147,7 @@ def create_user():
         
         if get_mongo_connection().check_user_name(user=name):
             return render_template('users.html',warning=True,users=user_aggregate_list,groups=grouplist,user=session['user'],is_admin = access_right)
-
+    
         val={"username":str(name),"group_id":group_id['_id'],"password":str(password),"is_admin":admin}
 
         res = get_mongo_connection().set_user(val)
@@ -191,10 +212,13 @@ def download_bpt():
 @app.route('/bpt', methods=['GET'])
 def bpt():
     try:
-        grouplist = get_mongo_connection().groups_list()
-        access_right = get_access_user()
-        bpt_list = get_mongo_connection().bpt_list()     
-        return render_template('bpt.html',bpt=bpt_list,groups=grouplist,user=session['user'],is_admin = access_right)
+        if session.get("user"):
+            grouplist = get_mongo_connection().groups_list()
+            access_right = get_access_user()
+            bpt_list = get_mongo_connection().bpt_list()     
+            return render_template('bpt.html',bpt=bpt_list,groups=grouplist,user=session['user'],is_admin = access_right)
+        else:
+            return render_template('login.html', error = "Your Session Expired")
     except Exception as e:
         print(e)
         
@@ -242,8 +266,7 @@ def dashboard():
 
 @app.route("/logout")
 def logout():
-    session.pop('username', None)
-    session.pop('password', None)
+    session.clear()
     return render_template('login.html')
 
 #example code
