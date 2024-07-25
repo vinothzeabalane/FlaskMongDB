@@ -172,25 +172,26 @@
 
             <form id="frmAdd" action="{{ url_for('create_user') }}" method="post" autocomplete='off'>
                 <div class="row">
+                    <input type="hidden" id="hdnUserID" name="hdnUserID" value=""/>
                     <div class="col-md-12" style="padding-left: 11px;">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <span class="heading">Add New Users</span>
+                                <span class="heading">Add/Edit Users</span>
                             </div>
                             <div class="panel-body grey-color">
                                 <div class="row">
                                     <label><b style="padding-left: 20px; color: black;">UserName</b></label>
-                                    <input type="text" tabindex="1" name="username" maxlength="50" style="width: 30%;margin-left: 25px;" required>
+                                    <input type="text" id="txtUsername" tabindex="1" name="username" maxlength="50" style="width: 30%;margin-left: 25px;" required>
 
-                                    <label><b style="padding-left: 20px; color: #000000;">Password</b></label>
-                                    <input type="password" id="txtpwd" autocomplete="new-password" class="myDIV"  tabindex="2" pattern="[a-zA-Z0-9!@#$.^*_|]{0,20}"  maxlength="20" name="password" style="width: 30%;margin-left: 25px;" required>
-                                    <span toggle="#txtpwd" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                                    <label id="lblpwd"><b style="padding-left: 20px; color: #000000;">Password</b></label>
+                                    <input type="password" id="txtpwd" autocomplete="new-password" class="myDIV"  tabindex="2" maxlength="20" name="password" style="width: 30%;margin-left: 25px;" required>
+                                    <span id="spnpwd" toggle="#txtpwd" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                                     <br>
                                     <br>
 
                                     <label><b style="padding-left: 20px; color: black;">Group Name</b></label>
 
-                                    <select style="width: 30%;margin-left: 10px;" tabindex="3"  name="group" required>
+                                    <select id="ddlGroup" style="width: 30%;margin-left: 10px;" tabindex="3"  name="group" required>
                                         <option value="">Select Group</option>
                                         {% for value in groups %}
                                         <option value={{value}}>{{value}}</option>
@@ -211,8 +212,8 @@
                                         </ul>
                                     </div>
 
-                                    <button type="submit" tabindex="4" class="btn btn-primary login-button" style="margin-left: 44%;">Submit</button>
-
+                                    <button id="btnAdd" type="submit" tabindex="4" class="btn btn-primary login-button" style="margin-left: 44%;">Submit</button>
+                                    <button class="btn btn-primary login-button" onclick="resetFields();">Clear</button>
                                 </div>
                             </div>
                         </div>
@@ -235,6 +236,7 @@
 	                                    <th>Group</th>
 	                                    <th>Password</th>
 	                                    <!-- <th>Admin user?</th> -->
+                                        <th>Edit</th>
 								  </tr>
                                 </thead>
                                 <tbody>
@@ -248,16 +250,17 @@
                                         {% else %}
                                         <td><input type="checkbox" name="chk" value={{v}} disabled /></td>
                                         {% endif %}
-                                        <td>{{value.username}}</td>
-                                        <td>{{value.group[0].name}}</td>
+                                        <td class="tdUsername">{{value.username}}</td>
+                                        <td class="tdGroup">{{value.group[0].name}}</td>
                                         {% if (user == value.username) %}
                                         <td>{{value.password}}</td>
                                         {% else %}
                                         <td>xxxxx</td>
                                         {% endif %}
+                                        <td><button type="button" class="edit btn btn-info btn-sm" dataid="{{value._id}}" datagroup="{{value.group[0].name}}" datausername="{{value.username}}"><i class="fa fa-wrench"> Edit</i></button></td>
                                         <!-- {% if (value.is_admin) == "True"  %} <td>Yes</td>  {% else %} <td>No</td> {% endif %} -->
                                 	{% endif %}
-                                    {% endfor %}
+                                    {% endfor %}                                    
                                 </tr>
                                 {% endif %}
                                 {% endfor %}
@@ -283,15 +286,45 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <script>
 
-         $(document).ready(function() {
+        function resetFields(){
+            $('#btnAdd').html('Submit');
+            $('#txtUsername').val('');
+            $('#ddlGroup').val('');
+            $('#hdnUserID').val('');
+            $('#lblpwd').css('display','');
+            $('#txtpwd').css('display','');
+            $('#spnpwd').css('display','');
+            $('#txtpwd').prop('required',true);
+
             $('#sMsg').css('display','none');
             $('.hideIns').css('color','');
             $('.hideIns').css('display','none');
+        }
+
+         $(document).ready(function() {
+
+            resetFields();
+
             //alert('hi');
-            $("#userTable").DataTable({
+            var mytable = $("#userTable").DataTable({
             "pageLength": 5,
-            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
-            });                    
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]           
+            });     
+            
+            $('#frmTable tbody').off('click').on('click', 'button.edit', function () { // edit token
+            var td =  mytable.cell($(this).parents('td')).node();
+            //alert($( td ).find( 'button' ).attr('dataid'));
+            $('#txtUsername').val($( td ).find( 'button' ).attr('datausername'));
+            $('#ddlGroup').val($( td ).find( 'button' ).attr('datagroup'));
+            $('#hdnUserID').val($( td ).find( 'button' ).attr('dataid'));
+            $('#lblpwd').css('display','none');
+            $('#txtpwd').css('display','none');
+            $('#spnpwd').css('display','none');
+            $('#txtpwd').prop('required',false);
+            $('#txtUsername').focus();
+            $('#btnAdd').html('Update');
+            });
+            
         });
 
         $('#txtpwd').on("cut copy paste",function(e) {
@@ -310,12 +343,17 @@
             return regex.test(password);
         }
 
-        $('#frmAdd').submit(function () {
+        $('#frmAdd').submit(function () {       
+           // debugger;     
             var newpwd = $.trim($('#txtpwd').val());
-            if (!validatePassword(newpwd)) {
-            $('#txtpwd').focus();
-            $('.hideIns').css('color','red');
-            return false;
+            var userID = $('#hdnUserID').val();
+            //alert(userID);
+            if(userID == "") {
+                if (!validatePassword(newpwd)) {
+                $('#txtpwd').focus();
+                $('.hideIns').css('color','red');
+                return false;
+            }    
           }
         });
 
@@ -330,6 +368,7 @@
             return false;
             }
         });
+
 
         $(".toggle-password").click(function() {
         $(this).toggleClass("fa-eye fa-eye-slash");

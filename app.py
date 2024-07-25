@@ -7,6 +7,7 @@ from pymongo import MongoClient
 from gridfs import GridFSBucket
 from pathlib import Path
 from gevent.pywsgi import WSGIServer
+from bson.objectid import ObjectId
 
 app = Flask(__name__, static_url_path='/static')
 app.config.from_pyfile('config.cfg')
@@ -108,16 +109,24 @@ def create_user():
     try:
         name = request.form['username']
         password = request.form["password"]
+        request_user = request.form["hdnUserID"] or False
+        group = request.form["group"]
         access_right = get_access_user()
         grouplist = get_mongo_connection().groups_list()
         # user_list = get_mongo_connection().users_list()
         user_aggregate_list = get_mongo_connection().users_aggregate()
-        group = request.form["group"]
         admin = request.form.get("is_admin") or False
         group_id = get_mongo_connection().check_group(group)
+
+        if request_user:
+            filter = {'_id': ObjectId(request_user)}
+            update = {'$set': {'username': name, 'group_id': group_id['_id'] }}
+            if get_mongo_connection().update_user_details(filter,update):
+                return render_template('users.html',users=get_mongo_connection().users_aggregate(),groups=get_mongo_connection().groups_list(),user=session['user'],is_admin = get_access_user())
+        
         if get_mongo_connection().check_user_name(user=name):
             return render_template('users.html',warning=True,users=user_aggregate_list,groups=grouplist,user=session['user'],is_admin = access_right)
-    
+
         val={"username":str(name),"group_id":group_id['_id'],"password":str(password),"is_admin":admin}
 
         res = get_mongo_connection().set_user(val)

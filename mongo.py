@@ -167,3 +167,10 @@ class MongoDB:
                 return False
         except Exception as e:
             print(e)
+
+
+    def update_user_details(self,filter,update):
+        try:
+            return  self.db.users.update_one(filter, update)
+        except Exception as e:
+            print(e)
