@@ -20,8 +20,9 @@ class MongoDB:
 
     def check_user_name(self,user):
         try:
-            res = self.db.users.find_one({"username":str(user)})
-            return res
+            if self.db.users.find_one({"username": { '$regex': user, '$options': 'i' }}):
+                return True
+            return False
         except Exception as e:
             print(e)
 
@@ -41,7 +42,7 @@ class MongoDB:
     
     def set_user(self,val):
         try:
-            res = self.check_user(val.get("username"),val.get("password"))
+            res = self.check_user_name(val.get("username"))
             if not res:
                 res = self.db.users.insert_one(val)
             else:
@@ -139,7 +140,7 @@ class MongoDB:
     def set_group(self,group):
         while True:
             try:
-                if self.db.groups.find_one({'name': group}):
+                if self.db.groups.find_one({'name': { '$regex': group, '$options': 'i' }}):
                     return False
                 group_id = 'GRP' + '-' + self.generate_random_suffix()
                 self.db.groups.insert_one(
