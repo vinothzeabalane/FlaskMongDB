@@ -67,6 +67,11 @@
                 margin-right: 30%;
                 margin-top: 10px;
             }
+
+            #sWarning, #sMsg{
+                padding-left: 15%;
+            }
+        
 </style>
 <body>
     <header class="site-header">
@@ -88,6 +93,7 @@
                     <div class="pull-right" style="height: 50px; padding-top: 60px;>
                         <ul class="menu">
                             {% if user %}
+                                <input type="hidden" id="hdnPwd" value="{{password}}" />                                
                             	<img src="{{ url_for('static', filename='img/user.jpg') }}" alt="User" width="30" height="30">
                             	<a>{{user}}<a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="{{ url_for('logout') }}"> <span class="glyphicon glyphicon-log-out"></span> Log out </a></a>
                             {% endif %}
@@ -130,10 +136,10 @@
         <div class="container">
                      
             {% if error %}
-            <p class="error"><strong>{{ error }}</strong></p>
+            <p class="error"><strong id="sWarning">{{ error }}</strong></p>
             {% else %}
             <p class="error" id="sMsg"></p>
-            {% endif %}     
+            {% endif %}   
             
             {% for mesg in get_flashed_messages() %}
             {% if get_flashed_messages() %}
@@ -234,16 +240,25 @@
         var oldpwd = $.trim($('#oldpass').val());
         var newpwd = $.trim($('#newpass').val());
         var conpwd = $.trim($('#conpass').val());
-               
+        var loginpwd = $.trim($('#hdnPwd').val());
+             //  alert(loginpwd);
         // Check condition        
-         if (oldpwd  == newpwd) {
+        if(loginpwd != oldpwd) {
+            $('#sMsg').css('display','block');
+            $('#sMsg').html('<strong>Current Password is invalid</strong>');
+            $('#oldpass').focus();
+            return false;
+        }
+         else if (oldpwd  == newpwd) {
             $('#sMsg').css('display','block');
             $('#sMsg').html('<strong>New password is same as Current Password</strong>');
+            $('#newpass').focus();
             return false;
           }
           else if (newpwd  != conpwd) {
             $('#sMsg').css('display','block');
             $('#sMsg').html('<strong>New password is not same as Confirm Password</strong>');
+            $('#conpass').focus();
             return false;
           }      
           else if (!validatePassword(newpwd)) {

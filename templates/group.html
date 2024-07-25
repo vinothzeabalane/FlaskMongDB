@@ -158,19 +158,18 @@
         <div class="container">
 
             {% if error %}
-            <p class="error"><strong>{{ error }}</strong></p>
-            {% else %}
-            <p class="error" id="sMsg"></p>
-            {% endif %} 
-            
-        {% if warning %}
+            <p class="error"><strong id="sWarning" style="padding-left: 15%;">{{ error }}</strong></p>
+            {% endif %}  
+
+           {% if warning %}
 	        <div class="alert">
 	  			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-	  			<strong style="color: #3c0606;">Warning!</strong> Group Name already exits .
+	  			<strong style="color:white; padding-left: 20%;">Warning!&nbsp;&nbsp;&nbsp;</strong> Group Name already exits .
 			</div>
             {% else %}
-            <p class="error" id="sMsg"></p>
+            <p class="error" id="sMsg" style="padding-left: 15%;"></p>
             {% endif %}  
+            
             <form id="frmAdd" action="{{ url_for('create_group') }}" method="post">
                 <div class="row">
                     <div class="col-md-12" style="padding-left: 11px;">
@@ -182,7 +181,7 @@
                                 <div class="row">
                                     <label><b style="padding-left: 20px; color: black;">Group Name</b></label>
                                     <input type="text" tabindex="1" name="name" maxlength="20" style="width: 322px;margin-left: 25px;" required>
-                                    <button type="submit" tabindex="2" class="btn btn-primary login-button" style="margin-top: 0px;">Submit</button>
+                                    <button type="submit" tabindex="2" class="btn btn-primary login-button" style="margin-top: 0px;">Add</button>
                                 </div>
                             </div>
                         </div>

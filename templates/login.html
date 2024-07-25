@@ -19,8 +19,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">    
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
-
+    <style>
+        .toggle-password {
+                    float: right;
+                    cursor: pointer;                    
+                    margin-top: 10px;
+                }
+    </style>
 </head>
 <body>
 
@@ -68,6 +75,7 @@
                             <label>Password</label>
                             <div>
                                 <input type="password" id="txtpwd" maxlength="20" tabindex="2" name="password" style="width:96%;" autocomplete="off" value="" />
+                                <span toggle="#txtpwd" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                             </div>
                         </div>
 
@@ -97,6 +105,16 @@
      $('#txtpwd').on("cut copy paste",function(e) {
                 e.preventDefault();
             });
+
+            $(".toggle-password").click(function() {
+                $(this).toggleClass("fa-eye fa-eye-slash");
+                var input = $($(this).attr("toggle"));
+                if (input.attr("type") == "password") {
+                input.attr("type", "text");
+                } else {
+                input.attr("type", "password");
+                }
+                });
 </script>
 </body>
 

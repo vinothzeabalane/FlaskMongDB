@@ -16,7 +16,7 @@ app.secret_key = os.urandom(12)
 @app.route('/account')
 def account():
     access_right = get_access_user()
-    return render_template('account.html',user=session['user'],is_admin = access_right)
+    return render_template('account.html',user=session['user'],password=session['password'], is_admin = access_right)
 
 
 @app.route('/account_update', methods=['GET', 'POST'])

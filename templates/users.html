@@ -157,14 +157,19 @@
     <!-- /.site-header -->
     <div class="row">
         <div class="container">
+            {% if error %}
+            <p class="error"><strong id="sWarning" style="padding-left: 15%;">{{ error }}</strong></p>
+            {% endif %}  
+
             {% if warning %}
 	        <div class="alert">
 	  			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-	  			<strong style="color: #3c0606;">Warning!</strong> User Name already exits .
+	  			<strong style="color:white; padding-left: 20%;">Warning!&nbsp;&nbsp;&nbsp;</strong> User Name already exits .
 			</div>
             {% else %}
-            <p class="error" id="sMsg"></p>
+            <p class="error" id="sMsg" style="padding-left: 20%;"></p>
             {% endif %}
+
             <form id="frmAdd" action="{{ url_for('create_user') }}" method="post" autocomplete='off'>
                 <div class="row">
                     <div class="col-md-12" style="padding-left: 11px;">
@@ -196,7 +201,7 @@
                                     <input type="checkbox" name="is_admin" value="True" style="display: none;">
                                     <br>
 
-                                    <div id="password_rules" class="row hideIns" style="margin-left: 50%; margin-top:-6%">
+                                    <div id="password_rules" class="row hideIns" style="margin-left: 50%; margin-top:-6%;display:none;">
                                         <h4>Passwords must meet these requirements:</h4>
                                         <ul>
                                             <li class="password_length">At least 8 characters</li>
@@ -286,7 +291,7 @@
             $("#userTable").DataTable({
             "pageLength": 5,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
-            });
+            });                    
         });
 
         $('#txtpwd').on("cut copy paste",function(e) {
@@ -335,6 +340,9 @@
         input.attr("type", "password");
         }
         });
+
+        //alert(sessionStorage.getItem("user"));    
+
     </script>
 </body>
 
