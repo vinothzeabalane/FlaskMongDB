@@ -209,13 +209,17 @@ def download_bpt():
         # Return an error response or None
         return Response(f"Error downloading file: {e}", status=500)
 
-@app.route('/bpt', methods=['GET'])
+@app.route('/bpt', methods=['GET', 'POST'])
 def bpt():
     try:
         if session.get("user"):
+            if request.form:
+                bpt_list = get_mongo_connection().bpt_list(filter=request.form)
+            else:
+                bpt_list = get_mongo_connection().bpt_list(filter=None)
             grouplist = get_mongo_connection().groups_list()
             access_right = get_access_user()
-            bpt_list = get_mongo_connection().bpt_list()     
+                
             return render_template('bpt.html',bpt=bpt_list,groups=grouplist,user=session['user'],is_admin = access_right)
         else:
             return render_template('login.html', error = "Your Session Expired")

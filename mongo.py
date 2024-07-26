@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
+from datetime import datetime, timedelta
 import gridfs
 import random
 import string
@@ -85,20 +86,25 @@ class MongoDB:
         except Exception as e:
             print(e)
 
-    def bpt_list(self):
+    def bpt_list(self, filter=None):
         l1 = []
         try:
             client = MongoClient("127.0.0.1", 27017)
             db = client.openstack 
-            fs = gridfs.GridFS(db)
+            today = datetime.now().date()
+            two_months_ago = today - timedelta(days=60)  # Approximate 2 months as 60 days
 
-            col = db.fs.files.find()
+            query = {
+                "metadata.date": {
+                    "$gte": filter['StartDate'] if filter and 'StartDate' in filter else two_months_ago.strftime("%Y-%m-%d"),
+                    "$lte": filter['EndDate'] if filter and 'EndDate' in filter else today.strftime("%Y-%m-%d")
+                }
+            }
+            col = db.fs.files.find(query)
             for i in col:
-                print(i)
                 if 'filename' not in i:
                     continue
                 l1.append({'name': i['filename'], 'data': i['metadata'] or None})
-            print ("BootProfileTime list:  {}".format(l1))
             return l1
                 
         except Exception as e:
