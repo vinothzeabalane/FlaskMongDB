@@ -254,7 +254,7 @@
                                        <label style="padding-top: 8px;">To:&nbsp;&nbsp;&nbsp;</label>
                                     <input id="EndDate" style="width: 25%;" size="16" type="text">
                                     &nbsp;&nbsp;&nbsp;<div class="tooltiphelp"><i class="fa fa-info-circle"></i><span class="tooltiptexthelp">You can select any Start and End date with the maximum range of 2 months.</span></div>
-                                    &nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-primary login-button" id="btnFilter" style="margin-top: 0px;" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
+                                    &nbsp;&nbsp;&nbsp;<button type="submit" onclick="changeFormAttr(this)" name="fil" class="btn btn-primary login-button" id="btnFilter" style="margin-top: 0px;" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
                                  </div>
                                  </fieldset>
                                  <br/>
@@ -345,7 +345,15 @@
                    //alert(selValue.name);
                   var sData = selValue.name;
                   var sTarget = sData == "view"  ? "_blank" : "_self";
-                  var sAction = sData == "view"  ? "{{ url_for('view_bpt') }}" : "{{ url_for('download_bpt') }}";                 
+                 // var sAction = sData == "view"  ? "{{ url_for('view_bpt') }}" : "{{ url_for('download_bpt') }}";                 
+                 var sAction = "";
+                 if(sData == "view")
+                  sAction = "{{ url_for('view_bpt') }}";
+                  else if(sData == "download")
+                     sAction ="{{ url_for('download_bpt') }}";
+                   else
+                     sAction ="{{ url_for('bpt') }}";
+            
                   document.getElementById("frmbpt").setAttribute("target",sTarget);
                   document.getElementById("frmbpt").setAttribute("action",sAction);               
                }
