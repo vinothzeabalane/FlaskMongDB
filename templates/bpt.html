@@ -206,6 +206,33 @@
                   width: 50%;
                } */
 
+         .tooltiphelp {
+            position: relative;
+            display: inline-block;   
+            padding-top: 8px;        
+            }
+
+         .tooltiphelp .tooltiptexthelp {
+         
+         width: 245px;
+         background-color: black;
+         color: #fff;
+         text-align: center;
+         border-radius: 6px;
+         padding: 7px 0;
+
+         /* Position the tooltip */
+         position: absolute;
+         z-index: 1;
+         display: none;         
+         }
+
+         .tooltiphelp:hover .tooltiptexthelp {
+         visibility: visible;
+         display: block;
+         opacity: 5;
+         }
+
                 </style>
                </header>
                <!-- /.site-header -->
@@ -221,13 +248,13 @@
                                  <fieldset>
                                  <!-- <legend>Filter with 2 months date range:</legend> -->
                                  <div class="filter-container">
-                                    <label>From:&nbsp;&nbsp;&nbsp;</label>
+                                    <label style="padding-top: 8px;">From:&nbsp;&nbsp;&nbsp;</label>
                                     <input id="StartDate" style="width: 25%;" size="16" type="text">
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                       <label>To:&nbsp;&nbsp;&nbsp;</label>
+                                       <label style="padding-top: 8px;">To:&nbsp;&nbsp;&nbsp;</label>
                                     <input id="EndDate" style="width: 25%;" size="16" type="text">
-                                    &nbsp;&nbsp;&nbsp;
-                                    <button type="submit" class="btn btn-primary login-button" id="btnFilter" style="margin-top: 0px;" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
+                                    &nbsp;&nbsp;&nbsp;<div class="tooltiphelp"><i class="fa fa-info-circle"></i><span class="tooltiptexthelp">You can select any Start and End date with the maximum range of 2 months.</span></div>
+                                    &nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-primary login-button" id="btnFilter" style="margin-top: 0px;" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
                                  </div>
                                  </fieldset>
                                  <br/>
@@ -374,18 +401,48 @@
 
                         $(document).ready(function() {
 
-                           $("#StartDate").datepicker({
-                              numberOfMonths: 1,
-                              onSelect: function(selected) {
-                                 $("#EndDate").datepicker("option","minDate", selected)
+                           // $("#StartDate").datepicker({
+                           //    numberOfMonths: 1,
+                           //    onSelect: function(selected) {
+                           //       $("#EndDate").datepicker("option","minDate", selected)
+                           //    }
+                           // });
+                           $("#StartDate").datepicker({     
+                              changeMonth: true,
+                              changeYear: true,
+                              dateFormat: 'yy-mm-dd',                               
+                              onSelect: function (selectedDate) {
+                                 var orginalDate = new Date(selectedDate);
+                                 var monthsAddedDate = new Date(new Date(orginalDate).setMonth(orginalDate.getMonth() + 2));
+                                 //alert(monthsAddedDate);
+                                 $("#EndDate").datepicker("option", 'minDate', selectedDate);
+                                 $("#EndDate").datepicker("option", 'maxDate', monthsAddedDate);
                               }
-                           });
-                           $("#EndDate").datepicker({ 
-                              numberOfMonths: 1,
-                              onSelect: function(selected) {
-                                 $("#StartDate").datepicker("option","maxDate", selected)
+                        });
+
+                        $("#EndDate").datepicker({  
+                           changeMonth: true,
+                           changeYear: true,                           
+                           dateFormat: 'yy-mm-dd',                                                         
+                              onSelect: function (selectedDate) {
+                                 var orginalDate = new Date(selectedDate);
+                                 var monthsAddedDate = new Date(new Date(orginalDate).setMonth(orginalDate.getMonth() - 2));
+                                 //alert(monthsAddedDate);
+                                 $("#StartDate").datepicker("option", 'minDate', monthsAddedDate);
+                                 $("#StartDate").datepicker("option", 'maxDate', selectedDate);
                               }
-                           });  
+                        })
+
+                        var d = new Date();
+                        d.setMonth(d.getMonth() - 2);
+                        $('#StartDate').datepicker('setDate', d);
+                        $('#EndDate').datepicker('setDate', new Date());
+                           // $("#EndDate").datepicker({ 
+                           //    numberOfMonths: 1,
+                           //    onSelect: function(selected) {
+                           //       $("#StartDate").datepicker("option","maxDate", selected)
+                           //    }
+                           // });  
                            
                           // alert('hi');
                           var table = $("#myTable").DataTable({                                                    
