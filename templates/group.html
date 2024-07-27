@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
     <style>
                      #grpTable {
@@ -35,6 +36,9 @@
                      text-align: left; /* Left-align text */
                      padding: 5px; /* Add padding */
                      font-size: 14px;
+                     }
+                     #grpTable th {
+                     text-align: center; /* Left-align text */                    
                      }
                      #grpTable tr {
                      /* Add a bottom border to all table rows */
@@ -149,6 +153,65 @@
             .closebtn:hover {
                 color: black;
             }
+
+            div.panelAccess {
+                  
+            display: block;
+            /* margin-inline-start: 25%; */
+            margin-inline-end: -1px;
+            padding-block-start: 0.35em;
+            padding-inline-start: 0.75em;
+            padding-inline-end: 1.75em;
+            padding-block-end: 0.625em;
+            min-inline-size: min-content;
+            border-width: 2px;
+            border-style: groove;
+            border-color: rgb(192, 192, 192);
+            border-image: initial;
+            /* width: 40%; */
+            background-color: whitesmoke;
+          
+        }
+
+        input[type=checkbox] {
+  position: relative;
+	border: 2px solid #000;
+	border-radius: 2px;
+	background: none;
+	cursor: pointer;
+	line-height: 0;
+	margin:0px 5.6em 0px 0px;;
+	outline: 0;
+	padding: 0 !important;
+	vertical-align: text-top;
+	height: 20px;
+	width: 20px;
+	-webkit-appearance: none;
+  opacity: .5;
+}
+
+input[type=checkbox]:hover {
+  opacity: 1;
+}
+
+input[type=checkbox]:checked {
+  background-color: #2981c9;
+  opacity: 1;
+}
+
+input[type=checkbox]:before {
+  content: '';
+  position: absolute;
+  right: 50%;
+  top: 50%;
+  width: 4px;
+  height: 10px;
+  border: solid #FFF;
+  border-width: 0 2px 2px 0;
+  margin: -1px -1px 0 -1px;
+  transform: rotate(45deg) translate(-50%, -50%);
+  z-index: 2;
+}
         
 	   </style>
 
@@ -172,6 +235,7 @@
             
             <form id="frmAdd" action="{{ url_for('create_group') }}" method="post">
                 <div class="row">
+                    <input type="hidden" id="hdnGroupID" name="hdnGroupID" value=""/>
                     <div class="col-md-12" style="padding-left: 11px;">
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -180,8 +244,41 @@
                             <div class="panel-body grey-color">
                                 <div class="row">
                                     <label><b style="padding-left: 20px; color: black;">Group Name</b></label>
-                                    <input type="text" tabindex="1" name="name" maxlength="20" style="width: 322px;margin-left: 25px;" required>
-                                    <button type="submit" tabindex="2" class="btn btn-primary login-button" style="margin-top: 0px;">Add</button>
+                                    <input type="text" tabindex="1" id="txtGroup" name="name" maxlength="20" style="width: 322px;margin-left: 25px;" required>                                   
+                                   </div>
+
+                                <br/>
+                               
+                                    <div class="panelAccess" align="center">
+                                        
+                                            <label></label>
+                                            <label><h4 style="padding-left: 45px;color: purple;">VIEW</h4></label>
+                                            <label><h4 style="padding-left: 45px;color: purple">EDIT</h4></label>
+                                            <label><h4 style="padding-left: 45px;color: purple">DELETE</h4></label>
+                                       
+                                        <br/>
+                                        <br/>
+                                   
+                                        <label><b style="color: black; margin-right: 35px;padding-left: 0px !important;">User&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></label>
+                                        <input type="checkbox" id="chkUserView" name="chkUserView"/>
+                                        <input type="checkbox" id="chkUserEdit" name="chkUserEdit"/>
+                                        <input type="checkbox" id="chkUserDelete" name="chkUserDelete"/>
+                                   
+                                    <br/> <br/>
+                                  
+                                        <label><b style="color: black; margin-right: 35px;padding-left: 0px !important;">Group&nbsp;&nbsp;&nbsp;&nbsp;</b></label>
+                                        <input type="checkbox" id="chkGroupView" name="chkGroupView"/>
+                                        <input type="checkbox" id="chkGroupEdit" name="chkGroupEdit"/>
+                                        <input type="checkbox" id="chkGroupDelete" name="chkGroupDelete"/>
+                                    
+                                   
+                                </div>
+                                <br/>
+                                <br/>
+                                                          
+                                <div class="row" align="center">
+                                    <button type="submit" id="btnAdd" tabindex="2" class="btn btn-primary login-button" style="margin-top: 0px;">Add</button>
+                                    <button class="btn btn-primary login-button" style="margin-top: 0px;" onclick="resetFields();">Clear</button>
                                 </div>
                             </div>
                         </div>
@@ -197,11 +294,25 @@
                     <div class="row">
  						<form id="frmTable" action="{{ url_for('update_group') }}" method="post">
 						<table id="grpTable">
-						<thead>
+						<thead>                           
 						          <tr>
-                                        <th style="width:2%">Select</th>
-	                                    <th>Name</th>
+                                        <th style="width:1%">Select</th>
+                                        <th>Name</th>
+                                        <th colspan="3">User</th>
+                                        <th colspan="3">Group</th>	  
+                                        <th>Edit</th>	                                  
 								  </tr>
+                                  <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th rowspan="3">View</th>
+                                    <th rowspan="3">Edit</th>
+                                    <th rowspan="3">Delete</th>
+                                    <th rowspan="3">View</th>
+                                    <th rowspan="3">Edit</th>
+                                    <th rowspan="3">Delete</th>   
+                                    <th></th>                                 
+                                </tr>
                         </thead>
                         <tbody>
 						 	{% for value in groups %}
@@ -209,6 +320,17 @@
 							<tr>
 								<td><input type="checkbox" name="chk" value={{value}} /></td>
 								<td>{{value}}</td>
+
+                                <td style="text-align: center;"><i class="fa fa-check"></i></td>
+                                <td style="text-align: center;"><i class="fa fa-close"></i></td>
+                                <td style="text-align: center;"><i class="fa fa-close"></i></td>
+
+                                <td style="text-align: center;"><i class="fa fa-check"></i></td>
+                                <td style="text-align: center;"><i class="fa fa-check"></i></td>
+                                <td style="text-align: center;"><i class="fa fa-close"></i></td>     
+                                
+                                <td style="text-align: center;"><button type="button" class="edit btn btn-primary login-button" style="margin-top: 0px;" dataid="{{value._id}}" datagroup="{{value.group}}" datauser="{{value.user}}" dataname="{{value}}"><i class="fa fa-wrench"> Edit</i></button></td>
+
 							</tr>
                             {% endif %}     
                             {% endfor %}
@@ -231,24 +353,69 @@
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <script>
+
+       function resetFields(){
+            $('#btnAdd').html('Add');
+            $('#txtGroup').val('');
+
+            $('#chkUserView').attr('checked','');
+            $('#chkUserEdit').attr('checked','');
+            $('#chkUserDelete').attr('checked','');
+
+            $('#chkGroupView').attr('checked','');
+            $('#chkGroupEdit').attr('checked','');
+            $('#chkGroupDelete').attr('checked','');
+
+            $('#hdnGroupID').val('');
+           
+            $('#sMsg').css('display','none');            
+        }
+
         $(document).ready(function() {
-           $('#sMsg').css('display','none');
+            resetFields();
+           
            //alert('hi');
            $("#grpTable").DataTable({                                                             
            "pageLength": 5,
            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
            });   
+
+           $('#frmTable tbody').off('click').on('click', 'button.edit', function () { // edit token
+            var td =  mytable.cell($(this).parents('td')).node();            
+            $('#txtGroup').val($( td ).find( 'button' ).attr('dataname'));
+
+            $('#chkUserView').attr('checked','');
+            $('#chkUserEdit').attr('checked','');
+            $('#chkUserDelete').attr('checked','');
+
+            $('#chkGroupView').attr('checked','');
+            $('#chkGroupEdit').attr('checked','');
+            $('#chkGroupDelete').attr('checked','');
+
+           // $('#ddlGroup').val($( td ).find( 'button' ).attr('datagroup'));
+            //$('#ddlUser').val($( td ).find( 'button' ).attr('datauser'));
+
+
+            $('#hdnGroupID').val($( td ).find( 'button' ).attr('dataid'));           
+            $('#txtGroup').focus();
+            $('#btnAdd').html('Update');
+            });
+
        });
 
+       
        $('#frmTable').submit(function () {
-           var array = []
-            var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
-            if(checkboxes.length == 0){
-            //alert("Please at least one option to delete!");                   
-            $('#sMsg').css('display','block');
-            $('#sMsg').html('<strong>Please at least one option to delete!</strong>');
-            window.scrollTo(0, 0);
-            return false;
+           var grpID = $('#hdnGroupID').val();
+           if(grpID == "") {
+                var array = []
+                var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+                if(checkboxes.length == 0){
+                    //alert("Please at least one option to delete!");                   
+                    $('#sMsg').css('display','block');
+                    $('#sMsg').html('<strong>Please at least one option to delete!</strong>');
+                    window.scrollTo(0, 0);
+                    return false;
+                }
             }
         });
       

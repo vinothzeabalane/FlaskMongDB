@@ -126,6 +126,9 @@
                      padding: 5px; /* Add padding */
                      font-size: 14px;
                      }
+                     #myTable th{
+                        text-align: center;
+                     }
                      #myTable tr {
                      /* Add a bottom border to all table rows */
                      border-bottom: 1px solid #ddd;
@@ -282,13 +285,13 @@
                                  <table id="myTable">
                                     <thead>
                                        <tr>
-                                          <th>ITEMS</th>                                         
-                                          <th>REPORT</th>                                         
-                                          <th>VIEW</th>
-                                          <th>DOWNLOAD</th>
-                                          <th>COMMIT ID</th>
-                                          <th>DATE</th>                                         
-                                          <th style="display: none;">FLOW</th>
+                                          <th>Items</th>                                         
+                                          <th>Report</th>                                         
+                                          <th>View</th>
+                                          <th>Download</th>
+                                          <th>Commit ID</th>
+                                          <th>Date</th>                                         
+                                          <th style="display: none;">Flow</th>
                                        </tr>
                                     </thead>
                                     <tbody>
@@ -299,8 +302,8 @@
                                        {% for k,v in value.items() %}                                      
                                        {% if k == 'name' %}     
                                        <td>{{v}}</td>                                       
-                                       <td><button name="view" style="margin-top: 0px;" class="btn btn-primary login-button" title="View" value={{v}} type="submit" onclick="changeFormAttr(this)">View</button></td>
-                                       <td><button name="download" style="margin-top: 0px;" class="btn btn-primary login-button" title="Download" value={{v}} type="submit" onclick="changeFormAttr(this)">Download</button></td>
+                                       <td style="text-align: center;"><button name="view" style="margin-top: 0px;" class="btn btn-primary login-button" title="View" value={{v}} type="submit" onclick="changeFormAttr(this)">View</button></td>
+                                       <td style="text-align: center;"><button name="download" style="margin-top: 0px;" class="btn btn-primary login-button" title="Download" value={{v}} type="submit" onclick="changeFormAttr(this)">Download</button></td>
                                        {% endif %}    
                                        {% if k == 'data' %}          
                                        <td>{{v.commit_id}}</td>                                  
