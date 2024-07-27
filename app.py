@@ -62,13 +62,13 @@ def account_update():
 def create_group():
     try:
         name = request.form['name']
-        res = get_mongo_connection().set_group(name)
+        res = get_mongo_connection().set_group(request)
         groups_list = get_mongo_connection().groups_list()
         access_right = get_access_user()
         if res:
             return redirect(url_for('groups'))
         else:
-            return render_template("group.html",warning=True,groups=groups_list,user=session['user'],is_admin = access_right)
+            return render_template("group.html",warning=True, error = "Group Name: {} already exits".format(name), groups=groups_list,user=session['user'],is_admin = access_right)
     except Exception as e:
         print(e)
 
@@ -87,18 +87,27 @@ def groups():
 @app.route('/update_group', methods=['GET', 'POST'])
 def update_group():    
     try:
-        access_right = get_access_user()
-        grouplist = get_mongo_connection().groups_list()
-        user_list = get_mongo_connection().users_list()
+        del_groups = []
+        warning_groups = []
+
         if request.form:
             groups = request.form.getlist('chk')
             for i in groups:
                 group_id = get_mongo_connection().check_group(i)
-            res =  get_mongo_connection().check_group_in_users(group_id['_id'])
-            if res:
-                print("Warning: {} group is linked with one or more users. Please unlink before delete".format(i))
-                return render_template("group.html",warning=True, error = "Warning: {} group is linked with one or more users. Please unlink before delete".format(i),users=user_list,groups=grouplist,user=session['user'],is_admin = access_right)
-            res = get_mongo_connection().delete_groups(groups)
+                if get_mongo_connection().check_group_in_users(group_id['_id']):
+                    warning_groups.append(i)
+                else:
+                    del_groups.append(i)
+            get_mongo_connection().delete_groups(del_groups)
+
+            access_right = get_access_user()
+            grouplist = get_mongo_connection().groups_list()
+            user_list = get_mongo_connection().users_list()
+
+            if len(warning_groups) > 0:
+                print("Warning: {} group is linked with one or more users. Please unlink before delete".format(warning_groups))
+                return render_template("group.html",warning=True, error = "Warning: {} group is linked with one or more users. Please unlink before delete!".format(warning_groups),users=user_list,groups=grouplist,user=session['user'],is_admin = access_right)
+
         return redirect(url_for('groups'))
     except Exception as e:
         print(e)
@@ -135,7 +144,6 @@ def create_user():
         grouplist = get_mongo_connection().groups_list()
         # user_list = get_mongo_connection().users_list()
         user_aggregate_list = get_mongo_connection().users_aggregate()
-        group = request.form["group"]
         admin = request.form.get("is_admin") or False
         group_id = get_mongo_connection().check_group(group)
 

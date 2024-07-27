@@ -296,7 +296,7 @@
                                     </thead>
                                     <tbody>
                                     {% for value in bpt %}
-                                    {% if value != None %}    
+                                    {% if value != None and value != Empty%}    
                                     <tr>
                                        <td>{{loop.index}}</td>                                                                                   
                                        {% for k,v in value.items() %}                                      

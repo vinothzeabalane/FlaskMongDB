@@ -55,9 +55,9 @@ class MongoDB:
     def groups_list(self):
         l1 = []
         try:
-            res = self.db.groups.find({}, {"_id":0})
+            res = self.db.groups.find()
             for i in res:
-                l1.append(i['name'])
+                l1.append(i)
             return l1
         except Exception as e:
             print(e)
@@ -143,23 +143,56 @@ class MongoDB:
     def generate_random_suffix(self,length=3):
         return ''.join(random.choices(string.digits, k=length))
             
-    def set_group(self,group):
+    def set_group(self,request=None):
         while True:
+            data = request.form
             try:
-                if self.db.groups.find_one({'name': { '$regex': group, '$options': 'i' }}):
-                    return False
-                group_id = 'GRP' + '-' + self.generate_random_suffix()
-                self.db.groups.insert_one(
-                        {
-                        "_id":group_id,
-                        "name": group
-                        })
-                print(f"Inserted document with group _id: {group_id}")
-                break                    
+                val = {'user':[False,False,False], 'group': [False,False,False]}
+
+                if data['hdnGroupID'] == '':
+                    group_id = 'GRP' + '-' + self.generate_random_suffix()
+                    if self.db.groups.find_one({'name': { '$regex': data['name'], '$options': 'i' }}):
+                        return False
+                else:
+                    group_id = data['hdnGroupID']
+
+                if 'chkUserView' in data:
+                    val['user'][0] = True if data['chkUserView'] == 'on' else False
+                if 'chkUserEdit' in data:
+                    val['user'][1] = True if data['chkUserEdit'] == 'on' else False
+                if 'chkUserDelete' in data:
+                    val['user'][2] = True if data['chkUserDelete'] == 'on' else False
+
+
+                if 'chkGroupView' in data:
+                    val['group'][0] = True if data['chkGroupView'] == 'on' else False
+                if 'chkGroupEdit' in data:
+                    val['group'][1] = True if data['chkGroupEdit'] == 'on' else False
+                if 'chkGroupDelete' in data:
+                    val['group'][2] = True if data['chkGroupDelete'] == 'on' else False
+
+                if data['hdnGroupID'] == '':
+                    self.db.groups.insert_one(
+                            {
+                            "_id":group_id,
+                            "name": data['name'],
+                            "access": val
+                            })
+                    print(f"Inserted document with group _id: {group_id}")
+                    break
+                else:
+                    filter = {'_id': group_id}
+                    update = {'$set': {"name": data['name'],"access": val}}
+
+                    self.db.groups.update_one(filter, update) 
+                    break        
             except DuplicateKeyError:
                 # If DuplicateKeyError occurs, generate a new random suffix and retry
                 print(f"Duplicate _id found, retrying...")
                 continue
+            except Exception as e:
+                # Handle the exception
+                print(f"An error occurred: {e}")
 
         return True
     

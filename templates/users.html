@@ -155,6 +155,47 @@
                 margin-right: 15%;
                 margin-top: 10px;
             }
+
+            input[type=checkbox] {
+  position: relative;
+	border: 2px solid #000;
+	border-radius: 2px;
+	background: none;
+	cursor: pointer;
+	line-height: 0;
+	margin:0px 5.6em 0px 0px;;
+	outline: 0;
+	padding: 0 !important;
+	vertical-align: text-top;
+	height: 20px;
+	width: 20px;
+	-webkit-appearance: none;
+  opacity: .5;
+}
+
+input[type=checkbox]:hover {
+  opacity: 1;
+}
+
+input[type=checkbox]:checked {
+  background-color: #2981c9;
+  opacity: 1;
+}
+
+input[type=checkbox]:before {
+  content: '';
+  position: absolute;
+  right: 50%;
+  top: 50%;
+  width: 4px;
+  height: 10px;
+  border: solid #FFF;
+  border-width: 0 2px 2px 0;
+  margin: -1px -1px 0 -1px;
+  transform: rotate(45deg) translate(-50%, -50%);
+  z-index: 2;
+}
+
 	   </style>
     </header>
     <!-- /.site-header -->
@@ -197,7 +238,7 @@
                                     <select id="ddlGroup" style="width: 30%;margin-left: 10px;" tabindex="3"  name="group" required>
                                         <option value="">Select Group</option>
                                         {% for value in groups %}
-                                        <option value={{value}}>{{value}}</option>
+                                        <option value={{value.name}}>{{value.name}}</option>
                                         {% endfor %}
                                     </select>
 
@@ -234,7 +275,7 @@
 						<table id="userTable">
                             <thead>
                              	  <tr>
-                             			<th style="width:2%">Select</th>
+                             			<th style="width:1%">Select</th>
 	                                    <th>UserName</th>
 	                                    <th>Group</th>
 	                                    <th>Password</th>
@@ -244,14 +285,14 @@
                                 </thead>
                                 <tbody>
  								{% for value in users %}
-                                {% if value != None %}
+                                {% if value != None and value != Empty %}
                                 <tr>
                                 	{% for k,v in value.items() %}
                                 	{% if k == 'username' %}
                                         {% if (user != value.username) %}
-                                		<td><input type="checkbox" name="chk" value={{v}} /></td>
+                                		<td style="text-align: center;"><input style="margin: 0px !important;" type="checkbox" name="chk" value={{v}} /></td>
                                         {% else %}
-                                        <td><input type="checkbox" name="chk" value={{v}} disabled /></td>
+                                        <td style="text-align: center;"><input style="margin: 0px !important;"  type="checkbox"  name="chk" value={{v}} disabled /></td>
                                         {% endif %}
                                         <td class="tdUsername">{{value.username}}</td>
                                         <td class="tdGroup">{{value.group[0].name}}</td>
