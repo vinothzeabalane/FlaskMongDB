@@ -4,127 +4,101 @@ from datetime import datetime, timedelta
 import gridfs
 import random
 import string
+import logging
 
 class MongoDB:
     
-    def __init__(self,host,port,db):
-        self.client = MongoClient(host,port)
+    def __init__(self, host, port, db):
+        self.client = MongoClient(host, port)
         self.db = self.client[db]
+        self.logger = logging.getLogger(__name__)
+        logging.basicConfig(level=logging.ERROR)
         
-    
-    def check_user(self,user,password):
-        try:
-            res = self.db.users.find_one({"username":str(user),"password":str(password)})
-            return res
-        except Exception as e:
-            print(e)
+    def _log_error(self, e):
+        self.logger.error(e)
 
-    def check_user_name(self,user):
+    def check_user(self, user, password):
         try:
-            if self.db.users.find_one({"username": { '$regex': user, '$options': 'i' }}):
-                return True
-            return False
+            return self.db.users.find_one({"username": str(user), "password": str(password)})
         except Exception as e:
-            print(e)
+            self._log_error(e)
 
-    def check_user_by_group(self,group_id):
+    def check_user_name(self, user):
         try:
-            res = self.db.users.find_one({"group_id": group_id})
-            return res
+            return self.db.users.find_one({"username": {'$regex': user, '$options': 'i'}}) is not None
         except Exception as e:
-            print(e)
+            self._log_error(e)
+
+    def check_user_by_group(self, group_id):
+        try:
+            return self.db.users.find_one({"group_id": group_id})
+        except Exception as e:
+            self._log_error(e)
             
-    def check_access_right(self,user):
+    def check_access_right(self, user):
         try:
-            res = self.db.users.find_one({"username":str(user),"is_admin":"True"})
-            return res
+            return self.db.users.find_one({"username": str(user), "is_admin": "True"})
         except Exception as e:
-            print(e)
+            self._log_error(e)
     
-    def set_user(self,val):
+    def set_user(self, val):
         try:
-            res = self.check_user_name(val.get("username"))
-            if not res:
-                res = self.db.users.insert_one(val)
+            if not self.check_user_name(val.get("username")):
+                self.db.users.insert_one(val)
             else:
-                return "user already exits"
+                return "user already exists"
         except Exception as e:
-            print(e)
+            self._log_error(e)
         return True
     
     def groups_list(self):
-        l1 = []
         try:
-            res = self.db.groups.find()
-            for i in res:
-                l1.append(i)
-            return l1
+            return list(self.db.groups.find())
         except Exception as e:
-            print(e)
+            self._log_error(e)
             
     def users_list(self):
-        l1 = []
         try:
-            res = self.db.users.find({}, {"_id":0})
-            for i in res:
-                l1.append(i)
-            return l1
-                
+            return list(self.db.users.find({}, {"_id": 0}))
         except Exception as e:
-            print(e)
+            self._log_error(e)
 
     def users_aggregate(self):
-        l1=[]
         try:
-            
-            pipeline = [{"$lookup": {"from": "groups","localField": "group_id","foreignField": "_id","as": "group"}}]
-            res = self.db.users.aggregate(pipeline)
-            for i in res:
-                l1.append(i)
-            return l1
-                
+            pipeline = [
+                {"$lookup": {
+                    "from": "groups",
+                    "localField": "group_id",
+                    "foreignField": "_id",
+                    "as": "group"
+                }}
+            ]
+            return list(self.db.users.aggregate(pipeline))
         except Exception as e:
-            print(e)
-
+            self._log_error(e)
 
     def users_aggregate_access(self, username):
-        access_list = []
         try:
-            # Define the aggregation pipeline
             pipeline = [
-                {"$match": {"username": username}},  # Filter by username
+                {"$match": {"username": username}},
                 {"$lookup": {
                     "from": "groups",
                     "localField": "group_id",
                     "foreignField": "_id",
                     "as": "group"
                 }},
-                {"$project": {"_id": 0, "group": 1}}  # Include only the 'group' field
+                {"$project": {"_id": 0, "group": 1}}
             ]
-            
-            # Execute the aggregation pipeline
             result = self.db.users.aggregate(pipeline)
-            
-            # Collect results
-            for item in result:
-                if 'group' in item:
-                    for group in item['group']:
-                        if 'access' in group:
-                            access_list.append(group['access'])
-            return access_list
-                
+            return [group['access'] for item in result if 'group' in item for group in item['group'] if 'access' in group]
         except Exception as e:
-            print(e)
+            self._log_error(e)
             return []
 
-
     def bpt_list(self, filter=None):
-        l1 = []
         try:
-            client = MongoClient("127.0.0.1", 27017)
-            db = client.openstack 
             today = datetime.now().date()
-            two_months_ago = today - timedelta(days=60)  # Approximate 2 months as 60 days
+            two_months_ago = today - timedelta(days=60)
 
             query = {
                 "metadata.date": {
@@ -132,116 +106,89 @@ class MongoDB:
                     "$lte": filter['EndDate'] if filter and 'EndDate' in filter else today.strftime("%Y-%m-%d")
                 }
             }
-            col = db.fs.files.find(query)
-            for i in col:
-                if 'filename' not in i:
-                    continue
-                l1.append({'name': i['filename'], 'data': i['metadata'] or None})
-            return l1
-                
+            col = self.db.fs.files.find(query)
+            return [{'name': i['filename'], 'data': i.get('metadata')} for i in col if 'filename' in i]
         except Exception as e:
-            print(e)
+            self._log_error(e)
             
-    def check_group(self,group):
+    def check_group(self, group):
         try:
-            res = self.db.groups.find_one({"name":str(group)})
-            return res
+            return self.db.groups.find_one({"name": str(group)})
         except Exception as e:
-            print(e)
+            self._log_error(e)
 
-    def check_group_in_users(self,group):
+    def check_group_in_users(self, group):
         try:
-            res = self.db.users.find_one({"group_id":group})
-            return res
+            return self.db.users.find_one({"group_id": group})
         except Exception as e:
-            print(e)
+            self._log_error(e)
             
-    def delete_groups(self,val):
+    def delete_groups(self, values):
         try:
-            for i in val:
-                res = self.db.groups.delete_one({"name":str(i)})
+            for group in values:
+                self.db.groups.delete_one({"name": str(group)})
             return True
         except Exception as e:
-            print(e)
+            self._log_error(e)
             
-    def delete_users(self,val):
+    def delete_users(self, values):
         try:
-            for i in val:
-                res = self.db.users.delete_one({"username":str(i)})
+            for user in values:
+                self.db.users.delete_one({"username": str(user)})
             return True
         except Exception as e:
-            print(e)
+            self._log_error(e)
 
-    def generate_random_suffix(self,length=3):
+    def generate_random_suffix(self, length=3):
         return ''.join(random.choices(string.digits, k=length))
             
-    def set_group(self,request=None):
+    def set_group(self, request=None):
         while True:
-            data = request.form
             try:
-                val = {'user':[False,False,False], 'group': [False,False,False]}
-
-                if data['hdnGroupID'] == '':
+                data = request.form if request else {}
+                if data.get('hdnGroupID') == '':
                     group_id = 'GRP' + '-' + self.generate_random_suffix()
-                    if self.db.groups.find_one({'name': { '$regex': data['name'], '$options': 'i' }}):
+                    if self.db.groups.find_one({'name': {'$regex': data['name'], '$options': 'i'}}):
                         return False
                 else:
                     group_id = data['hdnGroupID']
 
-                if 'chkUserView' in data:
-                    val['user'][0] = True if data['chkUserView'] == 'on' else False
-                if 'chkUserEdit' in data:
-                    val['user'][1] = True if data['chkUserEdit'] == 'on' else False
-                if 'chkUserDelete' in data:
-                    val['user'][2] = True if data['chkUserDelete'] == 'on' else False
+                access = {
+                    'user': [data.get(f'chkUser{perm}', 'off') == 'on' for perm in ['View', 'Edit', 'Delete']],
+                    'group': [data.get(f'chkGroup{perm}', 'off') == 'on' for perm in ['View', 'Edit', 'Delete']]
+                }
 
-
-                if 'chkGroupView' in data:
-                    val['group'][0] = True if data['chkGroupView'] == 'on' else False
-                if 'chkGroupEdit' in data:
-                    val['group'][1] = True if data['chkGroupEdit'] == 'on' else False
-                if 'chkGroupDelete' in data:
-                    val['group'][2] = True if data['chkGroupDelete'] == 'on' else False
-
-                if data['hdnGroupID'] == '':
-                    self.db.groups.insert_one(
-                            {
-                            "_id":group_id,
-                            "name": data['name'],
-                            "access": val
-                            })
-                    print(f"Inserted document with group _id: {group_id}")
+                if data.get('hdnGroupID') == '':
+                    self.db.groups.insert_one({
+                        "_id": group_id,
+                        "name": data['name'],
+                        "access": access
+                    })
                     break
                 else:
-                    filter = {'_id': group_id}
-                    update = {'$set': {"name": data['name'],"access": val}}
-
-                    self.db.groups.update_one(filter, update) 
-                    break        
+                    self.db.groups.update_one(
+                        {'_id': group_id},
+                        {'$set': {"name": data['name'], "access": access}}
+                    )
+                    break
             except DuplicateKeyError:
-                # If DuplicateKeyError occurs, generate a new random suffix and retry
-                print(f"Duplicate _id found, retrying...")
+                self.logger.warning(f"Duplicate _id found, retrying...")
                 continue
             except Exception as e:
-                # Handle the exception
-                print(f"An error occurred: {e}")
-
+                self._log_error(e)
         return True
     
-    def update_password(self,user,oldpass,newpass):
+    def update_password(self, user, oldpass, newpass):
         try:
-            res = self.db.users.find_one({"password":str(oldpass)})
-            if res:
-                result = self.db.users.update_one({ "username": user },{"$set":{"password": newpass}})
+            if self.db.users.find_one({"password": str(oldpass)}):
+                self.db.users.update_one({"username": user}, {"$set": {"password": newpass}})
                 return True
-            else:
-                return False
+            return False
         except Exception as e:
-            print(e)
+            self._log_error(e)
 
-
-    def update_user_details(self,filter,update):
+    def update_user_details(self, filter, update):
         try:
-            return  self.db.users.update_one(filter, update)
+            return self.db.users.update_one(filter, update)
         except Exception as e:
-            print(e)
+            self._log_error(e)

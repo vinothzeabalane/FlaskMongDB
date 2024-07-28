@@ -1,7 +1,7 @@
 import os
 from flask import Flask, flash, redirect, render_template, request, session, url_for, send_file, jsonify, Response
 import gridfs
-import pandas
+import pandas as pd
 import mongo
 from pymongo import MongoClient
 from gridfs import GridFSBucket
@@ -10,315 +10,249 @@ from gevent.pywsgi import WSGIServer
 from datetime import timedelta, datetime, timezone
 from bson.objectid import ObjectId
 
-app = Flask(__name__, static_url_path='/static')
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=10)  # Session timeout set to 10 minutes
-app.config.from_pyfile('config.cfg')
-app.secret_key = os.urandom(12)
+class MyApp:
+    def __init__(self):
+        self.app = Flask(__name__, static_url_path='/static')
+        self.configure_app()
+        self.add_routes()
 
+    def configure_app(self):
+        self.app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=10)  # Session timeout set to 10 minutes
+        self.app.config.from_pyfile('config.cfg')
+        self.app.secret_key = os.urandom(12)
+        self.app.before_request(self.before_request)
 
-@app.before_request
-def before_request():
-    session.permanent = True
-    app.permanent_session_lifetime = app.config['PERMANENT_SESSION_LIFETIME']
-    if 'last_activity' in session:
-        naive_now = datetime.utcnow()
-        aware_now = naive_now.replace(tzinfo=timezone.utc)
-        last_activity = session.get('last_activity')
+    def add_routes(self):
+        self.app.add_url_rule('/account', 'account', self.account)
+        self.app.add_url_rule('/account_update', 'account_update', self.account_update, methods=['GET', 'POST'])
+        self.app.add_url_rule('/create_group', 'create_group', self.create_group, methods=['GET', 'POST'])
+        self.app.add_url_rule('/groups', 'groups', self.groups)
+        self.app.add_url_rule('/update_group', 'update_group', self.update_group, methods=['GET', 'POST'])
+        self.app.add_url_rule('/update_user', 'update_user', self.update_user, methods=['GET', 'POST'])
+        self.app.add_url_rule('/create_user', 'create_user', self.create_user, methods=['GET', 'POST'])
+        self.app.add_url_rule('/users', 'users', self.users)
+        self.app.add_url_rule('/view_bpt', 'view_bpt', self.view_bpt, methods=['GET', 'POST'])
+        self.app.add_url_rule('/download_bpt', 'download_bpt', self.download_bpt, methods=['GET', 'POST'])
+        self.app.add_url_rule('/bpt', 'bpt', self.bpt, methods=['GET', 'POST'])
+        self.app.add_url_rule('/home', 'home', self.home, methods=['GET', 'POST'])
+        self.app.add_url_rule('/dashboard', 'dashboard', self.dashboard)
+        self.app.add_url_rule('/logout', 'logout', self.logout)
+        self.app.errorhandler(404)(self.page_not_found)
+        self.app.add_url_rule('/login', 'login', self.login)
+        self.app.add_url_rule('/', 'index', self.index)
 
-        # Ensure last_activity is timezone-aware
-        if last_activity:
-            # Assuming last_activity is a datetime object with timezone information
-            if (aware_now - last_activity).total_seconds() > app.permanent_session_lifetime.total_seconds():
+    def before_request(self):
+        session.permanent = True
+        self.app.permanent_session_lifetime = self.app.config['PERMANENT_SESSION_LIFETIME']
+        if 'last_activity' in session:
+            naive_now = datetime.utcnow()
+            aware_now = naive_now.replace(tzinfo=timezone.utc)
+            last_activity = session.get('last_activity')
+            if last_activity and (aware_now - last_activity).total_seconds() > self.app.permanent_session_lifetime.total_seconds():
                 session.clear()
-                return render_template('login.html', error = "Your Session Expired")
-    session['last_activity'] = datetime.utcnow()
+                return render_template('login.html', error="Your Session Expired")
+        session['last_activity'] = datetime.utcnow()
 
+    def get_mongo_connection(self):
+        try:
+            conn = mongo.MongoDB(
+                host=self.app.config['MYSQL_HOST'],
+                port=self.app.config['MYSQL_PORT'],
+                db=self.app.config['MONGO_DB']
+            )
+            return conn
+        except Exception as e:
+            self.app.logger.error(f"MongoDB connection error: {e}")
 
-@app.route('/account')
-def account():
-    access_right = get_access_user()
-    group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
-    return render_template('account.html',user_access=group_access[0],user=session['user'],password=session['password'], is_admin = access_right)
+    def account(self):
+        group_access = self.get_mongo_connection().users_aggregate_access(username=session['user'])
+        return render_template('account.html', user_access=group_access[0], user=session['user'], password=session['password'])
 
-
-@app.route('/account_update', methods=['GET', 'POST'])
-def account_update():
-    try:
-        if session.get("user"):
-            oldpass = request.form["oldpass"]
-            newpass = request.form["newpass"]
-            access_right = get_access_user()
-            res = get_mongo_connection().update_password(session['user'],oldpass,newpass)
-            if res:
-                flash('Your password has been updated successfully. <br/><br/> Re-login with new password!', 'success')
-                return redirect(url_for('account'))
-            else:
-                return render_template('account.html',user=session['user'],is_admin = access_right, error = "Please enter correct old password")
-        else:
-            return render_template('login.html', error = "Your Session Expired")
-    except Exception as e:
-        print(e)
-        
-@app.route('/create_group', methods=['GET', 'POST'])
-def create_group():
-    try:
-        name = request.form['name']
-        res = get_mongo_connection().set_group(request)
-        groups_list = get_mongo_connection().groups_list()
-        access_right = get_access_user()
-        if res:
-            return redirect(url_for('groups'))
-        else:
-            return render_template("group.html",warning=True, error = "Group Name: {} already exits".format(name), groups=groups_list,user=session['user'],is_admin = access_right)
-    except Exception as e:
-        print(e)
-
-@app.route('/groups')
-def groups():
-    try:
-        if session.get("user"):
-            res = get_mongo_connection().groups_list()
-            group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
-            access_right = get_access_user()
-            return render_template('group.html',groups=res,user_access=group_access[0],user=session['user'],is_admin = access_right)
-        else:
-            return render_template('login.html', error = "Your Session Expired")
-    except Exception as e:
-        print(e)
-
-@app.route('/update_group', methods=['GET', 'POST'])
-def update_group():    
-    try:
-        del_groups = []
-        warning_groups = []
-
-        if request.form:
-            groups = request.form.getlist('chk')
-            for i in groups:
-                group_id = get_mongo_connection().check_group(i)
-                if get_mongo_connection().check_group_in_users(group_id['_id']):
-                    warning_groups.append(i)
+    def account_update(self):
+        try:
+            if session.get("user"):
+                oldpass = request.form["oldpass"]
+                newpass = request.form["newpass"]
+                res = self.get_mongo_connection().update_password(session['user'], oldpass, newpass)
+                if res:
+                    flash('Your password has been updated successfully. <br/><br/> Re-login with new password!', 'success')
+                    return redirect(url_for('account'))
                 else:
-                    del_groups.append(i)
-            get_mongo_connection().delete_groups(del_groups)
-
-            access_right = get_access_user()
-            grouplist = get_mongo_connection().groups_list()
-            user_list = get_mongo_connection().users_list()
-
-            if len(warning_groups) > 0:
-                print("Warning: {} group is linked with one or more users. Please unlink before delete".format(warning_groups))
-                return render_template("group.html",warning=True, error = "Warning: {} group is linked with one or more users. Please unlink before delete!".format(warning_groups),users=user_list,groups=grouplist,user=session['user'],is_admin = access_right)
-
-        return redirect(url_for('groups'))
-    except Exception as e:
-        print(e)
-        
-@app.route('/update_collection', methods=['GET', 'POST'])
-def update_collection():
-    try:
-        if request.form:
-            collections = request.form.getlist('chk')
-            print(collections)
-            res = get_mongo_connection().delete_collections(collections)
-        return redirect(url_for('collections'))
-    except Exception as e:
-        print(e)
-
-@app.route('/update_user', methods=['GET', 'POST'])
-def update_user():
-    try:
-        if request.form:
-            users = request.form.getlist('chk')
-            res = get_mongo_connection().delete_users(users)
-        return redirect(url_for('users'))
-    except Exception as e:
-        print(e)
-
-@app.route('/create_user', methods=['GET', 'POST'])
-def create_user():
-    try:
-        name = request.form['username']
-        password = request.form["password"]
-        request_user = request.form["hdnUserID"] or False
-        group = request.form["group"]
-        access_right = get_access_user()
-        grouplist = get_mongo_connection().groups_list()
-        # user_list = get_mongo_connection().users_list()
-        user_aggregate_list = get_mongo_connection().users_aggregate()
-        admin = request.form.get("is_admin") or False
-        group_id = get_mongo_connection().check_group(group)
-        group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
-
-        if request_user:
-            filter = {'_id': ObjectId(request_user)}
-            update = {'$set': {'username': name, 'group_id': group_id['_id'] }}
-            if get_mongo_connection().update_user_details(filter,update):
-                return render_template('users.html',users=get_mongo_connection().users_aggregate(),user_access=group_access[0],groups=get_mongo_connection().groups_list(),user=session['user'],is_admin = get_access_user())
-        
-        if get_mongo_connection().check_user_name(user=name):
-            return render_template('users.html',warning=True,users=user_aggregate_list,groups=grouplist,user=session['user'],is_admin = access_right)
-    
-        val={"username":str(name),"group_id":group_id['_id'],"password":str(password),"is_admin":admin}
-
-        res = get_mongo_connection().set_user(val)
-        return redirect(url_for('users'))
-    
-    except Exception as e:
-        print(e)
-
-@app.route('/users')
-def users():
-    try:
-        if session.get("user"):
-            grouplist = get_mongo_connection().groups_list()
-            # user_list = get_mongo_connection().users_list()
-            user_aggregate_list = get_mongo_connection().users_aggregate()
-            access_right = get_access_user()
-            group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
-             
-            return render_template('users.html',users=user_aggregate_list,user_access=group_access[0],groups=grouplist,user=session['user'],is_admin = access_right)
-        else:
-            return render_template('login.html', error = "Your Session Expired")
-    except Exception as e:
-        print(e)
-
-@app.route('/view_bpt', methods=['GET', 'POST'])
-def view_bpt():
-    try:
-        if request.form:
-            report = request.form.getlist('view')
-            client = MongoClient("mongodb://localhost:27017/")
-            db = client['openstack']
-            fs = GridFSBucket(db)
-            grid_out = fs.open_download_stream_by_name(report[0])
-            data = pandas.read_excel(grid_out)
-            return render_template('view_bpt.html', excelData = data.to_html())
-    except Exception as e:
-        print(e)
-
-@app.route('/download_bpt', methods=['GET', 'POST'])
-def download_bpt():
-    try:
-        if request.form:
-            report = request.form.getlist('download')
-            client = MongoClient("mongodb://localhost:27017/")
-            db = client['openstack']
-            fs = gridfs.GridFS(db)
-            data = db.fs.files.find_one({'filename': report[0]})
-            outputdata = fs.get(data['_id']).read()
-            data = pandas.read_excel(outputdata)
-            path = Path.home() / 'Downloads'
-            filename = report[0]+'.csv'
-            fullpath = os.path.join(path, filename)
-            with open(fullpath, "wb") as file: 
-                file.write(outputdata) 
-            return send_file(fullpath , as_attachment = True)
-              
-    except Exception as e:
-        # Log the error for debugging purposes
-        app.logger.error(f"Error downloading file: {e}")
-        # Return an error response or None
-        return Response(f"Error downloading file: {e}", status=500)
-
-@app.route('/bpt', methods=['GET', 'POST'])
-def bpt():
-    try:
-        if session.get("user"):
-            if request.form:
-                bpt_list = get_mongo_connection().bpt_list(filter=request.form)
+                    return render_template('account.html', user=session['user'], error="Please enter correct old password")
             else:
-                bpt_list = get_mongo_connection().bpt_list(filter=None)
-            grouplist = get_mongo_connection().groups_list()
-            access_right = get_access_user()
-            group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
-                
-            return render_template('bpt.html',bpt=bpt_list,groups=grouplist,user_access=group_access[0],user=session['user'],is_admin = access_right)
+                return render_template('login.html', error="Your Session Expired")
+        except Exception as e:
+            self.app.logger.error(f"Error updating account: {e}")
+
+    def create_group(self):
+        try:
+            name = request.form['name']
+            res = self.get_mongo_connection().set_group(request)
+            groups_list = self.get_mongo_connection().groups_list()
+            if res:
+                return redirect(url_for('groups'))
+            else:
+                return render_template("group.html", warning=True, error=f"Group Name: {name} already exists", groups=groups_list, user=session['user'])
+        except Exception as e:
+            self.app.logger.error(f"Error creating group: {e}")
+
+    def groups(self):
+        try:
+            if session.get("user"):
+                res = self.get_mongo_connection().groups_list()
+                group_access = self.get_mongo_connection().users_aggregate_access(username=session['user'])
+                return render_template('group.html', groups=res, user_access=group_access[0], user=session['user'])
+            else:
+                return render_template('login.html', error="Your Session Expired")
+        except Exception as e:
+            self.app.logger.error(f"Error retrieving groups: {e}")
+
+    def update_group(self):
+        try:
+            del_groups = []
+            warning_groups = []
+            if request.form:
+                groups = request.form.getlist('chk')
+                for i in groups:
+                    group_id = self.get_mongo_connection().check_group(i)
+                    if self.get_mongo_connection().check_group_in_users(group_id['_id']):
+                        warning_groups.append(i)
+                    else:
+                        del_groups.append(i)
+                self.get_mongo_connection().delete_groups(del_groups)
+                grouplist = self.get_mongo_connection().groups_list()
+                group_access = self.get_mongo_connection().users_aggregate_access(username=session['user'])
+                if len(warning_groups) > 0:
+                    warning_message = f"Warning: {warning_groups} group(s) are linked with one or more users. Please unlink before deleting!"
+                    self.app.logger.warning(warning_message)
+                    return render_template("group.html", warning=True, error=warning_message, user_access=group_access[0], groups=grouplist, user=session['user'])
+            return redirect(url_for('groups'))
+        except Exception as e:
+            self.app.logger.error(f"Error updating groups: {e}")
+
+    def update_user(self):
+        try:
+            if request.form:
+                users = request.form.getlist('chk')
+                self.get_mongo_connection().delete_users(users)
+            return redirect(url_for('users'))
+        except Exception as e:
+            self.app.logger.error(f"Error updating users: {e}")
+
+    def create_user(self):
+        try:
+            name = request.form['username']
+            password = request.form["password"]
+            request_user = request.form["hdnUserID"] or False
+            group = request.form["group"]
+            grouplist = self.get_mongo_connection().groups_list()
+            user_aggregate_list = self.get_mongo_connection().users_aggregate()
+            group_id = self.get_mongo_connection().check_group(group)
+            group_access = self.get_mongo_connection().users_aggregate_access(username=session['user'])
+            if request_user:
+                filter = {'_id': ObjectId(request_user)}
+                update = {'$set': {'username': name, 'group_id': group_id['_id']}}
+                if self.get_mongo_connection().update_user_details(filter, update):
+                    return render_template('users.html', users=self.get_mongo_connection().users_aggregate(), user_access=group_access[0], groups=grouplist, user=session['user'])
+            if self.get_mongo_connection().check_user_name(user=name):
+                return render_template('users.html', warning=True, users=user_aggregate_list, groups=grouplist, user=session['user'])
+            val = {"username": str(name), "group_id": group_id['_id'], "password": str(password)}
+            self.get_mongo_connection().set_user(val)
+            return redirect(url_for('users'))
+        except Exception as e:
+            self.app.logger.error(f"Error creating user: {e}")
+
+    def users(self):
+        try:
+            if session.get("user"):
+                grouplist = self.get_mongo_connection().groups_list()
+                user_aggregate_list = self.get_mongo_connection().users_aggregate()
+                group_access = self.get_mongo_connection().users_aggregate_access(username=session['user'])
+                return render_template('users.html', users=user_aggregate_list, user_access=group_access[0], groups=grouplist, user=session['user'])
+            else:
+                return render_template('login.html', error="Your Session Expired")
+        except Exception as e:
+            self.app.logger.error(f"Error retrieving users: {e}")
+
+    def view_bpt(self):
+        try:
+            if request.form:
+                report = request.form.getlist('view')
+                client = MongoClient("mongodb://localhost:27017/")
+                db = client['openstack']
+                fs = GridFSBucket(db)
+                grid_out = fs.open_download_stream_by_name(report[0])
+                data = pd.read_excel(grid_out)
+                return render_template('view_bpt.html', excelData=data.to_html())
+        except Exception as e:
+            self.app.logger.error(f"Error viewing BPT: {e}")
+
+    def download_bpt(self):
+        try:
+            if request.form:
+                report = request.form.getlist('download')
+                client = MongoClient("mongodb://localhost:27017/")
+                db = client['openstack']
+                fs = gridfs.GridFS(db)
+                data = db.fs.files.find_one({'filename': report[0]})
+                outputdata = fs.get(data['_id']).read()
+                path = Path.home() / 'Downloads'
+                filename = report[0] + '.csv'
+                fullpath = os.path.join(path, filename)
+                with open(fullpath, "wb") as file:
+                    file.write(outputdata)
+                return send_file(fullpath, as_attachment=True)
+        except Exception as e:
+            self.app.logger.error(f"Error downloading BPT: {e}")
+            return Response(f"Error downloading file: {e}", status=500)
+
+    def bpt(self):
+        try:
+            if session.get("user"):
+                bpt_list = self.get_mongo_connection().bpt_list(filter=request.form if request.form else None)
+                group_access = self.get_mongo_connection().users_aggregate_access(username=session['user'])
+                return render_template('bpt.html', bpt=bpt_list, user_access=group_access[0], user=session['user'])
+            else:
+                return render_template('login.html', error="Your Session Expired")
+        except Exception as e:
+            self.app.logger.error(f"Error retrieving BPT: {e}")
+
+    def home(self):
+        try:
+            session['user'] = request.form['username']
+            session['password'] = request.form['password']
+            res = self.get_mongo_connection().check_user(session['user'], session['password'])
+            group_access = self.get_mongo_connection().users_aggregate_access(username=session['user'])
+            if res:
+                return render_template('dashboard.html', user_access=group_access[0], user=session['user'])
+            else:
+                return render_template('login.html', error="Invalid Username or Password")
+        except Exception as e:
+            self.app.logger.error(f"Error in home route: {e}")
+
+    def dashboard(self):
+        if session.get("user"):
+            group_access = self.get_mongo_connection().users_aggregate_access(username=session['user'])
+            return render_template('dashboard.html', user_access=group_access[0], user=session['user'])
         else:
-            return render_template('login.html', error = "Your Session Expired")
-    except Exception as e:
-        print(e)
-        
-@app.route('/home', methods=['GET', 'POST'])
-def home():
-    try:
-        session['user'] = request.form['username']
-        session['password'] = request.form['password']
-        
-        res = get_mongo_connection().check_user(session['user'],session['password'])
-        access_right = get_access_user()
-        group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
-        
-        if res:
-            return render_template('dashboard.html', user_access=group_access[0],user=session['user'],is_admin = access_right)
-        else:
-            return render_template('login.html', error = "Invalid Username or Password")
-    except Exception as e:
-        print(e)
+            return render_template('login.html', error="Your Session Expired")
 
-def get_mongo_connection():
-    try:
-        conn = mongo.MongoDB(host=app.config['MYSQL_HOST'],port=app.config['MYSQL_PORT'],db=app.config['MONGO_DB'])
-        return conn
-    except Exception as e:
-        print(e)
-    
-def get_access_user():
-    try:
-        is_admin = get_mongo_connection().check_access_right(session['user'])
-        if is_admin is None:
-            access_right = False
-        else:
-            access_right = True
-        return access_right
-    except Exception as e:
-        print(e)
+    def logout(self):
+        session.clear()
+        return render_template('login.html')
 
-@app.route('/dashboard')
-def dashboard():
-    if session.get("user"):
-        access_right = get_access_user()
-        group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
+    def page_not_found(self, e):
+        return render_template('404.html')
 
-        return render_template('dashboard.html',user_access=group_access[0], user=session['user'],is_admin = access_right)
-    else:
-        return render_template('login.html', error = "Your Session Expired")
+    def login(self):
+        return render_template('login.html')
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return render_template('login.html')
+    def index(self):
+        return redirect(url_for('login'))
 
-#example code
-@app.route('/data')
-def data():
-    data = [{'id': 1, 'name': 'John Doe', 'email': 'johndoe@example.com'},
-    {'id': 2, 'name': 'Jane Doe', 'email': 'janedoe@example.com'},
-    {'id': 3, 'name': 'kane Doe', 'email': 'kanedoe@example.com'},
-    {'id': 4, 'name': 'lane Doe', 'email': 'lanedoe@example.com'},
-    {'id': 5, 'name': 'mane Doe', 'email': 'manedoe@example.com'},
-    {'id': 6, 'name': 'nane Doe', 'email': 'nanedoe@example.com'},
-    {'id': 7, 'name': 'oane Doe', 'email': 'oanedoe@example.com'},
-    {'id': 8, 'name': 'pane Doe', 'email': 'panedoe@example.com'},
-    {'id': 9, 'name': 'qane Doe', 'email': 'qanedoe@example.com'},
-    {'id': 10, 'name': 'rane Doe', 'email': 'ranedoe@example.com'},
-    {'id': 11, 'name': 'sane Doe', 'email': 'sanedoe@example.com'},]
-    return render_template('data.html', data=data)
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html')
-
-@app.route('/login')
-def login():
-    return render_template('login.html')
-
-@app.route('/')
-def index():
-    return redirect(url_for('login'))
-
+    def run(self):
+        self.app.run(debug=False, host=self.app.config['FLASK_HOST'], port=self.app.config['FLASK_PORT'], threaded=True)
 
 if __name__ == "__main__":
-    # http_server = WSGIServer(('localhost', 5000), app)
-    # http_server.serve_forever()    
-    app.run(debug=True, host=app.config['FLASK_HOST'], port=app.config['FLASK_PORT'], threaded=True)
+    app_instance = MyApp()
+    app_instance.run()
