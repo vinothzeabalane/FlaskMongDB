@@ -254,7 +254,7 @@ class MyApp:
         return redirect(url_for('login'))
 
     def run(self):
-        self.app.run(debug=False, host=self.app.config['FLASK_HOST'], port=self.app.config['FLASK_PORT'], threaded=True)
+        self.app.run(debug=True, host=self.app.config['FLASK_HOST'], port=self.app.config['FLASK_PORT'], threaded=True)
 
 if __name__ == "__main__":
     app_instance = MyApp()
