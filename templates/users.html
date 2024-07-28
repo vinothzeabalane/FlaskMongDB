@@ -223,6 +223,8 @@ input[type=checkbox]:before {
             <p class="error" id="sMsg" style="padding-left: 20%;"></p>
             {% endif %}
 
+            {% if user_access != None and user_access != Empty %}
+            {% if (user_access['user'][1]) %}
             <form id="frmAdd" action="{{ url_for('create_user') }}" method="post" autocomplete='off'>
                 <div class="row">
                     <input type="hidden" id="hdnUserID" name="hdnUserID" value=""/>
@@ -273,6 +275,9 @@ input[type=checkbox]:before {
                     </div>
                 </div>
             </form>
+            {% endif %}
+            {% endif %}
+
 
             <div class="panel panel-default">
                 <div class="panel-heading">

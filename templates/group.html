@@ -240,6 +240,8 @@ input[type=checkbox]:before {
             <p class="error" id="sMsg" style="padding-left: 15%;"></p>
             {% endif %}  
             
+            {% if user_access != None and user_access != Empty %}
+            {% if (user_access['group'][1]) %}
             <form id="frmAdd" action="{{ url_for('create_group') }}" method="post">
                 <div class="row">
                     <input type="hidden" id="hdnGroupID" name="hdnGroupID" value=""/>
@@ -292,6 +294,8 @@ input[type=checkbox]:before {
                     </div>
                 </div>
             </form>
+            {% endif %} 
+            {% endif %} 
 
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -324,7 +328,7 @@ input[type=checkbox]:before {
                                     <th></th>
                                     {% endif %}                                   
                                     {% endif %}   
-                                     
+
                                     <th></th>
                                     <th rowspan="3">View</th>
                                     <th rowspan="3">Edit</th>
