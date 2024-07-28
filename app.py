@@ -148,12 +148,13 @@ def create_user():
         user_aggregate_list = get_mongo_connection().users_aggregate()
         admin = request.form.get("is_admin") or False
         group_id = get_mongo_connection().check_group(group)
+        group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
 
         if request_user:
             filter = {'_id': ObjectId(request_user)}
             update = {'$set': {'username': name, 'group_id': group_id['_id'] }}
             if get_mongo_connection().update_user_details(filter,update):
-                return render_template('users.html',users=get_mongo_connection().users_aggregate(),groups=get_mongo_connection().groups_list(),user=session['user'],is_admin = get_access_user())
+                return render_template('users.html',users=get_mongo_connection().users_aggregate(),user_access=group_access[0],groups=get_mongo_connection().groups_list(),user=session['user'],is_admin = get_access_user())
         
         if get_mongo_connection().check_user_name(user=name):
             return render_template('users.html',warning=True,users=user_aggregate_list,groups=grouplist,user=session['user'],is_admin = access_right)
