@@ -29,18 +29,6 @@ class MongoDB:
         except Exception as e:
             self._log_error(e)
 
-    def check_user_by_group(self, group_id):
-        try:
-            return self.db.users.find_one({"group_id": group_id})
-        except Exception as e:
-            self._log_error(e)
-            
-    def check_access_right(self, user):
-        try:
-            return self.db.users.find_one({"username": str(user), "is_admin": "True"})
-        except Exception as e:
-            self._log_error(e)
-    
     def set_user(self, val):
         try:
             if not self.check_user_name(val.get("username")):
@@ -57,12 +45,6 @@ class MongoDB:
         except Exception as e:
             self._log_error(e)
             
-    def users_list(self):
-        try:
-            return list(self.db.users.find({}, {"_id": 0}))
-        except Exception as e:
-            self._log_error(e)
-
     def users_aggregate(self):
         try:
             pipeline = [
