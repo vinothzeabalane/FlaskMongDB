@@ -86,6 +86,38 @@ class MongoDB:
         except Exception as e:
             print(e)
 
+
+    def users_aggregate_access(self, username):
+        access_list = []
+        try:
+            # Define the aggregation pipeline
+            pipeline = [
+                {"$match": {"username": username}},  # Filter by username
+                {"$lookup": {
+                    "from": "groups",
+                    "localField": "group_id",
+                    "foreignField": "_id",
+                    "as": "group"
+                }},
+                {"$project": {"_id": 0, "group": 1}}  # Include only the 'group' field
+            ]
+            
+            # Execute the aggregation pipeline
+            result = self.db.users.aggregate(pipeline)
+            
+            # Collect results
+            for item in result:
+                if 'group' in item:
+                    for group in item['group']:
+                        if 'access' in group:
+                            access_list.append(group['access'])
+            return access_list
+                
+        except Exception as e:
+            print(e)
+            return []
+
+
     def bpt_list(self, filter=None):
         l1 = []
         try:

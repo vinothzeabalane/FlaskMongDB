@@ -37,7 +37,8 @@ def before_request():
 @app.route('/account')
 def account():
     access_right = get_access_user()
-    return render_template('account.html',user=session['user'],password=session['password'], is_admin = access_right)
+    group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
+    return render_template('account.html',user_access=group_access[0],user=session['user'],password=session['password'], is_admin = access_right)
 
 
 @app.route('/account_update', methods=['GET', 'POST'])
@@ -77,8 +78,9 @@ def groups():
     try:
         if session.get("user"):
             res = get_mongo_connection().groups_list()
+            group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
             access_right = get_access_user()
-            return render_template('group.html',groups=res,user=session['user'],is_admin = access_right)
+            return render_template('group.html',groups=res,user_access=group_access[0],user=session['user'],is_admin = access_right)
         else:
             return render_template('login.html', error = "Your Session Expired")
     except Exception as e:
@@ -172,8 +174,9 @@ def users():
             # user_list = get_mongo_connection().users_list()
             user_aggregate_list = get_mongo_connection().users_aggregate()
             access_right = get_access_user()
+            group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
              
-            return render_template('users.html',users=user_aggregate_list,groups=grouplist,user=session['user'],is_admin = access_right)
+            return render_template('users.html',users=user_aggregate_list,user_access=group_access[0],groups=grouplist,user=session['user'],is_admin = access_right)
         else:
             return render_template('login.html', error = "Your Session Expired")
     except Exception as e:
@@ -227,8 +230,9 @@ def bpt():
                 bpt_list = get_mongo_connection().bpt_list(filter=None)
             grouplist = get_mongo_connection().groups_list()
             access_right = get_access_user()
+            group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
                 
-            return render_template('bpt.html',bpt=bpt_list,groups=grouplist,user=session['user'],is_admin = access_right)
+            return render_template('bpt.html',bpt=bpt_list,groups=grouplist,user_access=group_access[0],user=session['user'],is_admin = access_right)
         else:
             return render_template('login.html', error = "Your Session Expired")
     except Exception as e:
@@ -242,9 +246,10 @@ def home():
         
         res = get_mongo_connection().check_user(session['user'],session['password'])
         access_right = get_access_user()
+        group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
         
         if res:
-            return render_template('dashboard.html', user=session['user'],is_admin = access_right)
+            return render_template('dashboard.html', user_access=group_access[0],user=session['user'],is_admin = access_right)
         else:
             return render_template('login.html', error = "Invalid Username or Password")
     except Exception as e:
@@ -272,7 +277,9 @@ def get_access_user():
 def dashboard():
     if session.get("user"):
         access_right = get_access_user()
-        return render_template('dashboard.html', user=session['user'],is_admin = access_right)
+        group_access = get_mongo_connection().users_aggregate_access(username=session['user'])
+
+        return render_template('dashboard.html',user_access=group_access[0], user=session['user'],is_admin = access_right)
     else:
         return render_template('login.html', error = "Your Session Expired")
 

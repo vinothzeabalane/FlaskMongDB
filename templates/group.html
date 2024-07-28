@@ -111,9 +111,16 @@
                         <div class="list-menu">
                             <ul>
                                 <li><a href="{{ url_for('dashboard') }}">My Dashboard</a></li>
-                                {% if is_admin %}
-                                <li><a href="{{ url_for('groups') }}">Groups</a></li>
-                                <li><a href="{{ url_for('users') }}">Users</a></li>
+                                {% if user_access != None and user_access != Empty %}
+
+                                {% if (user_access['group'][0]) %}
+                                <li><a href="{{ url_for('groups') }}">Groups</a></li>                                      
+                                {% endif %}
+                               
+                                {% if (user_access['user'][0]) %}
+                                <li><a href="{{ url_for('users') }}">Users</a></li>                                      
+                                {% endif %}                                                                                             
+
                                 {% endif %}
                                 <li><a href="{{ url_for('bpt') }}">Boot Profile Time</a></li>
                                 <li><a href="{{ url_for('account') }}">My Account</a></li>
@@ -296,14 +303,28 @@ input[type=checkbox]:before {
 						<table id="grpTable">
 						<thead>                           
 						          <tr>
+                                        {% if user_access != None and user_access != Empty %}
+                                        {% if (user_access['group'][2]) %}  
                                         <th style="width:1%">Select</th>
+                                        {% endif %}
+                                        {% endif %}       
+
                                         <th>Name</th>
                                         <th colspan="3">User</th>
-                                        <th colspan="3">Group</th>	  
-                                        <th>Edit</th>	                                  
+                                        <th colspan="3">Group</th>	
+                                        {% if user_access != None and user_access != Empty %}
+                                        {% if (user_access['group'][1]) %}  
+                                        <th>Edit</th>	
+                                        {% endif %}
+                                        {% endif %}                                  
 								  </tr>
                                   <tr>
+                                    {% if user_access != None and user_access != Empty %}
+                                    {% if (user_access['group'][2]) %}  
                                     <th></th>
+                                    {% endif %}                                   
+                                    {% endif %}   
+                                     
                                     <th></th>
                                     <th rowspan="3">View</th>
                                     <th rowspan="3">Edit</th>
@@ -311,14 +332,23 @@ input[type=checkbox]:before {
                                     <th rowspan="3">View</th>
                                     <th rowspan="3">Edit</th>
                                     <th rowspan="3">Delete</th>   
-                                    <th></th>                                 
+                                    {% if user_access != None and user_access != Empty %}
+                                    {% if (user_access['group'][1]) %}  
+                                    <th></th>
+                                    {% endif %}                               
+                                    {% endif %}
                                 </tr>
                         </thead>
                         <tbody>
 						 	{% for value in groups %}
                             {% if value != None and  value != Empty %}    
 							<tr>
+                                {% if user_access != None and user_access != Empty %}
+                                {% if (user_access['group'][2]) %}  
 								<td style="text-align: center;"><input type="checkbox" name="chk" value={{value.name}} style="margin: 0px !important;" /></td>
+                                {% endif %}
+                                {% endif %}   
+
                                 <td>{{value.name}}</td>
 
                                 {% if value.access != None and value.access != Empty %} 								
@@ -339,7 +369,11 @@ input[type=checkbox]:before {
                                         {% endif %}
                                     {% endfor %}    
 
-                                <td style="text-align: center;"><button type="button" onclick="EditData(this)" class="edit btn btn-primary login-button" style="margin-top: 0px;" dataid="{{value._id}}" datagroup="{{value.access['group']}}" datauser="{{value.access['user']}}" dataname="{{value.name}}"><i class="fa fa-wrench"> Edit</i></button></td>
+                                    {% if user_access != None and user_access != Empty %}
+                                    {% if (user_access['group'][1]) %}  
+                                    <td style="text-align: center;"><button type="button" onclick="EditData(this)" class="edit btn btn-primary login-button" style="margin-top: 0px;" dataid="{{value._id}}" datagroup="{{value.access['group']}}" datauser="{{value.access['user']}}" dataname="{{value.name}}"><i class="fa fa-wrench"> Edit</i></button></td>
+                                    {% endif %}
+                                    {% endif %}
 
                                 {% else %}
                                     <td style="text-align: center;"><i class="fa fa-close"></i></td>
@@ -350,7 +384,11 @@ input[type=checkbox]:before {
                                     <td style="text-align: center;"><i class="fa fa-close"></i></td>
                                     <td style="text-align: center;"><i class="fa fa-close"></i></td>  
 
+                                    {% if user_access != None and user_access != Empty %}
+                                    {% if (user_access['group'][1]) %}  
                                     <td style="text-align: center;"><button type="button" onclick="EditData(this)" class="edit btn btn-primary login-button" style="margin-top: 0px;" dataid="{{value._id}}" datagroup="[False,False,False]" datauser="[False,False,False]" dataname="{{value.name}}"><i class="fa fa-wrench"> Edit</i></button></td>
+                                    {% endif %}
+                                    {% endif %}
 
                                 {% endif %}   
 
@@ -362,7 +400,11 @@ input[type=checkbox]:before {
                         </tbody>							
 						</table>                      
 						<br>
+                        {% if user_access != None and user_access != Empty %}
+                        {% if (user_access['group'][2]) %} 
 						<button type="submit" class="btn btn-primary login-button">Delete</button>
+                        {% endif %}
+                        {% endif %}
 						</form>
                     </div>
                 </div>
@@ -432,7 +474,7 @@ input[type=checkbox]:before {
            "pageLength": 5,
            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
            });  
-                    
+              
        });
 
        $('#frmTable').submit(function () {

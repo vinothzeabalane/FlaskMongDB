@@ -28,7 +28,8 @@
     <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
 </head>
 
-<body>
+<body>   
+  
     <header class="site-header">
         <div class="main-header" style="padding-top: 0px;padding-bottom: 0px; height: 120px;">
             <div class="container">
@@ -66,9 +67,17 @@
                         <div class="list-menu">
                             <ul>
                                 <li><a href="{{ url_for('dashboard') }}">My Dashboard</a></li>
-                                {% if is_admin %}
-                                <li><a href="{{ url_for('groups') }}">Groups</a></li>
-                                <li><a href="{{ url_for('users') }}">Users</a></li>
+                                {% if user_access != None and user_access != Empty %}
+
+                                {% if (user_access['group'][0]) %}
+                                <li><a href="{{ url_for('groups') }}">Groups</a></li>                                      
+                                {% endif %}
+                               
+                                {% if (user_access['user'][0]) %}
+                                <li><a href="{{ url_for('users') }}">Users</a></li>                                      
+                                {% endif %}
+                                   
+                                                                 
                                 {% endif %}
                                 <li><a href="{{ url_for('bpt') }}">Boot Profile Time</a></li>
                                 <li><a href="{{ url_for('account') }}">My Account</a></li>
@@ -275,12 +284,20 @@ input[type=checkbox]:before {
 						<table id="userTable">
                             <thead>
                              	  <tr>
+                                        {% if user_access != None and user_access != Empty %}
+                                        {% if (user_access['user'][2]) %}
                              			<th style="width:1%">Select</th>
+                                        {% endif %}
+                                        {% endif %}
+
 	                                    <th>UserName</th>
 	                                    <th>Group</th>
-	                                    <th>Password</th>
-	                                    <!-- <th>Admin user?</th> -->
+	                                    <th>Password</th>	                                    
+                                        {% if user_access != None and user_access != Empty %}
+                                        {% if (user_access['user'][1]) %}
                                         <th>Edit</th>
+                                        {% endif %}
+                                        {% endif %}
 								  </tr>
                                 </thead>
                                 <tbody>
@@ -289,11 +306,17 @@ input[type=checkbox]:before {
                                 <tr>
                                 	{% for k,v in value.items() %}
                                 	{% if k == 'username' %}
+
+                                    {% if user_access != None and user_access != Empty %}
+                                    {% if (user_access['user'][2]) %}
                                         {% if (user != value.username) %}
                                 		<td style="text-align: center;"><input style="margin: 0px !important;" type="checkbox" name="chk" value={{v}} /></td>
                                         {% else %}
                                         <td style="text-align: center;"><input style="margin: 0px !important;"  type="checkbox"  name="chk" value={{v}} disabled /></td>
                                         {% endif %}
+                                    {% endif %}
+                                    {% endif %}
+
                                         <td class="tdUsername">{{value.username}}</td>
                                         <td class="tdGroup">{{value.group[0].name}}</td>
                                         {% if (user == value.username) %}
@@ -301,8 +324,11 @@ input[type=checkbox]:before {
                                         {% else %}
                                         <td>xxxxx</td>
                                         {% endif %}
-                                        <td style="text-align: center;"><button type="button" class="edit btn btn-primary login-button" style="margin-top: 0px;" dataid="{{value._id}}" datagroup="{{value.group[0].name}}" datausername="{{value.username}}"><i class="fa fa-wrench"> Edit</i></button></td>
-                                        <!-- {% if (value.is_admin) == "True"  %} <td>Yes</td>  {% else %} <td>No</td> {% endif %} -->
+                                        {% if user_access != None and user_access != Empty %}
+                                        {% if (user_access['user'][1]) %}
+                                        <td style="text-align: center;"><button type="button" class="edit btn btn-primary login-button" style="margin-top: 0px;" dataid="{{value._id}}" datagroup="{{value.group[0].name}}" datausername="{{value.username}}"><i class="fa fa-wrench"> Edit</i></button></td>                                        
+                                        {% endif %}
+                                        {% endif %}
                                 	{% endif %}
                                     {% endfor %}                                    
                                 </tr>
@@ -311,7 +337,11 @@ input[type=checkbox]:before {
                             </tbody>
 						</table>
 						<br>
+                        {% if user_access != None and user_access != Empty %}
+                        {% if (user_access['user'][2]) %}
 						<button type="submit" class="btn btn-primary login-button">Delete</button>
+                        {% endif %}
+                        {% endif %}
 						</form>
 
                     </div>
@@ -354,6 +384,9 @@ input[type=checkbox]:before {
             "pageLength": 5,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]           
             });     
+
+            //debugger;
+            //mytable.column(1).visible(false);
             
             $('#frmTable tbody').off('click').on('click', 'button.edit', function () { // edit token
             var td =  mytable.cell($(this).parents('td')).node();
