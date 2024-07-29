@@ -200,7 +200,7 @@ class MyApp:
                 report = request.form.getlist('view')
                 grid_out = self.gridfsbucket.open_download_stream_by_name(report[0])
                 data = pd.read_excel(grid_out)
-                return render_template('view_bpt.html', excelData=data.to_html())
+                return render_template('view_bpt.html', report_name= report[0], excelData=data.to_html())
         except Exception as e:
             self.app.logger.error(f"Error viewing BPT: {e}")
 
