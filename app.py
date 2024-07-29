@@ -163,8 +163,10 @@ class MyApp:
             group_access = self.conn.users_aggregate_access(username=session['user'])
             if request_user:
                 result = next((item for item in user_aggregate_list if item['_id'] == ObjectId(request_user)), None)
-                if result and result.get('username') == name:
-                    # Perform the action if the username does not match
+                if result and result.get('username') != name:
+                    do_validation = False
+
+                if result.get('group')[0]['name'] != group:
                     do_validation = False
 
             if self.conn.check_user_name(user=name) and do_validation:
