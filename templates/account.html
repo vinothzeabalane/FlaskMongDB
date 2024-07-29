@@ -1,189 +1,85 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>
-<html class="no-js lt-ie9 lt-ie8 lt-ie7">
-   <![endif]-->
-<!--[if IE 7]>
-   <html class="no-js lt-ie9 lt-ie8">
-      <![endif]-->
-<!--[if IE 8]>
-      <html class="no-js lt-ie9">
-         <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js">
-<!--<![endif]-->
-
+<html lang="" class="no-js">
 <head>
-    <meta charset="utf-8">
-    <title>My Account</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,200,400,500,600" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">    
-    <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-</head>
-<title>Flask Pop-up Example</title>
+    {% extends "layout.html" %}
+    <title>{% block title %} My Account {% endblock %}</title>
+    {% block head %}
+    {{ super() }}
     <style>
-        /* Style for pop-up container */
-        .popup-container {            
-            position: fixed;
-            top: 75%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            /* background-color: #e1e1b8; */
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            width: 100%;
-            height: 100%;
-        }
-
-        .fade-out {
-            transition: opacity 0.5s ease;
-            opacity: 1;
-        }
-        .fade-out.fade {
-            opacity: 0;
-        }
-        
-        .field-icon {
-            float: right;
-            margin-left: -25px;
-            margin-top: -25px;
-            position: relative;
-            z-index: 2;
+            .popup-container {            
+                position: fixed;
+                top: 75%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                /* background-color: #e1e1b8; */
+                background-color: #fff;
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+                width: 100%;
+                height: 100%;
             }
-
-            .toggle-password {
+       
+            .field-icon {
                 float: right;
-                cursor: pointer;
-                margin-right: 30%;
-                margin-top: 10px;
+                margin-left: -25px;
+                margin-top: -25px;
+                position: relative;
+                z-index: 2;
             }
 
-            #sWarning, #sMsg{
-                padding-left: 15%;
+            .toggle-password {               
+                margin-right: 30%;                
             }
-        
-</style>
+ 
+    </style>
+    {% endblock %}
+</head>
 <body>
-    <header class="site-header">
-        <div class="main-header" style="padding-top: 0px;padding-bottom: 0px; height: 120px;">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4 col-sm-6 col-xs-8">
-                        <div class="logo">
-                            <h1 style="height: 110px;>
-                                    <a href="#"> <img
-                                       src="{{ url_for('static', filename='img/PS.jpg') }}"
-                                       height="100" width="100" alt="Platform Service" />
-                                    </a>
-                                 </h1>
-                        </div>
-                        <!-- /.logo -->
-                    </div>
-                    <!-- /.col-md-4 -->
-                    <div class="pull-right" style="height: 50px; padding-top: 60px;>
-                        <ul class="menu">
-                            {% if user %}
-                                <input type="hidden" id="hdnPwd" value="{{password}}" />                                
-                            	<img src="{{ url_for('static', filename='img/user.jpg') }}" alt="User" width="30" height="30">
-                            	<a>{{user}}<a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="{{ url_for('logout') }}"> <span class="glyphicon glyphicon-log-out"></span> Log out </a></a>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.container -->
-        </div>
-        <!-- /.main-header -->
-        <div class="main-nav">
-            <div class="container">
-                <div class="row">
-                    <div>
-                        <div class="list-menu">
-                            <ul>
-                                <li><a href="{{ url_for('dashboard') }}">My Dashboard</a></li>
-                                {% if user_access != None and user_access != Empty %}
-
-                                {% if (user_access['group'][0]) %}
-                                <li><a href="{{ url_for('groups') }}">Groups</a></li>                                      
-                                {% endif %}
-                               
-                                {% if (user_access['user'][0]) %}
-                                <li><a href="{{ url_for('users') }}">Users</a></li>                                      
-                                {% endif %}       
-                                                             
-                            {% endif %}
-                                <li><a href="{{ url_for('bpt') }}">Boot Profile Time</a></li>
-                                <li><a href="{{ url_for('account') }}">My Account</a></li>
-                            </ul>
-                        </div>
-                        <!-- /.list-menu -->
-                    </div>
-                    <!-- /.col-md-6 -->
-                </div>
-                <!-- /.row -->
-            </div>
-        </div>
-        <!-- /.container -->
-        <!-- /.main-nav -->
-    </header>
-    <!-- /.site-header -->
+    {% block content %}
     <div class="row">
-
         <div class="container">
-                     
             {% if error %}
             <p class="error"><strong id="sWarning">{{ error }}</strong></p>
             {% else %}
             <p class="error" id="sMsg"></p>
-            {% endif %}   
-            
+            {% endif %}
             {% for mesg in get_flashed_messages() %}
             {% if get_flashed_messages() %}
-            <div id="popup" class="popup-container">                
-                <h4>{{ mesg| safe }}<h4>
-                <p><button onclick="reloadAndRedirect()"  class="btn btn-primary login-button" style="margin-left: 40%;">OK</button></p>                
-            </div>            
+            <div id="popup" class="popup-container">
+                <h4>{{ mesg| safe }}</h4>
+                <p><button id="btnReload" type="button" onclick="reloadAndRedirect()"  class="btn btn-primary login-button">OK</button></p>
+            </div>
             {% endif %}
             {% endfor %}
 
             <form action="{{ url_for('account_update') }}" method="post">
                 <div class="row">
-                    <div class="col-md-12" style="padding-left: 11px;">
+                    <div class="col-md-12 colpanel">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <span class="heading">Update Password</span>
                             </div>
                             <div class="panel-body grey-color">
                                 <div class="row">
-                                    <label><b style="color: #000000;margin-left: -15px;">Current Password</b></label>
-                                    <input type="password" tabindex="1" maxlength="20" id="oldpass" name="oldpass" style="width: 40%;margin-left:6%;" required>
+                                    <label><b class="pwdlabel">Current Password</b></label>
+                                    <input type="password" tabindex="1" maxlength="20" id="oldpass" name="oldpass" required>
                                     <span toggle="#oldpass" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                                 </div>
-                                <br/>
-                                <br/>
+                                <br>
+                                <br>
                                 <div class="row">
-                                    <label><b style="color: black;margin-left: -21px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;New Password</b></label>
-                                    <input type="password" tabindex="2" maxlength="20" id="newpass" name="newpass" style="width: 40%;margin-left:6%;" required>
-                                    <span toggle="#newpass" class="fa fa-fw fa-eye field-icon toggle-password"></span><br><br>                                                                 
+                                    <label><b class="pwdlabel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;New Password</b></label>
+                                    <input type="password" tabindex="2" maxlength="20" id="newpass" name="newpass" required>
+                                    <span toggle="#newpass" class="fa fa-fw fa-eye field-icon toggle-password"></span><br><br>
                                 </div>
-                                <br/>                                
+                                <br>
                                 <div class="row">
-                                    <label><b style="color: black;margin-left: -21px;">Confirm Password</b></label>
-                                    <input type="password" tabindex="3"  maxlength="20" id="conpass" name="conpass" style="width: 40%;margin-left:6%;" required>
-                                    <span toggle="#conpass" class="fa fa-fw fa-eye field-icon toggle-password"></span>   <br><br>                             
+                                    <label><b class="pwdlabel">Confirm Password</b></label>
+                                    <input type="password" tabindex="3"  maxlength="20" id="conpass" name="conpass" required>
+                                    <span toggle="#conpass" class="fa fa-fw fa-eye field-icon toggle-password"></span>   <br><br>
                                 </div>
-                                <div id="password_rules" class="row" style="margin-left: 20px;">
+                                <div id="password_rules" class="row">
                                     <h4>Passwords must meet these requirements:</h4>
                                     <ul>
                                         <li class="password_length">At least 8 characters</li>
@@ -192,7 +88,7 @@
                                         <li class="password_match">New Password and Confirmation must match</li>
                                     </ul>
                                 </div>
-                                    <button type="submit" tabindex="4" class="btn btn-primary login-button" style="margin-left: 40%;">Submit</button>                               
+                                    <button type="submit" tabindex="4" class="btn btn-primary login-button" id="pwdSubmit">Submit</button>
                             </div>
                         </div>
                     </div>
@@ -201,18 +97,12 @@
 
         </div>
     </div>
-
     <div>
     </div>
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.easing-1.3.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    <script>
-      
+    <script>      
         function reloadAndRedirect() {
             // Reload the current page
             window.location.reload();
-
             // Redirect to a different URL after reloading
             window.location.href = '/logout';  // Replace with your desired URL
         }
@@ -220,25 +110,7 @@
         // Function to validate password using jQuery
         function validatePassword(password) {
             // Regular expression to match a strong password
-            var regex = /^(?=.*\d)(?=.*[0-9])(?=.*[A-Z]).{8,}$/;
-            //(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]
-            //alert(regex.test(password));
-            // var regex = new Array();
-            //     regex.push("[A-Z]"); //Uppercase Alphabet.
-            //     //regex.push("[a-z]"); //Lowercase Alphabet.
-            //     regex.push("[0-9]"); //Digit.
-            //     //regex.push("[!@#$%^&*]"); //Special Character.
-            //     var passed = 0;
-            //     for (var i = 0; i < regex.length; i++) {
-            //         if (new RegExp(regex[i]).test(passwordstrength.value)) {
-            //             passed++;
-            //         }
-            //     }
-            //     if(passed > 3)
-            //     alert("valid");
-            // else
-            // alert("not valid");
-
+            var regex = /^(?=.*\d)(?=.*[0-9])(?=.*[A-Z]).{8,}$/;           
             return regex.test(password);
         }
 
@@ -248,7 +120,6 @@
         var newpwd = $.trim($('#newpass').val());
         var conpwd = $.trim($('#conpass').val());
         var loginpwd = $.trim($('#hdnPwd').val());
-             //  alert(loginpwd);
         // Check condition        
         if(loginpwd != oldpwd) {
             $('#sMsg').css('display','block');
@@ -300,6 +171,6 @@
         });
 
     </script>
+    {% endblock %}
 </body>
-
 </html>

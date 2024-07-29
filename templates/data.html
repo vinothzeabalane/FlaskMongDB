@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html lang="" class="no-js">
     <head>
-        <meta charset="utf-8">
-        <title>Test: Report</title>
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="viewport" content="width=device-width">
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+        <title>Test</title>
+        {% extends "layout.html" %}
+        {% block title %} Data {% endblock %}
+        {% block head %}
+        {{ super() }}
+        <style type="text/css">
+          .important { color: #336699; }
+        </style>
+        {% endblock %}
     </head>
     <body>
+        {% block content %}
         <table id="data-table" class="display">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,10 +31,11 @@
             {% endfor %}
             </tbody>
         </table>
-    </body>
         <script>
             $(document).ready(function() {
                 $("#data-table").DataTable();
             });
         </script>
+        {% endblock %}
+    </body>
 </html>

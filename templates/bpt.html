@@ -1,490 +1,297 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>
-<html class="no-js lt-ie9 lt-ie8 lt-ie7">
-   <![endif]-->
-   <!--[if IE 7]>
-   <html class="no-js lt-ie9 lt-ie8">
-      <![endif]-->
-      <!--[if IE 8]>
-      <html class="no-js lt-ie9">
-         <![endif]-->
-         <!--[if gt IE 8]><!-->
-         <html class="no-js">
-            <!--<![endif]-->
-            <head>
-               <meta charset="utf-8">
-               <title>Boot Profile Time: Report</title>
-               <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-               <meta name="description" content="">
-               <meta name="viewport" content="width=device-width, initial-scale=1">
-               <meta name="viewport" content="width=device-width">
-               <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,200,400,500,600" rel="stylesheet">
-               <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-               <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
-               <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
-               <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
-               <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-               <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-               <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>                             
-            </head>
-            <body>
-               <header class="site-header">
-                  <div class="main-header" style="padding-top: 0px;padding-bottom: 0px; height: 120px;">
-                     <div class="container">
-                        <div class="row">
-                           <div class="col-md-4 col-sm-6 col-xs-8">
-                              <div class="logo">
-                                 <h1 style="height: 110px;>
-                                    <a href="#"> <img
-                                    src="{{ url_for('static', filename='img/PS.jpg') }}"
-                                    height="100" width="100" alt="Platform Service" />
-                                    </a>
-                                 </h1>
-                              </div>
-                              <!-- /.logo -->
-                           </div>
-                           <!-- /.col-md-4 -->
-                           <div class="pull-right" style="height: 50px; padding-top: 60px;>
-                              <ul class="menu">
-                              {% if user %}
-                              <img src="{{ url_for('static', filename='img/user.jpg') }}" alt="User" width="30" height="30">
-                              <a>{{user}}<a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="{{ url_for('logout') }}"> <span class="glyphicon glyphicon-log-out"></span> Log out </a></a>
-                              {% endif %}
-                              </ul>
-                           </div>
-                        </div>
-                        <!-- /.row -->
-                     </div>
-                     <!-- /.container -->
-                  </div>
-                  <!-- /.main-header -->
-                  <div class="main-nav">
-                     <div class="container">
-                        <div class="row">
-                           <div>
-                              <div class="list-menu">
-                                 <ul>
-                                    <li><a href="{{ url_for('dashboard') }}">My Dashboard</a></li>
-                                    {% if user_access != None and user_access != Empty %}
-
-                                    {% if (user_access['group'][0]) %}
-                                    <li><a href="{{ url_for('groups') }}">Groups</a></li>                                      
-                                    {% endif %}
-                                   
-                                    {% if (user_access['user'][0]) %}
-                                    <li><a href="{{ url_for('users') }}">Users</a></li>                                      
-                                    {% endif %}
-                                                                 
-                                    {% endif %}
-                                    <li><a href="{{ url_for('bpt') }}">Boot Profile Time</a></li>
-                                    <li><a href="{{ url_for('account') }}">My Account</a></li>
-                                 </ul>
-                              </div>
-                              <!-- /.list-menu -->
-                           </div>
-                           <!-- /.col-md-6 -->
-                        </div>
-                        <!-- /.row -->
-                     </div>
-                  </div>
-                  <!-- /.container -->
-                  <!-- /.main-nav -->
-                  <style>
-                     table, th, td {
-                     border: 1px solid black;
-                     padding-left: 10px;
-                     padding-right: 10px;
-                     text-align: center;
-                     color: black;
-                     }
-                     th {
-                        background-color: lightblue;
-                        color: black;
-                     }
-
-                     select{
-                padding: 7px 10px;
+   <html lang="" class="no-js">
+      <head>
+         {% extends "layout.html" %}
+         <title>{% block title %}Boot Profile Time: Report{% endblock %}</title>
+         {% block head %}
+         {{ super() }}
+         <style>
+            
+            #myInput {
+            background-image: url('/css/searchicon.png'); /* Add a search icon to input */
+            background-position: 10px 12px; /* Position the search icon */
+            background-repeat: no-repeat; /* Do not repeat the icon image */
+            /*width: 100%; Full-width */
+            font-size: 16px; /* Increase font-size */
+            padding: 12px 20px 12px 40px; /* Add some padding */
+            border: 1px solid #ddd; /* Add a grey border */
+            margin-bottom: 12px; /* Add some space below the input */
             }
 
-            input.text{
+            #myTable {
+            border-collapse: collapse; /* Collapse borders */
+            width: 100%; /* Full-width */
+            border: 1px solid #ddd; /* Add a grey border */
+            font-size: 18px; /* Increase font-size */
+            }
+
+            #myTable th, #myTable td {
+            text-align: left; /* Left-align text */
+            padding: 5px; /* Add padding */
+            font-size: 14px;
+            }
+            #myTable th{
+               text-align: center;
+            }
+            #myTable tr {
+            /* Add a bottom border to all table rows */
+            border-bottom: 1px solid #ddd;
+            }
+            #myTable tr.header, #myTable tr:hover {
+            /* Add a grey background color to the table header and on hover */
+            background-color: #818aa2;
+            color: white;
+            }
+          
+            label {
+               float: left;
+               clear: none;
+               display: block;              
+            }
+            
+            input[type=radio],
+            input.radio {
+               float: left;
+               clear: none;
+               margin: 2px 0 0 2px;
+               width: 20px;
+               height: 20px;
+               accent-color: rgb(67, 111, 163);                        
+               border-radius: 50%;
+               background: #e8e8e8;                       
+               border: 3px solid #FFF;
+            }
+          
+            .filter-container {
+               display: flex;
+               flex-wrap: wrap;
+            }
+
+            .filter {
+               flex: 0 0 50%;
+               padding: 10px;
+               margin-left: -8px;
+               width: 20%;
+            }
+
+            
+            input.text {
                width: 322px;
                margin-left: 25px;               
             }
-                  </style>
-                  <style>
-                     #myInput {
-                     background-image: url('/css/searchicon.png'); /* Add a search icon to input */
-                     background-position: 10px 12px; /* Position the search icon */
-                     background-repeat: no-repeat; /* Do not repeat the icon image */
-                     width: 100%; Full-width */
-                     font-size: 16px; /* Increase font-size */
-                     padding: 12px 20px 12px 40px; /* Add some padding */
-                     border: 1px solid #ddd; /* Add a grey border */
-                     margin-bottom: 12px; /* Add some space below the input */
-                     }
-                     #myTable {
-                     border-collapse: collapse; /* Collapse borders */
-                     width: 100%; /* Full-width */
-                     border: 1px solid #ddd; /* Add a grey border */
-                     font-size: 18px; /* Increase font-size */
-                     }
-                     #myTable th, #myTable td {
-                     text-align: left; /* Left-align text */
-                     padding: 5px; /* Add padding */
-                     font-size: 14px;
-                     }
-                     #myTable th{
-                        text-align: center;
-                     }
-                     #myTable tr {
-                     /* Add a bottom border to all table rows */
-                     border-bottom: 1px solid #ddd;
-                     }
-                     #myTable tr.header, #myTable tr:hover {
-                     /* Add a grey background color to the table header and on hover */
-                     background-color: #818aa2;
-                     color: white;
-                     }
-                   
-                     label {
-                        float: left;
-                        clear: none;
-                        display: block;
-                         /*padding: 0px 1em 0px 8px;                        
-                        border-color: rgb(20, 21, 20);
-                        background-color: #818aa2;
-                        border-radius: 100px; */
-                     }
-                     
-                     input[type=radio],
-                     input.radio {
-                        float: left;
-                        clear: none;
-                        margin: 2px 0 0 2px;
-                        width: 20px;
-                        height: 20px;
-                        accent-color: rgb(67, 111, 163);                        
-                        border-radius: 50%;
-                        background: #e8e8e8;                       
-                        border: 3px solid #FFF;
-                     }
-                   
-                     .filter-container {
-                        display: flex;
-                        flex-wrap: wrap;
-                        }
 
-                        .filter {
-                        flex: 0 0 50%;
-                        padding: 10px;
-                        margin-left: -8px;
-                        }
-
-                        select {
-                           color: #222;
-                           width: 41% !important;
-                        }
-
-                        input[type="search"] {                    
-                     padding: 7px 10px;             
-                  }  
-
-                  fieldset {
-                  display: block;
-                  margin-inline-start: 2px;
-                  margin-inline-end: 2px;
-                  padding-block-start: 1.35em;
-                  padding-inline-start: 6.75em;
-                  padding-inline-end: 0.75em;
-                  padding-block-end: 1.625em;
-                  min-inline-size: min-content;
-                  border-width: 2px;
-                  border-style: groove;
-                  border-color: rgb(192, 192, 192);
-                  border-image: initial;
-               }
-
-               /* legend {
-                  display: block;
-                  padding-inline-start: 2px;
-                  padding-inline-end: 2px;
-                  unicode-bidi: isolate;
-                  border-width: initial;
-                  border-style: none;
-                  border-color: initial;
-                  border-image: initial;
-                  width: 50%;
-               } */
-
-         .tooltiphelp {
-            position: relative;
-            display: inline-block;   
-            padding-top: 8px;        
+            fieldset {
+               display: block;
+               margin-inline-start: 2px;
+               margin-inline-end: 2px;
+               padding-block-start: 1.35em;
+               padding-inline-start: 6.75em;
+               padding-inline-end: 0.75em;
+               padding-block-end: 1.625em;
+               min-inline-size: min-content;
+               border-width: 2px;
+               border-style: groove;
+               border-color: rgb(192, 192, 192);
+               border-image: initial;
             }
 
-         .tooltiphelp .tooltiptexthelp {
-         
-         width: 245px;
-         background-color: black;
-         color: #fff;
-         text-align: center;
-         border-radius: 6px;
-         padding: 7px 0;
+            legend {
+               display: none;
+            }
 
-         /* Position the tooltip */
-         position: absolute;
-         z-index: 1;
-         display: none;         
-         }
+            .tooltiphelp {
+               position: relative;
+               display: inline-block;   
+               padding-top: 8px;        
+            }
 
-         .tooltiphelp:hover .tooltiptexthelp {
-         visibility: visible;
-         display: block;
-         opacity: 5;
-         }
+            .tooltiphelp .tooltiptexthelp {
+               width: 245px;
+               background-color: black;
+               color: #fff;
+               text-align: center;
+               border-radius: 6px;
+               padding: 7px 0;
 
-                </style>
-               </header>
-               <!-- /.site-header -->
-               <div class="row">
-                  <div class="container">
-                     <div class="panel panel-default">
-                        <div class="panel-heading">
-                           <!-- <span class="heading">Available Reports</span> -->
-                        </div>
-                        <div class="panel-body grey-color">
-                           <div class="row" style="padding-left: 25px; margin-right: 5px;">
-                              <form id="frmbpt" action="{{ url_for('view_bpt') }}" method="post" target="_blank">  
-                                 <fieldset>
-                                 <!-- <legend>Filter with 2 months date range:</legend> -->
-                                 <div class="filter-container">
-                                    <label style="padding-top: 8px;">From:&nbsp;&nbsp;&nbsp;</label>
-                                    <input id="StartDate" name="StartDate" style="width: 25%;" size="16" type="text"/>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                       <label style="padding-top: 8px;">To:&nbsp;&nbsp;&nbsp;</label>
-                                    <input id="EndDate" name="EndDate" style="width: 25%;" size="16" type="text"/>
-                                    &nbsp;&nbsp;&nbsp;<div class="tooltiphelp"><i class="fa fa-info-circle" style="color: purple;"></i><span class="tooltiptexthelp">You can select any Start and End date with the maximum range of 2 months.</span></div>
-                                    &nbsp;&nbsp;&nbsp;<button type="submit" onclick="changeFormAttr(this)" name="filter" class="btn btn-primary login-button" id="btnFilter" style="margin-top: 0px;" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
-                                 </div>
-                                 </fieldset>
-                                 <br/>
-                                 <div class="filter-container">
-                                     <!-- <div class="filter" style="width: 20%;">
-                                    <input type="radio" id="chkspi" name="chkflow" value="spi" onchange="filterTable(this)" />
-                                    <label for="spi">SPI Flow</label>
-                                    <input type="radio" id="chkeb0" name="chkflow" value="eb0"  onchange="filterTable(this)"/>
-                                    <label for="eb0">EB0 Flow</label>
-                                    <input type="radio" id="chkall" name="chkflow" value="all"  onchange="filterTable(this)" checked/>
-                                    <label for="all">All</label>  
-                                    </div>
-                                    <div class="filter">                           
-                                    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for reports.." title="Type in a report name">
-                                    </div> -->
-                                    <div class="filter" style="width: 20%;">
-                                       <input type="radio" id="chkspi" name="chkflow" value="spi"  />
-                                       <label for="spi" style="padding: 0px 1em 0px 8px;">SPI Flow</label>
-                                       <input type="radio" id="chkeb0" name="chkflow" value="eb0" />
-                                       <label for="eb0" style="padding: 0px 1em 0px 8px;">EB0 Flow</label>
-                                       <input type="radio" id="chkall" name="chkflow" value="all"  checked/>
-                                       <label for="all" style="padding: 0px 1em 0px 8px;">All</label>  
-                                       </div>
-                                 </div>
-                                 <table id="myTable">
-                                    <thead>
-                                       <tr>
-                                          <th>Items</th>                                         
-                                          <th>Report</th>                                         
-                                          <th>View</th>
-                                          <th>Download</th>
-                                          <th>Commit ID</th>
-                                          <th>Date</th>                                         
-                                          <th style="display: none;">Flow</th>
-                                       </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for value in bpt %}
-                                    {% if value != None and value != Empty%}    
-                                    <tr>
-                                       <td style="text-align: center;">{{loop.index}}</td>                                                                                   
-                                       {% for k,v in value.items() %}                                      
-                                       {% if k == 'name' %}     
-                                       <td>{{v}}</td>                                       
-                                       <td style="text-align: center;"><button name="view" style="margin-top: 0px;" class="btn btn-primary login-button" title="View" value={{v}} type="submit" onclick="changeFormAttr(this)">View</button></td>
-                                       <td style="text-align: center;"><button name="download" style="margin-top: 0px;" class="btn btn-primary login-button" title="Download" value={{v}} type="submit" onclick="changeFormAttr(this)">Download</button></td>
-                                       {% endif %}    
-                                       {% if k == 'data' %}          
-                                       <td>{{v.commit_id}}</td>                                  
-                                       {% if (v.is_spiflow == True) %}
-                                       <td class="spi">{{v.date}}</td>
-                                       <td style="display: none;">spi</td>      
-                                       {% elif (v.is_eb0flow == True) %}
-                                       <td class="eb0">{{v.date}}</td> 
-                                       <td style="display: none;">eb0</td>                                                                              
-                                       {% else %}
-                                       <td class="all">{{v.date}}</td>
-                                       <td style="display: none;">all</td>  
-                                       {% endif %}                                                                
-                                       {% endif %}                                                                              
-                                       {% endfor %}
-                                    </tr>
-                                    {% endif %}
-                                    {% endfor %}
-                                 </tbody>
-                                 </table>
-                                 <br>                                                         
-                              </form>                         
+               /* Position the tooltip */
+               position: absolute;
+               z-index: 1;
+               display: none;         
+            }
+
+            .tooltiphelp:hover .tooltiptexthelp {
+               visibility: visible;
+               display: block;
+               opacity: 5;
+            }
+
+            .tooltiphelp i {
+              color: purple;
+            }
+
+            .filter label {
+               padding: 0px 1em 0px 8px;
+            }
+         </style>
+         {% endblock %}
+      </head>
+      <body>
+         {% block content %}
+         <div class="row">
+            <div class="container">
+               <div class="panel panel-default">
+                  <div class="panel-heading">
+                     <!-- <span class="heading">Available Reports</span> -->
+                  </div>
+                  <div class="panel-body grey-color">
+                     <div class="row clsbptrow">
+                        <form id="frmbpt" action="{{ url_for('view_bpt') }}" method="post" target="_blank">
+                           <fieldset>
+                           <legend>&nbsp;</legend>
+                           <div class="filter-container">
+                              <label class="lblDate">From:&nbsp;&nbsp;&nbsp;</label>
+                              <input id="StartDate" name="StartDate" size="16" type="text">
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                 <label class="lblDate">To:&nbsp;&nbsp;&nbsp;</label>
+                              <input id="EndDate" name="EndDate" size="16" type="text">
+                              &nbsp;&nbsp;&nbsp;<div class="tooltiphelp"><i class="fa fa-info-circle"></i><span class="tooltiptexthelp">You can select any Start and End date with the maximum range of 2 months.</span></div>
+                              &nbsp;&nbsp;&nbsp;<button type="submit" onclick="changeFormAttr(this)" name="filter" class="btn btn-primary login-button" id="btnFilter" style="margin-top: 0px;" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
                            </div>
-                        </div>
+                           </fieldset>
+                           <br>
+                           <div class="filter-container">
+                              <div class="filter">
+                                 <input type="radio" id="chkspi" name="chkflow" value="spi"  >
+                                 <label for="spi">SPI Flow</label>
+                                 <input type="radio" id="chkeb0" name="chkflow" value="eb0" >
+                                 <label for="eb0">EB0 Flow</label>
+                                 <input type="radio" id="chkall" name="chkflow" value="all"  checked>
+                                 <label for="all">All</label>
+                                 </div>
+                           </div>
+                           <table id="myTable">
+                              <thead>
+                                 <tr>
+                                    <th scope="col">Items</th>
+                                    <th scope="col">Report</th>
+                                    <th scope="col">View</th>
+                                    <th scope="col">Download</th>
+                                    <th scope="col">Commit ID</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col" style="display: none;">Flow</th>
+                                 </tr>
+                              </thead>
+                              <tbody>
+                              {% for value in bpt %}
+                              {% if value != None and value != Empty%}
+                              <tr>
+                                 <td class="centerCol">{{loop.index}}</td>
+                                 {% for k,v in value.items() %}
+                                 {% if k == 'name' %}
+                                 <td>{{v}}</td>
+                                 <td class="centerCol"><button name="view" class="btn btn-primary login-button" title="View" value="{{v}}" type="submit" onclick="changeFormAttr(this)">View</button></td>
+                                 <td class="centerCol"><button name="download"  class="btn btn-primary login-button" title="Download" value="{{v}}" type="submit" onclick="changeFormAttr(this)">Download</button></td>
+                                 {% endif %}
+                                 {% if k == 'data' %}
+                                 <td>{{v.commit_id}}</td>
+                                 {% if (v.is_spiflow == True) %}
+                                 <td class="spi">{{v.date}}</td>
+                                 <td style="display: none;">spi</td>
+                                 {% elif (v.is_eb0flow == True) %}
+                                 <td class="eb0">{{v.date}}</td>
+                                 <td style="display: none;">eb0</td>
+                                 {% else %}
+                                 <td class="all">{{v.date}}</td>
+                                 <td style="display: none;">all</td>
+                                 {% endif %}
+                                 {% endif %}
+                                 {% endfor %}
+                              </tr>
+                              {% endif %}
+                              {% endfor %}
+                           </tbody>
+                           </table>
+                           <br>
+                        </form>
                      </div>
                   </div>
                </div>
-               <div>
-               </div>
-               <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-               <script src="{{ url_for('static', filename='js/jquery.easing-1.3.js') }}"></script>
-               <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-               <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>               
-               <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-               <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-               <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-               <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
-               <script>     
-               
-               
-               function changeFormAttr(selValue){
-                   //alert(selValue.name);
-                  var sData = selValue.name;
-                  var sTarget = sData == "view"  ? "_blank" : "_self";
-                 // var sAction = sData == "view"  ? "{{ url_for('view_bpt') }}" : "{{ url_for('download_bpt') }}";                 
-                 var sAction = "";
-                 if(sData == "view")
-                  sAction = "{{ url_for('view_bpt') }}";
-                  else if(sData == "download")
-                     sAction ="{{ url_for('download_bpt') }}";
-                   else
-                     sAction ="{{ url_for('bpt') }}";
-            
-                  document.getElementById("frmbpt").setAttribute("target",sTarget);
-                  document.getElementById("frmbpt").setAttribute("action",sAction);               
-               }
+            </div>
+         </div>
+         <script>              
+         function changeFormAttr(selValue){
+               //alert(selValue.name);
+            var sData = selValue.name;
+            var sTarget = sData == "view"  ? "_blank" : "_self";            
+            var sAction = "";
+            if(sData == "view")
+            sAction = "{{ url_for('view_bpt') }}";
+            else if(sData == "download")
+               sAction ="{{ url_for('download_bpt') }}";
+               else
+               sAction ="{{ url_for('bpt') }}";
+      
+            document.getElementById("frmbpt").setAttribute("target",sTarget);
+            document.getElementById("frmbpt").setAttribute("action",sAction);               
+         }
 
-                  // function checkSelection(cBox){
-                  // var array = []
-                  // var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
-                  // if(checkboxes.length> 1){
-                  //   alert("Please select only one option at a time!");
-                  //   cBox.checked = false;
-                  // }
-                  // }
 
-                  // function filterTable(sOption){
-                  //    var sValue, table, tr, td;
-                  //    sValue = sOption.value;
-                  //    //alert(sValue);
-                  //    table = document.getElementById("myTable");
-                  //    tr = table.getElementsByTagName("tr"); 
-                   
-                  //       for (i = 1; i < tr.length; i++) {
-                  //          //debugger;
-                  //           td = tr[i].cells[4];                        
-                  //           if (td) {                              
-                  //             if (td.className == sValue) {
-                  //               tr[i].style.display = "";
-                  //             } else {
-                  //               tr[i].style.display = ( sValue == 'all'? "": "none");
-                  //             }
-                  //           }       
-                  //         }                                           
-                  // }
+                  $(document).ready(function() {
 
-                     //  function myFunction() {
-                        //   var input, filter, table, tr, td, i, txtValue;
-                        //   input = document.getElementById("myInput");
-                        //   filter = input.value.toUpperCase();
-                        //   table = document.getElementById("myTable");
-                        //   tr = table.getElementsByTagName("tr");
-                        //   for (i = 1; i < tr.length; i++) {
-                        //     td = tr[i];
-                        //   //   td = tr[i].textContent
-                        //     if (td){
-                        //       txtValue = td.textContent|| td.innerText;
-                        //       if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        //         tr[i].style.display = "";
-                        //       } else {
-                        //         tr[i].style.display = "none";
-                        //       }
-                        //     }       
-                        //   }
-                        // }
+                     $("#StartDate").datepicker({     
+                        changeMonth: true,
+                        changeYear: true,
+                        dateFormat: 'yy-mm-dd',                               
+                        onSelect: function (selectedDate) {
+                           var orginalDate = new Date(selectedDate);
+                           var monthsAddedDate = new Date(new Date(orginalDate).setMonth(orginalDate.getMonth() + 2));
+                           //alert(monthsAddedDate);
+                           $("#EndDate").datepicker("option", 'minDate', selectedDate);
+                           $("#EndDate").datepicker("option", 'maxDate', monthsAddedDate);
+                        }
+                  });
 
-                        $(document).ready(function() {
+                  $("#EndDate").datepicker({  
+                     changeMonth: true,
+                     changeYear: true,                           
+                     dateFormat: 'yy-mm-dd',                                                         
+                        onSelect: function (selectedDate) {
+                           var orginalDate = new Date(selectedDate);
+                           var monthsAddedDate = new Date(new Date(orginalDate).setMonth(orginalDate.getMonth() - 2));
+                           //alert(monthsAddedDate);
+                           $("#StartDate").datepicker("option", 'minDate', monthsAddedDate);
+                           $("#StartDate").datepicker("option", 'maxDate', selectedDate);
+                        }
+                  })
 
-                           // $("#StartDate").datepicker({
-                           //    numberOfMonths: 1,
-                           //    onSelect: function(selected) {
-                           //       $("#EndDate").datepicker("option","minDate", selected)
-                           //    }
-                           // });
-                           $("#StartDate").datepicker({     
-                              changeMonth: true,
-                              changeYear: true,
-                              dateFormat: 'yy-mm-dd',                               
-                              onSelect: function (selectedDate) {
-                                 var orginalDate = new Date(selectedDate);
-                                 var monthsAddedDate = new Date(new Date(orginalDate).setMonth(orginalDate.getMonth() + 2));
-                                 //alert(monthsAddedDate);
-                                 $("#EndDate").datepicker("option", 'minDate', selectedDate);
-                                 $("#EndDate").datepicker("option", 'maxDate', monthsAddedDate);
-                              }
-                        });
+                  var d = new Date();
+                  d.setMonth(d.getMonth() - 2);
+                  $('#StartDate').datepicker('setDate', d);
+                  $('#EndDate').datepicker('setDate', new Date());
+                    
+                     var table = $("#myTable").DataTable({                                                    
+                     "pageLength": 10,
+                     lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
+                     });    
+                     
+                     $('input:radio').on('change', function () {
+                     //build a regex filter string with an or(|) condition
+                     var flowtype = $('input:radio[name="chkflow"]:checked').map(function() {
+                     return '^' + this.value + '$';
+                     }).get().join('|');
+                     
+                     //alert(flowtype);
 
-                        $("#EndDate").datepicker({  
-                           changeMonth: true,
-                           changeYear: true,                           
-                           dateFormat: 'yy-mm-dd',                                                         
-                              onSelect: function (selectedDate) {
-                                 var orginalDate = new Date(selectedDate);
-                                 var monthsAddedDate = new Date(new Date(orginalDate).setMonth(orginalDate.getMonth() - 2));
-                                 //alert(monthsAddedDate);
-                                 $("#StartDate").datepicker("option", 'minDate', monthsAddedDate);
-                                 $("#StartDate").datepicker("option", 'maxDate', selectedDate);
-                              }
-                        })
+                     //filter in column 1, with an regex, no smart filtering, not case sensitive
+                     if(flowtype != '^all$')
+                        table.column(6).search(flowtype, true, false).draw();
+                     else                              
+                        table.column(6).search( '^.+$', true, false ).draw();                           
+                     });  
 
-                        var d = new Date();
-                        d.setMonth(d.getMonth() - 2);
-                        $('#StartDate').datepicker('setDate', d);
-                        $('#EndDate').datepicker('setDate', new Date());
-                           // $("#EndDate").datepicker({ 
-                           //    numberOfMonths: 1,
-                           //    onSelect: function(selected) {
-                           //       $("#StartDate").datepicker("option","maxDate", selected)
-                           //    }
-                           // });  
-                           
-                          // alert('hi');
-                          var table = $("#myTable").DataTable({                                                    
-                           "pageLength": 10,
-                           lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
-                          });    
-                          
-                          $('input:radio').on('change', function () {
-                           //build a regex filter string with an or(|) condition
-                           var flowtype = $('input:radio[name="chkflow"]:checked').map(function() {
-                           return '^' + this.value + '$';
-                           }).get().join('|');
-                           
-                           //alert(flowtype);
+                  });                        
 
-                           //filter in column 1, with an regex, no smart filtering, not case sensitive
-                           if(flowtype != '^all$')
-                              table.column(6).search(flowtype, true, false).draw();
-                           else                              
-                              table.column(6).search( '^.+$', true, false ).draw();                           
-                         });  
-
-                        });                        
-
-               </script>            
-            </body>
-         </html>
+         </script>
+          {% endblock %}
+      </body>
+   </html>

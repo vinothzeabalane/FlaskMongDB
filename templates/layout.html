@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+    <html lang="" class="no-js">
+      <head>
+        {% block head %}
+        <meta charset="utf-8">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,200,400,500,600" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">        
+        <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/jquery.easing-1.3.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+        <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/mystyle.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='js/myscript.js') }}">
+        <title>{% block title %}{% endblock %}</title>
+        {% endblock %}
+      </head>
+      <body>
+        <header class="site-header">
+          <div class="main-header">
+              <div class="container">
+                  <div class="row">
+                      <div class="col-md-4 col-sm-6 col-xs-8">
+                          <div class="logo">
+                              <h1 id="headline">
+                                    <a href="#"> <img
+                                        src="{{ url_for('static', filename='img/PS.jpg') }}"
+                                        height="100" width="100" alt="Platform Service">
+                                    </a>
+                              </h1>
+                          </div>
+                          <!-- /.logo -->
+                      </div>
+                      <!-- /.col-md-4 -->
+                      <div class="pull-right" id="divLogin">
+                          <ul class="menu">
+                            <li>
+                              {% if user %}
+                                <input type="hidden" id="hdnPwd" value="{{password}}">
+                                <img src="{{ url_for('static', filename='img/user.jpg') }}" alt="User" width="30" height="30">
+                                <a href="void(0)">{{user}}</a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="{{ url_for('logout') }}"> <span class="glyphicon glyphicon-log-out"></span> Log out </a>
+                              {% endif %}
+                            </li>
+                          </ul>
+                      </div>
+                  </div>
+                  <!-- /.row -->
+              </div>
+              <!-- /.container -->
+          </div>
+          <!-- /.main-header -->
+          <div class="main-nav">
+              <div class="container">
+                  <div class="row">
+                      <div>
+                          <div class="list-menu">
+                              <ul>
+                                  <li><a href="{{ url_for('dashboard') }}">My Dashboard</a></li>
+                                  {% if user_access != None and user_access != Empty %}
+
+                                  {% if (user_access['group'][0]) %}
+                                  <li><a href="{{ url_for('groups') }}">Groups</a></li>
+                                  {% endif %}
+
+                                  {% if (user_access['user'][0]) %}
+                                  <li><a href="{{ url_for('users') }}">Users</a></li>
+                                  {% endif %}
+
+                                  {% endif %}
+                                  <li><a href="{{ url_for('bpt') }}">Boot Profile Time</a></li>
+                                  <li><a href="{{ url_for('account') }}">My Account</a></li>
+                              </ul>
+                          </div>
+                          <!-- /.list-menu -->
+                      </div>
+                      <!-- /.col-md-6 -->
+                  </div>
+                  <!-- /.row -->
+              </div>
+          </div>
+          <!-- /.container -->
+          <!-- /.main-nav -->
+        </header>
+        <div id="content">{% block content %}{% endblock %}</div>
+        <div id="footer">
+          {% block footer %}
+          &copy; Copyright 2024 by <a href="http://domain.invalid/">Omprakash Zeabalane</a>.
+          {% endblock %}
+        </div>
+      </body>
+    </html>
+       

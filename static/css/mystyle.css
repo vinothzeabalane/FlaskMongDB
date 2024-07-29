@@ -1,0 +1,163 @@
+#headline {
+    height: 110px;
+}
+
+#divLogin {
+    height: 50px; 
+    padding-top: 60px;
+}
+
+.main-header {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    height: 120px;
+}
+
+#btnReload {
+    margin-left: 40%;
+}
+
+#pwdSubmit {
+     margin-left: 40%;
+}
+
+.pwdlabel {
+    color: black;margin-left: -21px;
+}
+
+#oldpass, #newpass , #conpass {
+    width: 40%;margin-left:6%;
+}
+
+.colpanel {
+    padding-left: 11px;
+}
+
+#StartDate, #EndDate {
+    width: 25%;
+}
+
+.lblDate {
+    padding-top: 8px;
+}
+
+.clsbptrow {
+    padding-left: 25px; margin-right: 5px;
+}
+
+table, th, td {
+    border: 1px solid black;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: center;
+    color: black;
+}
+
+th {
+    background-color: lightblue;
+    color: black;
+}
+
+select {
+    padding: 7px 10px;
+    width: 41%;
+}
+
+input[type="search"] {
+    padding: 7px 10px;
+}
+
+.toggle-password {
+    float: right;
+    cursor: pointer;   
+    margin-top: 10px;
+}
+
+.alert {
+    padding: 20px;
+    background-color: #f44336;
+    margin-top: 20px;
+    color: white;
+}
+.closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.closebtn:hover {
+    color: black;
+}
+
+.centerCol {
+    text-align: center !important;
+}
+
+.centerCol button {
+    margin-top: 0px !important;
+}
+
+.centerCol input {
+    margin: 0px !important;
+}
+
+input[type=checkbox] {
+    position: relative;
+    border: 2px solid #000;
+    border-radius: 2px;
+    background: none;
+    cursor: pointer;
+    line-height: 0;
+    margin:0px 5.6em 0px 0px;;
+    outline: 0;
+    padding: 0 !important;
+    vertical-align: text-top;
+    height: 20px;
+    width: 20px;
+    -webkit-appearance: none;
+    opacity: .5;
+}
+
+input[type=checkbox]:hover {
+    opacity: 1;
+}
+
+input[type=checkbox]:checked {
+    background-color: #2981c9;
+    opacity: 1;
+}
+
+input[type=checkbox]:before {
+    content: '';
+    position: absolute;
+    right: 50%;
+    top: 50%;
+    width: 4px;
+    height: 10px;
+    border: solid #FFF;
+    border-width: 0 2px 2px 0;
+    margin: -1px -1px 0 -1px;
+    transform: rotate(45deg) translate(-50%, -50%);
+    z-index: 2;
+}
+
+#sWarning, #sMsg {
+    padding-left: 15%;
+}   
+
+.userpanel b {
+    padding-left: 20px !important; color: black;
+}
+
+.alert strong {
+    color:white; padding-left: 20%;
+}
+
+.headerCol {
+    width:1%
+}

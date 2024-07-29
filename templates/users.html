@@ -1,263 +1,110 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>
-<html class="no-js lt-ie9 lt-ie8 lt-ie7">
-   <![endif]-->
-<!--[if IE 7]>
-   <html class="no-js lt-ie9 lt-ie8">
-      <![endif]-->
-<!--[if IE 8]>
-      <html class="no-js lt-ie9">
-         <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js">
-<!--<![endif]-->
-
+<html lang="" class="no-js">
 <head>
-    <meta charset="utf-8">
-    <title>Users</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,200,400,500,600" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="{{ url_for('static', filename='js/vendor/modernizr-2.6.2.min.js') }}"></script>
+    {% extends "layout.html" %}
+    <title>{% block title %} Users {% endblock %}</title>
+    {% block head %}
+    {{ super() }}
+    <style>
+        #userTable {
+            border-collapse: collapse; /* Collapse borders */
+            width: 100%; /* Full-width */
+            font-size: 18px; /* Increase font-size */
+        }
+        #userTable th, #userTable td {
+            text-align: left; /* Left-align text */
+            padding: 5px; /* Add padding */
+            font-size: 14px;
+            color: black;
+        }
+        #userTable th{
+          text-align: center;
+        }
+        #userTable tr {
+        /* Add a bottom border to all table rows */
+         border-bottom: 1px solid #ddd;
+        }
+        #userTable tr.header, #userTable tr:hover {
+            /* Add a grey background color to the table header and on hover */
+            background-color: #818aa2;
+            color: white;
+        }
+
+        .toggle-password {                
+            margin-right: 15%;               
+        }
+
+        #txtUsername, #txtpwd {
+            width: 30%;margin-left: 25px;
+        }
+
+        #ddlGroup {
+            width: 30%;margin-left: 10px;
+        }
+
+        #btnAdd {
+            margin-left: 44%;
+        }
+
+        .divUserTable {
+            padding-left: 25px; margin-right:10px;
+        }
+
+        .pwdpanel {
+            margin-left: 50%; margin-top:-6%;
+        }
+   </style>
+    {% endblock %}
 </head>
-
-<body>   
-  
-    <header class="site-header">
-        <div class="main-header" style="padding-top: 0px;padding-bottom: 0px; height: 120px;">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4 col-sm-6 col-xs-8">
-                        <div class="logo">
-                            <h1 style="height: 110px;>
-                                    <a href="#"> <img
-                                       src="{{ url_for('static', filename='img/PS.jpg') }}"
-                                       height="100" width="100" alt="Platform Service" />
-                                    </a>
-                                 </h1>
-                        </div>
-                        <!-- /.logo -->
-                    </div>
-                    <!-- /.col-md-4 -->
-                    <div class="pull-right" style="height: 50px; padding-top: 60px;>
-                        <ul class="menu">
-                            {% if user %}
-                            	<img src="{{ url_for('static', filename='img/user.jpg') }}" alt="User" width="30" height="30">
-                            	<a>{{user}}<a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="{{ url_for('logout') }}"> <span class="glyphicon glyphicon-log-out"></span> Log out </a></a>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.container -->
-        </div>
-        <!-- /.main-header -->
-        <div class="main-nav">
-            <div class="container">
-                <div class="row">
-                    <div>
-                        <div class="list-menu">
-                            <ul>
-                                <li><a href="{{ url_for('dashboard') }}">My Dashboard</a></li>
-                                {% if user_access != None and user_access != Empty %}
-
-                                {% if (user_access['group'][0]) %}
-                                <li><a href="{{ url_for('groups') }}">Groups</a></li>                                      
-                                {% endif %}
-                               
-                                {% if (user_access['user'][0]) %}
-                                <li><a href="{{ url_for('users') }}">Users</a></li>                                      
-                                {% endif %}
-                                   
-                                                                 
-                                {% endif %}
-                                <li><a href="{{ url_for('bpt') }}">Boot Profile Time</a></li>
-                                <li><a href="{{ url_for('account') }}">My Account</a></li>
-                            </ul>
-                        </div>
-                        <!-- /.list-menu -->
-                    </div>
-                    <!-- /.col-md-6 -->
-                </div>
-                <!-- /.row -->
-            </div>
-        </div>
-        <!-- /.container -->
-        <!-- /.main-nav -->
-
-        <style>
-                     #userTable {
-                     border-collapse: collapse; /* Collapse borders */
-                     width: 100%; /* Full-width */
-                     font-size: 18px; /* Increase font-size */
-                     }
-                     #userTable th, #userTable td {
-                     text-align: left; /* Left-align text */
-                     padding: 5px; /* Add padding */
-                     font-size: 14px;
-                     color: black;
-                     }
-                     #userTable th{
-                        text-align: center;
-                     }
-                     #userTable tr {
-                     /* Add a bottom border to all table rows */
-                     border-bottom: 1px solid #ddd;
-                     }
-                     #userTable tr.header, #userTable tr:hover {
-                     /* Add a grey background color to the table header and on hover */
-                     background-color: #818aa2;
-                     color: white;
-                     }
-
-                     table, th, td {
-                     border: 1px solid black;
-                     padding-left: 10px;
-                     padding-right: 10px;
-                     text-align: center;
-                     }
-                     th {
-                        background-color: lightblue;
-                        color: black;
-                     }
-
-            select{
-                padding: 7px 10px;
-                width: 41%;
-            }
-
-            input[type="search"] {
-                padding: 7px 10px;
-            }
-
-            .alert {
-                padding: 20px;
-                background-color: #f44336;
-                margin-top: 20px;
-                color: white;
-            }
-            .closebtn {
-                margin-left: 15px;
-                color: white;
-                font-weight: bold;
-                float: right;
-                font-size: 22px;
-                line-height: 20px;
-                cursor: pointer;
-                transition: 0.3s;
-            }
-
-            .closebtn:hover {
-                color: black;
-            }
-            .toggle-password {
-                float: right;
-                cursor: pointer;
-                margin-right: 15%;
-                margin-top: 10px;
-            }
-
-            input[type=checkbox] {
-  position: relative;
-	border: 2px solid #000;
-	border-radius: 2px;
-	background: none;
-	cursor: pointer;
-	line-height: 0;
-	margin:0px 5.6em 0px 0px;;
-	outline: 0;
-	padding: 0 !important;
-	vertical-align: text-top;
-	height: 20px;
-	width: 20px;
-	-webkit-appearance: none;
-  opacity: .5;
-}
-
-input[type=checkbox]:hover {
-  opacity: 1;
-}
-
-input[type=checkbox]:checked {
-  background-color: #2981c9;
-  opacity: 1;
-}
-
-input[type=checkbox]:before {
-  content: '';
-  position: absolute;
-  right: 50%;
-  top: 50%;
-  width: 4px;
-  height: 10px;
-  border: solid #FFF;
-  border-width: 0 2px 2px 0;
-  margin: -1px -1px 0 -1px;
-  transform: rotate(45deg) translate(-50%, -50%);
-  z-index: 2;
-}
-
-	   </style>
-    </header>
-    <!-- /.site-header -->
+<body>
+    {% block content %}
     <div class="row">
         <div class="container">
             {% if error %}
-            <p class="error"><strong id="sWarning" style="padding-left: 15%;">{{ error }}</strong></p>
-            {% endif %}  
-
-            {% if warning %}
+            <p class="error"><strong id="sWarning">{{ error }}</strong></p>
+            {% elif warning %}
 	        <div class="alert">
 	  			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-	  			<strong style="color:white; padding-left: 20%;">Warning!&nbsp;&nbsp;&nbsp;</strong> User Name already exits .
+	  			<strong>Warning!&nbsp;&nbsp;&nbsp;</strong> User Name already exists.
 			</div>
             {% else %}
-            <p class="error" id="sMsg" style="padding-left: 20%;"></p>
+            <p class="error" id="sMsg"></p>
             {% endif %}
 
             {% if user_access != None and user_access != Empty %}
             {% if (user_access['user'][1]) %}
-            <form id="frmAdd" action="{{ url_for('create_user') }}" method="post" autocomplete='off'>
+            <form id="frmAdd" action="{{ url_for('create_user') }}" method="post" autocomplete="off">
                 <div class="row">
-                    <input type="hidden" id="hdnUserID" name="hdnUserID" value=""/>
-                    <div class="col-md-12" style="padding-left: 11px;">
+                    <input type="hidden" id="hdnUserID" name="hdnUserID" value="">
+                    <div class="col-md-12 colpanel">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <span class="heading">Add/Edit Users</span>
                             </div>
                             <div class="panel-body grey-color">
-                                <div class="row">
-                                    <label><b style="padding-left: 20px; color: black;">UserName</b></label>
-                                    <input type="text" id="txtUsername" tabindex="1" name="username" maxlength="50" style="width: 30%;margin-left: 25px;" required>
+                                <div class="row userpanel">
+                                    <label><b>UserName</b></label>
+                                    <input type="text" id="txtUsername" tabindex="1" name="username" maxlength="50" required>
 
-                                    <label id="lblpwd"><b style="padding-left: 20px; color: #000000;">Password</b></label>
-                                    <input type="password" id="txtpwd" autocomplete="new-password" class="myDIV"  tabindex="2" maxlength="20" name="password" style="width: 30%;margin-left: 25px;" required>
+                                    <label id="lblpwd"><b>Password</b></label>
+                                    <input type="password" id="txtpwd" autocomplete="new-password" class="myDIV"  tabindex="2" maxlength="20" name="password"  required>
                                     <span id="spnpwd" toggle="#txtpwd" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                                     <br>
                                     <br>
 
-                                    <label><b style="padding-left: 20px; color: black;">Group Name</b></label>
-
-                                    <select id="ddlGroup" style="width: 30%;margin-left: 10px;" tabindex="3"  name="group" required>
+                                    <label><b>Group Name</b></label>
+                                    <select id="ddlGroup" tabindex="3"  name="group" required>
                                         <option value="">Select Group</option>
                                         {% for value in groups %}
-                                        <option value={{value.name}}>{{value.name}}</option>
+                                        <option value="{{value.name}}">{{value.name}}</option>
                                         {% endfor %}
                                     </select>
 
-                                    <label><b style="color: black;padding-left: 20px;display: none;">Admin user?</b></label>
+                                    <label><b style="display: none;">Admin user?</b></label>
                                     <input type="checkbox" name="is_admin" value="True" style="display: none;">
                                     <br>
 
-                                    <div id="password_rules" class="row hideIns" style="margin-left: 50%; margin-top:-6%;display:none;">
+                                    <div id="password_rules" class="row hideIns pwdpanel" style="display:none;">
                                         <h4>Passwords must meet these requirements:</h4>
                                         <ul>
                                             <li class="password_length">At least 8 characters</li>
@@ -267,8 +114,8 @@ input[type=checkbox]:before {
                                         </ul>
                                     </div>
 
-                                    <button id="btnAdd" type="submit" tabindex="4" class="btn btn-primary login-button" style="margin-left: 44%;">Submit</button>
-                                    <button class="btn btn-primary login-button" onclick="resetFields();">Clear</button>
+                                    <button id="btnAdd" type="submit" tabindex="4" class="btn btn-primary login-button">Submit</button>
+                                    <button type="button" class="btn btn-primary login-button" onclick="resetFields();">Clear</button>
                                 </div>
                             </div>
                         </div>
@@ -278,29 +125,29 @@ input[type=checkbox]:before {
             {% endif %}
             {% endif %}
 
-
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <span class="heading">Existing Users</span>
                 </div>
                 <div class="panel-body grey-color">
-                    <div class="row" style="padding-left: 25px; margin-right:10px;">
+                    <div class="row divUserTable">
                         <form id="frmTable" action="{{ url_for('update_user') }}" method="post">
 						<table id="userTable">
                             <thead>
                              	  <tr>
                                         {% if user_access != None and user_access != Empty %}
                                         {% if (user_access['user'][2]) %}
-                             			<th style="width:1%">Select</th>
+                             			<th scope="col" class="headerCol">Select</th>
                                         {% endif %}
                                         {% endif %}
 
-	                                    <th>UserName</th>
-	                                    <th>Group</th>
-	                                    <th>Password</th>	                                    
+	                                    <th scope="col">UserName</th>
+	                                    <th scope="col">Group</th>
+	                                    <th scope="col">Password</th>
+
                                         {% if user_access != None and user_access != Empty %}
                                         {% if (user_access['user'][1]) %}
-                                        <th>Edit</th>
+                                        <th scope="col">Edit</th>
                                         {% endif %}
                                         {% endif %}
 								  </tr>
@@ -315,9 +162,9 @@ input[type=checkbox]:before {
                                     {% if user_access != None and user_access != Empty %}
                                     {% if (user_access['user'][2]) %}
                                         {% if (user != value.username) %}
-                                		<td style="text-align: center;"><input style="margin: 0px !important;" type="checkbox" name="chk" value={{v}} /></td>
+                                		<td class="centerCol"><input type="checkbox" name="chk" value="{{v}}"></td>
                                         {% else %}
-                                        <td style="text-align: center;"><input style="margin: 0px !important;"  type="checkbox"  name="chk" value={{v}} disabled /></td>
+                                        <td class="centerCol"><input type="checkbox" name="chk" value="{{v}}" disabled></td>
                                         {% endif %}
                                     {% endif %}
                                     {% endif %}
@@ -331,11 +178,11 @@ input[type=checkbox]:before {
                                         {% endif %}
                                         {% if user_access != None and user_access != Empty %}
                                         {% if (user_access['user'][1]) %}
-                                        <td style="text-align: center;"><button type="button" class="edit btn btn-primary login-button" style="margin-top: 0px;" dataid="{{value._id}}" datagroup="{{value.group[0].name}}" datausername="{{value.username}}"><i class="fa fa-wrench"> Edit</i></button></td>                                        
+                                        <td class="centerCol"><button type="button" class="edit btn btn-primary login-button" dataid="{{value._id}}" datagroup="{{value.group[0].name}}" datausername="{{value.username}}"><i class="fa fa-wrench"> Edit</i></button></td>
                                         {% endif %}
                                         {% endif %}
                                 	{% endif %}
-                                    {% endfor %}                                    
+                                    {% endfor %}
                                 </tr>
                                 {% endif %}
                                 {% endfor %}
@@ -354,15 +201,6 @@ input[type=checkbox]:before {
             </div>
         </div>
     </div>
-
-    <div>
-    </div>
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.easing-1.3.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     <script>
 
         function resetFields(){
@@ -389,9 +227,7 @@ input[type=checkbox]:before {
             "pageLength": 5,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]           
             });     
-
-            //debugger;
-            //mytable.column(1).visible(false);
+    
             
             $('#frmTable tbody').off('click').on('click', 'button.edit', function () { // edit token
             var td =  mytable.cell($(this).parents('td')).node();
@@ -465,6 +301,6 @@ input[type=checkbox]:before {
         //alert(sessionStorage.getItem("user"));    
 
     </script>
+     {% endblock %}
 </body>
-
 </html>
