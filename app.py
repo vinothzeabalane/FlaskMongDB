@@ -49,6 +49,7 @@ class MyApp:
         self.app.errorhandler(404)(self.page_not_found)
         self.app.add_url_rule('/login', 'login', self.login)
         self.app.add_url_rule('/', 'index', self.index)
+        self.app.add_url_rule('/', 'data', self.data)
 
     def before_request(self):
         session.permanent = True
@@ -98,10 +99,11 @@ class MyApp:
             name = request.form['name']
             res = self.conn.set_group(request)
             groups_list = self.conn.groups_list()
+            group_access = self.conn.users_aggregate_access(username=session['user'])
             if res:
                 return redirect(url_for('groups'))
             else:
-                return render_template("group.html", warning=True, error=f"Group Name: {name} already exists", groups=groups_list, user=session['user'])
+                return render_template("group.html", warning=True, error=f"Group Name: {name} already exists", user_access=group_access[0], groups=groups_list, user=session['user'])
         except Exception as e:
             self.app.logger.error(f"Error creating group: {e}")
 
@@ -150,6 +152,7 @@ class MyApp:
 
     def create_user(self):
         try:
+            do_validation = True
             name = request.form['username']
             password = request.form["password"]
             request_user = request.form["hdnUserID"] or False
@@ -159,12 +162,18 @@ class MyApp:
             group_id = self.conn.check_group(group)
             group_access = self.conn.users_aggregate_access(username=session['user'])
             if request_user:
+                result = next((item for item in user_aggregate_list if item['_id'] == ObjectId(request_user)), None)
+                if result and result.get('username') == name:
+                    # Perform the action if the username does not match
+                    do_validation = False
+
+            if self.conn.check_user_name(user=name) and do_validation:
+                return render_template('users.html', warning=True, users=user_aggregate_list, user_access=group_access[0], groups=grouplist, user=session['user'])
+            if request_user:
                 filter = {'_id': ObjectId(request_user)}
                 update = {'$set': {'username': name, 'group_id': group_id['_id']}}
                 if self.conn.update_user_details(filter, update):
                     return render_template('users.html', users=self.conn.users_aggregate(), user_access=group_access[0], groups=grouplist, user=session['user'])
-            if self.conn.check_user_name(user=name):
-                return render_template('users.html', warning=True, users=user_aggregate_list, groups=grouplist, user=session['user'])
             val = {"username": str(name), "group_id": group_id['_id'], "password": str(password)}
             self.conn.set_user(val)
             return redirect(url_for('users'))
@@ -252,6 +261,20 @@ class MyApp:
 
     def index(self):
         return redirect(url_for('login'))
+    
+    def data(self):
+        sample = [{'id': 1, 'name': 'John Doe', 'email': 'johndoe@example.com'},
+        {'id': 2, 'name': 'Jane Doe', 'email': 'janedoe@example.com'},
+        {'id': 3, 'name': 'kane Doe', 'email': 'kanedoe@example.com'},
+        {'id': 4, 'name': 'lane Doe', 'email': 'lanedoe@example.com'},
+        {'id': 5, 'name': 'mane Doe', 'email': 'manedoe@example.com'},
+        {'id': 6, 'name': 'nane Doe', 'email': 'nanedoe@example.com'},
+        {'id': 7, 'name': 'oane Doe', 'email': 'oanedoe@example.com'},
+        {'id': 8, 'name': 'pane Doe', 'email': 'panedoe@example.com'},
+        {'id': 9, 'name': 'qane Doe', 'email': 'qanedoe@example.com'},
+        {'id': 10, 'name': 'rane Doe', 'email': 'ranedoe@example.com'},
+        {'id': 11, 'name': 'sane Doe', 'email': 'sanedoe@example.com'},]
+        return render_template('data.html', data=sample)    
 
     def run(self):
         self.app.run(debug=True, host=self.app.config['FLASK_HOST'], port=self.app.config['FLASK_PORT'], threaded=True)
