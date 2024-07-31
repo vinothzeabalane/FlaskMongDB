@@ -4,6 +4,10 @@ ul {
     margin: 0;  /* Optional: removes margin */
   }
 
+  .lilogout {
+    background-color: white;
+}
+
 #headline {
     height: 110px;
 }
