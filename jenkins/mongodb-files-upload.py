@@ -1,5 +1,9 @@
 import os
 import re
+import pandas as pd
+import json
+import random
+import string
 
 from pymongo import MongoClient
 from gridfs import GridFS
@@ -24,6 +28,57 @@ db = client['openstack']  # Replace with your database name
 
 # Access GridFS
 fs = GridFS(db)
+
+
+def generate_random_suffix(length=3):
+    return ''.join(random.choices(string.digits, k=length))
+
+def time_string_to_microseconds(time_str):
+    """Convert time string 'ss.ms.us' to microseconds."""
+    match = re.match(r"time elapsed in ss.ms.us : (\d{2})\.(\d{3})\.(\d{3})", time_str.strip())
+    if match:
+        seconds = int(match.group(1))
+        milliseconds = int(match.group(2))
+        microseconds = int(match.group(3))
+        total_microseconds = (seconds * 1000000) + (milliseconds * 1000) + microseconds
+        return total_microseconds
+    return None
+
+def microseconds_to_time_string(microseconds):
+    """Convert microseconds to time string 'ss.ms.us'."""
+    seconds = microseconds // 1000000
+    milliseconds = (microseconds % 1000000) // 1000
+    microseconds = microseconds % 1000
+    return "{:02}.{:03}.{:03}".format(seconds, milliseconds, microseconds)
+
+def find_min_max_times(d):
+    """Find min and max times for each key in the dictionary."""
+    result = {}
+    for key, time_strings in d.items():
+        # Convert time strings to microseconds
+        time_values = [time_string_to_microseconds(ts) for ts in time_strings]
+        
+        # Find min and max values
+        min_time = min(time_values)
+        max_time = max(time_values)
+        
+        # Convert back to readable format
+        min_time_str = microseconds_to_time_string(min_time)
+        max_time_str = microseconds_to_time_string(max_time)
+        
+        result[key] = {
+            'min': min_time_str,
+            'max': max_time_str
+        }
+    
+    if result:
+        result['Date'] = date
+        if 'SPI' in file_name:
+            result['BootType'] = 'SPI'
+        else:
+            result['BootType'] = "EB0"
+        result['HOST'] =  prefix  
+    return result
 
 try:
 
@@ -77,11 +132,45 @@ try:
             db.fs.files.update_one({"_id": ObjectId(file_id)}, {"$set": {"metadata": new_metadata}})
             
             print("Metadata updated successfully.")
-            # Path(os.path.join(directory, filename)).unlink()
-            # print("File deleted the shared location")
+            #Path(os.path.join(directory, filename)).unlink()
+            #print("File deleted the shared location")
         else:
             print("File not found.")
 
+
+    for filepath in csv_files:
+        file_name = os.path.basename(filepath).replace(".csv", "")
+        is_filename_exit = db.dashboard.find_one({"filename": file_name})
+        if is_filename_exit:
+            print('File name already exists')
+            continue
+        df = pd.read_excel(filepath)
+        
+        # Extract date part and prefix from filename
+        parts = file_name.split('-')
+        date = "{}-{}-{}".format(parts[-3], parts[-2], parts[-1][:2]) 
+        prefix = '-'.join(parts[:2])
+        
+        data = {}
+        count = 0
+        icount = 2
+        
+        # Collect data from DataFrame
+        for _ in range(33):
+            l1 = [df.iat[icount, j] for j in range(1, 6)]
+            data[df.iat[count, 0]] = l1
+            count += 4
+            icount += 4
+        
+        min_max_times = find_min_max_times(data)
+        dashboard_id = 'REC-{}'.format(generate_random_suffix())
+        
+        # Insert into database
+        res = db.dashboard.insert_one({
+            "_id": dashboard_id,
+            "data": min_max_times,
+            "filename": file_name
+        })
 
 except Exception as e:
     print ("Exception : {}".format(e))
