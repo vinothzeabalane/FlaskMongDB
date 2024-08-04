@@ -15,13 +15,13 @@ def read_hosts_config(file_path):
     
     return hosts
 
-def read_dediprog_config(file_path):
+def read_fwcommands_config(file_path):
     config = configparser.ConfigParser()
     config.read(file_path)
     
     commands = {}
     for section in config.sections():
-        if section == 'DEDIPROG':
+        if section == 'FW-PREP':
             commands[section] = [config.get(section, f'command{i}') for i in range(1, len(config.options(section)) + 1)]
     
     return commands
@@ -64,7 +64,7 @@ def execute_commands_on_all_hosts(hosts, commands, picocom_commands, log_dir):
     for host in hosts:
         count = 0
         required_reboot = True
-        max_attempts = 2
+        max_attempts = 5
         ssh_connection = SSHConnection(
             hostname=host['ip'],
             port=22,  # Adjust port if necessary
@@ -80,9 +80,11 @@ def execute_commands_on_all_hosts(hosts, commands, picocom_commands, log_dir):
                 for cmd in commands['RESTART']:
                     ssh_connection.execute_command(cmd)
             
-            # Execute commands from `DEDIPROG` section
-            if 'DEDIPROG' in commands:
-                for cmd in commands['DEDIPROG']:
+            # Execute commands from `FW-PREP` section
+            if 'FW-PREP' in commands:
+                for cmd in commands['FW-PREP']:
+                    if 'eeprom-XXXXXXXXX.bin' in cmd:
+                        cmd = cmd.replace('eeprom-XXXXXXXXX.bin', host['eeprom'])
 
                     if '/dev/ttyACM' in cmd:
                         cmd = cmd.replace('X', host['pita'])
@@ -169,7 +171,7 @@ if __name__ == "__main__":
         os.makedirs(log_dir)
     
     hosts = read_hosts_config(ini_file)
-    commands = read_dediprog_config(ini_file)
+    commands = read_fwcommands_config(ini_file)
     picocom_commands = read_picocom_config(ini_file)
     
     # execute_commands_on_all_hosts(hosts, commands, picocom_commands, log_dir)
