@@ -22,7 +22,7 @@ def read_fwcommands_config(file_path):
     commands = {}
     for section in config.sections():
         if section == 'FW-PREP':
-            commands[section] = [config.get(section, f'command{i}') for i in range(1, len(config.options(section)) + 1)]
+            commands[section] = [config.get(section, 'command{}'.format(i)) for i in range(1, len(config.options(section)) + 1)]
     
     return commands
 
@@ -57,7 +57,7 @@ def run_picocom(hosts, picocom_commands):
                 ssh_connection.execute_command(picocom_command)
             time.sleep(2)
         except Exception as e:
-            print(f"An error occurred: {e}. Skipping this item.")
+            print("An error occurred: {}. Skipping this item.".format(e))
         
 
 def execute_commands_on_all_hosts(hosts, commands, picocom_commands, log_dir):
@@ -93,11 +93,12 @@ def execute_commands_on_all_hosts(hosts, commands, picocom_commands, log_dir):
 
             # Download the log file from the remote host
             remote_log_path = '/tmp/picocom.log'
-            local_log_path = os.path.join(log_dir, f'{host["ip"]}_picocom.log')
+            local_log_path = os.path.join(log_dir, '%s_picocom.log' % host["ip"])
             ssh_connection.download_file(remote_log_path, local_log_path)
 
         except Exception as e:
-            print(f"An error occurred: {e}. Skipping this item.")
+            print("An error occurred: {}. Skipping this item.".format(e))
+
         
         finally:
             # Execute picocom commands
@@ -128,42 +129,47 @@ class SSHConnection(object):
     def connect(self):
         try:
             self.client.connect(self.hostname, port=self.port, username=self.username, password=self.password)
-            print(f"Connected to {self.hostname}")
+            print("Connected to {}".format(self.hostname))
+
         except Exception as e:
-            print(f"Failed to connect to {self.hostname}: {e}")
+            print("Failed to connect to {}: {}".format(self.hostname, e))
+
             raise
     
     def execute_command(self, command):
         try:
-            print(f"Command executed: '{command}' ")
+            print("Command executed: '{}'".format(command))
             stdin, stdout, stderr = self.client.exec_command(command)
             output = stdout.read().decode('utf-8')
             error = stderr.read().decode('utf-8')
             if output:
-                print(f"Output from '{command}' on {self.hostname}:\n{output}")
+                print("Output from '{}' on {}:\n{}".format(command, self.hostname, output))
             if error:
-                print(f"Error from '{command}' on {self.hostname}:\n{error}")
+                print("Error from '{}' on {}:\n{}".format(command, self.hostname, error))
             return output
         except Exception as e:
-            print(f"Error executing command '{command}' on {self.hostname}: {e}")
+            print("Error executing command '{}' on {}: {}".format(command, self.hostname, e))
             return None
     
     def close(self):
         self.client.close()
-        print(f"Connection to {self.hostname} closed.")
+        print("Connection to {} closed".format(self.hostname))
+
 
     def download_file(self, remote_path, local_path):
         sftp = self.client.open_sftp()
         try:
             sftp.get(remote_path, local_path)
-            print(f"Downloaded {remote_path} to {local_path}")
+            print("Downloaded {} to {}".format(remote_path, local_path))
+
         except Exception as e:
-            print(f"Error downloading file {remote_path}: {e}")
+            print("Error downloading file {}: {}".format(remote_path, e))
+
         finally:
             sftp.close()
 
 if __name__ == "__main__":
-    ini_file = 'C:/eclipse-workspace/FlaskMongDB/host.ini'
+    ini_file = '/home/remlab/ps-bpt/FlaskMongDB/host.ini'
     log_dir = 'logs'  # Directory to store downloaded log files
     
     # Ensure the log directory exists
