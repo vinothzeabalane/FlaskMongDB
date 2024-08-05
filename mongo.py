@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime, timedelta
+from pymongo import DESCENDING
 import gridfs
 import random
 import string
@@ -88,7 +89,7 @@ class MongoDB:
                     "$lte": filter['EndDate'] if filter and 'EndDate' in filter else today.strftime("%Y-%m-%d")
                 }
             }
-            col = self.db.fs.files.find(query)
+            col = self.db.fs.files.find(query).sort("metadata.date", DESCENDING)
             return [{'name': i['filename'], 'data': i.get('metadata')} for i in col if 'filename' in i]
         except Exception as e:
             self._log_error(e)
