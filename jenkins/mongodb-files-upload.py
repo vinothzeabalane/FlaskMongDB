@@ -140,6 +140,10 @@ try:
 
     for filepath in csv_files:
         file_name = os.path.basename(filepath).replace(".csv", "")
+        parts = file_name.split('-')
+        hostname = parts[0]
+        skuSize = parts[1]
+        bootTpye = parts[2]
         is_filename_exit = db.dashboard.find_one({"filename": file_name})
         if is_filename_exit:
             print('File name already exists')
@@ -169,7 +173,11 @@ try:
         res = db.dashboard.insert_one({
             "_id": dashboard_id,
             "data": min_max_times,
-            "filename": file_name
+            "filename": file_name,
+            "hostname": hostname,
+            "sku": skuSize,
+            "bootType": bootTpye,
+            "date": date
         })
 
 except Exception as e:
