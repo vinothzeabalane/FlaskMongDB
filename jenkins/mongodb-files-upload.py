@@ -105,7 +105,7 @@ try:
         filename = str(os.path.basename(file)).replace('.csv','')
         is_file_exit = db.fs.files.find_one({"filename": filename})
         if is_file_exit:
-            print('File name already exists')
+            print('File name already exists in the files')
             continue
         with open(file, 'rb') as f:
             # Store data in GridFS, which handles chunking automatically
@@ -137,22 +137,27 @@ try:
         else:
             print("File not found.")
 
-
+    
     for filepath in csv_files:
         file_name = os.path.basename(filepath).replace(".csv", "")
+        # Split the file name by dashes
         parts = file_name.split('-')
-        hostname = parts[0]
-        skuSize = parts[1]
-        bootTpye = parts[2]
+
+        # Extract the parts based on the given rules
+        date = '-'.join(parts[-3:])  # The last three parts form the date
+        bootTpye = parts[-4]        # The fourth from the last part is the boot type
+        skuSize = parts[-5]              # The fifth from the last part is the SKU
+        hostname = '-'.join(parts[:-5])  # The remaining parts form the hostname
+
         is_filename_exit = db.dashboard.find_one({"filename": file_name})
         if is_filename_exit:
-            print('File name already exists')
+            print('File name already exists in the dashboard collection')
             continue
         df = pd.read_excel(filepath)
         
-        # Extract date part and prefix from filename
+        # # Extract date part and prefix from filename
         parts = file_name.split('-')
-        date = "{}-{}-{}".format(parts[-3], parts[-2], parts[-1][:2]) 
+        # date = "{}-{}-{}".format(parts[-3], parts[-2], parts[-1][:2]) 
         prefix = '-'.join(parts[:2])
         
         data = {}
@@ -182,6 +187,4 @@ try:
 
 except Exception as e:
     print ("Exception : {}".format(e))
-
-
 
