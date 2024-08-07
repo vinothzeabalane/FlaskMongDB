@@ -2,6 +2,7 @@
 <html lang="" class="no-js">
 <head>
     {% extends "layout.html" %}
+    {% block nav_group %}headerHighlight{% endblock %}
     <title>{% block title %} Groups {% endblock %}</title>
     {% block head %}
     {{ super() }}
@@ -73,6 +74,10 @@
         }
 
     </style>
+    <!-- Include ColReorder CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css">
+    <!-- Include ColReorder JS -->
+    <script src="https://cdn.datatables.net/2.1.3/js/dataTables.js"></script>
  {% endblock %}
 </head>
 <body>
@@ -171,12 +176,12 @@
                                     {% endif %}
 
                                     <th scope="col"></th>
-                                    <th scope="col" rowspan="3">View</th>
-                                    <th scope="col" rowspan="3">Edit</th>
-                                    <th scope="col" rowspan="3">Delete</th>
-                                    <th scope="col" rowspan="3">View</th>
-                                    <th scope="col" rowspan="3">Edit</th>
-                                    <th scope="col" rowspan="3">Delete</th>
+                                    <th scope="col" rowspan="3" data-dt-order="disable">View</th>
+                                    <th scope="col" rowspan="3" data-dt-order="disable">Edit</th>
+                                    <th scope="col" rowspan="3" data-dt-order="disable">Delete</th>
+                                    <th scope="col" rowspan="3" data-dt-order="disable">View</th>
+                                    <th scope="col" rowspan="3" data-dt-order="disable">Edit</th>
+                                    <th scope="col" rowspan="3" data-dt-order="disable">Delete</th>
 
                                     {% if user_access != None and user_access != Empty %}
                                     {% if (user_access['group'][1]) %}
@@ -307,9 +312,11 @@
             resetFields();
            
            //alert('hi');
-           var mytable = $("#grpTable").DataTable({                                                             
+           var mytable = $("#grpTable").DataTable({    
+        //    "colReorder": true,                                                         
            "pageLength": 5,
-           lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
+           lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+           "order": [[1, 'asc']]
            });  
               
        });

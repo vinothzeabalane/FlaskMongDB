@@ -49,7 +49,8 @@ class MyApp:
         self.app.errorhandler(404)(self.page_not_found)
         self.app.add_url_rule('/login', 'login', self.login)
         self.app.add_url_rule('/', 'index', self.index)
-        self.app.add_url_rule('/', 'data', self.data)
+        self.app.add_url_rule('/data', 'data', self.data)
+        self.app.add_url_rule('/test', 'test', self.test, methods=['GET', 'POST'])
 
     def before_request(self):
         session.permanent = True
@@ -237,8 +238,9 @@ class MyApp:
             session['password'] = request.form['password']
             res = self.conn.check_user(session['user'], session['password'])
             group_access = self.conn.users_aggregate_access(username=session['user'])
+            data = self.conn.get_dashboard_details()
             if res:
-                return render_template('dashboard.html', user_access=group_access[0], user=session['user'])
+                return render_template('dashboard.html', hostData=data, user_access=group_access[0], user=session['user'])
             else:
                 return render_template('login.html', error="Invalid Username or Password")
         except Exception as e:
@@ -247,7 +249,8 @@ class MyApp:
     def dashboard(self):
         if session.get("user"):
             group_access = self.conn.users_aggregate_access(username=session['user'])
-            return render_template('dashboard.html', user_access=group_access[0], user=session['user'])
+            data = self.conn.get_dashboard_details()
+            return render_template('dashboard.html',hostData=data, user_access=group_access[0], user=session['user'])
         else:
             return render_template('login.html', error="Your Session Expired")
 
@@ -263,6 +266,284 @@ class MyApp:
 
     def index(self):
         return redirect(url_for('login'))
+    
+    def test(self):
+        data = [{
+                    "SBL_LLOG_INIT": {
+                        "min": "00.000.001",
+                        "max": "00.000.001"
+                    },
+                    "SBL_WAKE_ALL": {
+                        "min": "00.000.029",
+                        "max": "00.000.036"
+                    },
+                    "SBL_SPI_INIT": {
+                        "min": "00.000.096",
+                        "max": "00.000.096"
+                    },
+                    "SBL_FCONFIG_LOAD": {
+                        "min": "00.001.456",
+                        "max": "00.001.457"
+                    },
+                    "SBL_TRNG_INIT": {
+                        "min": "00.000.002",
+                        "max": "00.000.002"
+                    },
+                    "SBL_CRYPTO_INIT": {
+                        "min": "00.000.872",
+                        "max": "00.000.875"
+                    },
+                    "SBL_CRITICAL_BOOT_LOAD": {
+                        "min": "00.000.015",
+                        "max": "00.000.015"
+                    },
+                    "SBL_UFH_LOAD_AND_VERIFY": {
+                        "min": "00.009.091",
+                        "max": "00.009.121"
+                    },
+                    "SBL_DIGEST_COMPUTE": {
+                        "min": "00.029.715",
+                        "max": "00.029.718"
+                    },
+                    "SBL_LOAD_TBL_IMAGE": {
+                        "min": "00.017.010",
+                        "max": "00.017.012"
+                    },
+                    "SBL_RIOT": {
+                        "min": "00.017.359",
+                        "max": "00.017.382"
+                    },
+                    "SBL_TOTAL": {
+                        "min": "00.075.677",
+                        "max": "00.075.706"
+                    },
+                    "TBL_GIC_INIT": {
+                        "min": "00.000.008",
+                        "max": "00.000.008"
+                    },
+                    "TBL_SPI_INIT": {
+                        "min": "00.000.007",
+                        "max": "00.000.007"
+                    },
+                    "TBL_FCONFIG_LOAD": {
+                        "min": "00.000.918",
+                        "max": "00.000.918"
+                    },
+                    "TBL_PCIE_INIT": {
+                        "min": "00.003.595",
+                        "max": "00.003.595"
+                    },
+                    "TBL_PCIE_CRS_START": {
+                        "min": "00.000.000",
+                        "max": "00.000.000"
+                    },
+                    "TBL_LOAD_PBL_IMAGE": {
+                        "min": "00.048.955",
+                        "max": "00.048.956"
+                    },
+                    "TBL_RIOT": {
+                        "min": "00.003.431",
+                        "max": "00.003.434"
+                    },
+                    "TBL_TOTAL": {
+                        "min": "00.057.492",
+                        "max": "00.057.495"
+                    },
+                    "PBL_SPI_INIT": {
+                        "min": "00.000.008",
+                        "max": "00.000.009"
+                    },
+                    "PBL_PARSE_FCONFIG": {
+                        "min": "00.000.922",
+                        "max": "00.000.923"
+                    },
+                    "PBL_PMIC_INIT": {
+                        "min": "00.016.898",
+                        "max": "00.016.901"
+                    },
+                    "PBL_DRAM_INIT": {
+                        "min": "00.043.633",
+                        "max": "00.043.649"
+                    },
+                    "PBL_SCRUB_MAINFW_DRAM": {
+                        "min": "00.029.937",
+                        "max": "00.030.291"
+                    },
+                    "PBL_CRYPTO_INIT": {
+                        "min": "00.000.583",
+                        "max": "00.000.585"
+                    },
+                    "PBL_NAND_INIT": {
+                        "min": "00.063.187",
+                        "max": "00.063.907"
+                    },
+                    "PBL_LOAD_MAIN_FW": {
+                        "min": "00.231.870",
+                        "max": "00.232.120"
+                    },
+                    "PBL_RIOT": {
+                        "min": "00.003.947",
+                        "max": "00.004.027"
+                    },
+                    "PBL_WAKE_CORES_JUMP": {
+                        "min": "00.294.586",
+                        "max": "00.296.500"
+                    },
+                    "PBL_TOTAL": {
+                        "min": "00.686.820",
+                        "max": "00.687.951"
+                    },
+                    "SBL_TO_PBL_TOTAL": {
+                        "min": "00.820.929",
+                        "max": "00.822.077"
+                    },
+                    "MAX_NUM_BL_MODULES": {
+                        "min": "00.000.000",
+                        "max": "00.000.000"
+                    },
+                    "Date": "2024-07-22",
+                    "BootType": "SPI",
+                    "HOST": "chewy20-8TB"
+                }
+                ,
+				{
+                    "SBL_LLOG_INIT": {
+                        "min": "00.000.001",
+                        "max": "00.000.001"
+                    },
+                    "SBL_WAKE_ALL": {
+                        "min": "00.000.029",
+                        "max": "00.000.036"
+                    },
+                    "SBL_SPI_INIT": {
+                        "min": "00.000.096",
+                        "max": "00.000.096"
+                    },
+                    "SBL_FCONFIG_LOAD": {
+                        "min": "00.001.456",
+                        "max": "00.001.457"
+                    },
+                    "SBL_TRNG_INIT": {
+                        "min": "00.000.002",
+                        "max": "00.000.002"
+                    },
+                    "SBL_CRYPTO_INIT": {
+                        "min": "00.000.872",
+                        "max": "00.000.875"
+                    },
+                    "SBL_CRITICAL_BOOT_LOAD": {
+                        "min": "00.000.015",
+                        "max": "00.000.015"
+                    },
+                    "SBL_UFH_LOAD_AND_VERIFY": {
+                        "min": "00.009.091",
+                        "max": "00.009.121"
+                    },
+                    "SBL_DIGEST_COMPUTE": {
+                        "min": "00.029.715",
+                        "max": "00.029.718"
+                    },
+                    "SBL_LOAD_TBL_IMAGE": {
+                        "min": "00.017.010",
+                        "max": "00.017.012"
+                    },
+                    "SBL_RIOT": {
+                        "min": "00.017.359",
+                        "max": "00.017.382"
+                    },
+                    "SBL_TOTAL": {
+                        "min": "00.075.677",
+                        "max": "00.075.706"
+                    },
+                    "TBL_GIC_INIT": {
+                        "min": "00.000.008",
+                        "max": "00.000.008"
+                    },
+                    "TBL_SPI_INIT": {
+                        "min": "00.000.007",
+                        "max": "00.000.007"
+                    },
+                    "TBL_FCONFIG_LOAD": {
+                        "min": "00.000.918",
+                        "max": "00.000.918"
+                    },
+                    "TBL_PCIE_INIT": {
+                        "min": "00.003.595",
+                        "max": "00.003.595"
+                    },
+                    "TBL_PCIE_CRS_START": {
+                        "min": "00.000.000",
+                        "max": "00.000.000"
+                    },
+                    "TBL_LOAD_PBL_IMAGE": {
+                        "min": "00.048.955",
+                        "max": "00.048.956"
+                    },
+                    "TBL_RIOT": {
+                        "min": "00.003.431",
+                        "max": "00.003.434"
+                    },
+                    "TBL_TOTAL": {
+                        "min": "00.057.492",
+                        "max": "00.057.495"
+                    },
+                    "PBL_SPI_INIT": {
+                        "min": "00.000.008",
+                        "max": "00.000.009"
+                    },
+                    "PBL_PARSE_FCONFIG": {
+                        "min": "00.000.922",
+                        "max": "00.000.923"
+                    },
+                    "PBL_PMIC_INIT": {
+                        "min": "00.016.898",
+                        "max": "00.016.901"
+                    },
+                    "PBL_DRAM_INIT": {
+                        "min": "00.043.633",
+                        "max": "00.043.649"
+                    },
+                    "PBL_SCRUB_MAINFW_DRAM": {
+                        "min": "00.029.937",
+                        "max": "00.030.291"
+                    },
+                    "PBL_CRYPTO_INIT": {
+                        "min": "00.000.583",
+                        "max": "00.000.585"
+                    },
+                    "PBL_NAND_INIT": {
+                        "min": "00.063.187",
+                        "max": "00.063.907"
+                    },
+                    "PBL_LOAD_MAIN_FW": {
+                        "min": "00.231.870",
+                        "max": "00.232.120"
+                    },
+                    "PBL_RIOT": {
+                        "min": "00.003.947",
+                        "max": "00.004.027"
+                    },
+                    "PBL_WAKE_CORES_JUMP": {
+                        "min": "00.294.586",
+                        "max": "00.296.500"
+                    },
+                    "PBL_TOTAL": {
+                        "min": "00.686.820",
+                        "max": "00.687.951"
+                    },
+                    "SBL_TO_PBL_TOTAL": {
+                        "min": "00.820.929",
+                        "max": "00.822.077"
+                    },
+                    "MAX_NUM_BL_MODULES": {
+                        "min": "00.000.000",
+                        "max": "00.000.000"
+                    },
+                    "Date": "2024-07-24",
+                    "BootType": "SPI",
+                    "HOST": "chewy21-8TB"
+                } ]
+        return render_template('dashboard.html',data=data)
     
     def data(self):
         sample = [{'id': 1, 'name': 'John Doe', 'email': 'johndoe@example.com'},

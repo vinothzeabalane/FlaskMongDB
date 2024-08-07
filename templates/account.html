@@ -2,6 +2,7 @@
 <html lang="" class="no-js">
 <head>
     {% extends "layout.html" %}
+    {% block nav_account %}headerHighlight{% endblock %}
     <title>{% block title %} My Account {% endblock %}</title>
     {% block head %}
     {{ super() }}
@@ -35,6 +36,11 @@
             #password_rules {
                 margin-left: 20px;
             }
+
+            /* .main-nav .list-menu ul li {
+    background-color: #405974;
+    text-decoration: underline !important;
+} */
  
     </style>
     {% endblock %}
@@ -176,5 +182,15 @@
 
     </script>
     {% endblock %}
+            <script>
+          $('.my-list').on('click', 'li a', function(e) {
+            const sText = $(this).text();
+            debugger;
+            $(this).css('font-size','25px');
+            $(this).css('text-decoration','underline !important');
+            e.preventDefault();
+         });
+        </script>
+
 </body>
 </html>

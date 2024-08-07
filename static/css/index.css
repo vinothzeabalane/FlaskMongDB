@@ -24,7 +24,7 @@ input{
 
 /* Overwriting bootstrap classes */
 input{
-   width: 96% 
+   width: 96%;
    height: 30px;
 }
 
@@ -43,7 +43,8 @@ input{
 }
 
 .grey-color{
-	background-color: #EEE;
+	/* background-color: #EEE; */
+  background-color: white;
 }
 
 .range-slider {

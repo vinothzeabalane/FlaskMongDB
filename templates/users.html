@@ -2,6 +2,7 @@
 <html lang="" class="no-js">
 <head>
     {% extends "layout.html" %}
+    {% block nav_user %}headerHighlight{% endblock %}
     <title>{% block title %} Users {% endblock %}</title>
     {% block head %}
     {{ super() }}

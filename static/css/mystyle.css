@@ -171,3 +171,44 @@ input[type=checkbox]:before {
 .headerCol {
     width:1%
 }
+
+.headerHighlight {
+    font-size: 25px !important;
+    text-decoration: underline !important;
+}
+
+button[id^="btnFilter"],#btnFilter{ 
+    margin-top: 0px;
+}
+
+table.dataTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for even rows */
+}
+table { 
+    border-collapse: collapse;         
+    width: 100%; 
+    border: 1px solid #e7b547;
+  } 
+  th, 
+  td { 
+    padding: 8px 15px; 
+    border: 1px solid #e7b547; 
+  } 
+  th { 
+    background-color: #e7b547;
+  } 
+  .datepicker-container {
+    position: relative;
+    display: inline-block;
+}
+.datepicker-container input {
+    padding-right: 30px; /* Adjust for icon width */
+}
+.datepicker-container .ui-datepicker-icon {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    pointer-events: none; /* Make sure the icon doesn't block input field interaction */
+}

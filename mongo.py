@@ -80,19 +80,47 @@ class MongoDB:
 
     def bpt_list(self, filter=None):
         try:
+            # Get today's date and calculate the date two months ago
             today = datetime.now().date()
             two_months_ago = today - timedelta(days=60)
 
+            # Determine the date range for the query
+            from_date = filter['StartDate'] if filter and 'StartDate' in filter else two_months_ago.strftime("%Y-%m-%d")
+            to_date = filter['EndDate'] if filter and 'EndDate' in filter else today.strftime("%Y-%m-%d")
+
+            # Construct the query with date filters
             query = {
                 "metadata.date": {
-                    "$gte": filter['StartDate'] if filter and 'StartDate' in filter else two_months_ago.strftime("%Y-%m-%d"),
-                    "$lte": filter['EndDate'] if filter and 'EndDate' in filter else today.strftime("%Y-%m-%d")
+                    "$gte": from_date,
+                    "$lte": to_date
                 }
             }
+
+            # Query the collection and sort by date in descending order
             col = self.db.fs.files.find(query).sort("metadata.date", DESCENDING)
-            return [{'name': i['filename'], 'data': i.get('metadata')} for i in col if 'filename' in i]
+
+            # Extract filenames and metadata
+            result = [
+                {
+                    'name': i['filename'],
+                    'data': i.get('metadata')
+                }
+                for i in col if 'filename' in i
+            ]
+
+            # Prepare the date range dictionary
+            date_range = {
+                'from_date': from_date,
+                'to_date': to_date
+            }
+
+            # Insert the date range at the beginning of the result list
+            result.insert(0, date_range)
+
+            return result
         except Exception as e:
             self._log_error(e)
+            return []  # Return an empty list if there's an error
             
     def check_group(self, group):
         try:
@@ -173,5 +201,19 @@ class MongoDB:
     def update_user_details(self, filter, update):
         try:
             return self.db.users.update_one(filter, update)
+        except Exception as e:
+            self._log_error(e)
+
+    def get_dashboard_details(self):
+        try:
+            start_date = (datetime.now() - timedelta(days=2)).date()
+            end_date = datetime.now().date()
+            start_date_str = start_date.strftime('%Y-%m-%d')
+            end_date_str = end_date.strftime('%Y-%m-%d')
+            res =  self.db.dashboard.find({'date': {'$gte': start_date_str, '$lte': end_date_str}})
+            for i in res:
+                print (i)
+
+            return res
         except Exception as e:
             self._log_error(e)
