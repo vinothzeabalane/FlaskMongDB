@@ -2,6 +2,7 @@ from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime, timedelta
 from pymongo import DESCENDING
+from collections import defaultdict
 import gridfs
 import random
 import string
@@ -206,14 +207,33 @@ class MongoDB:
 
     def get_dashboard_details(self):
         try:
-            start_date = (datetime.now() - timedelta(days=2)).date()
-            end_date = datetime.now().date()
+            # Calculate the start and end of the previous day
+            today = datetime.now().date()
+            start_date = today - timedelta(days=1)
+            
+            # Define the start and end times for the last day
             start_date_str = start_date.strftime('%Y-%m-%d')
-            end_date_str = end_date.strftime('%Y-%m-%d')
-            res =  self.db.dashboard.find({'date': {'$gte': start_date_str, '$lte': end_date_str}})
-            for i in res:
-                print (i)
+        
+            # Fetch data for the last day only
+            documents = self.db.dashboard.find({
+                'date': start_date_str
+            }).sort('hostname', 1)
+            
+            grouped_docs = defaultdict(list)
 
-            return res
+            for doc in documents:
+                hostname = doc.get('hostname', 'Unknown')
+                grouped_docs[hostname].append(doc)
+
+            # Convert grouped results to a list of lists
+            result_list = list(grouped_docs.values())
+
+            # Print the results
+            for group in result_list:
+                print(f"Group for hostname: {group[0]['hostname']}")
+                for doc in group:
+                    print(doc)
+            
+            return result_list
         except Exception as e:
             self._log_error(e)

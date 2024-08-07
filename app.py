@@ -244,7 +244,7 @@ class MyApp:
             else:
                 return render_template('login.html', error="Invalid Username or Password")
         except Exception as e:
-            self.app.logger.error(f"Error in home route: {e}")
+            self.app.logger.error("Error in home route: {e}")
 
     def dashboard(self):
         if session.get("user"):
