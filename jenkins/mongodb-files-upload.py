@@ -19,8 +19,6 @@ csv_files = []
 commid_id = None
 last_updated = []
 pattern = r'\b\d{4}-\d{2}-\d{2}\b'
-spiflow = False
-eb0flow = True
 
 # Connect to MongoDB
 client = MongoClient('mongodb://localhost:27017/')
@@ -113,9 +111,9 @@ try:
 
         print('Uploaded file with _id: {file_id}')
 
-        if 'SPI' in str(filename):
-            spiflow = True
-            eb0flow = False
+        fparts = filename.split('-')
+        spiflow = 'SPI' in fparts
+        eb0flow = not spiflow
 
         # Find the uploaded file by filename
         file_info = db.fs.files.find_one({"filename": filename})
