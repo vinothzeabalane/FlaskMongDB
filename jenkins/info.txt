@@ -3,7 +3,7 @@ seyon@seyon:/usr/bin$ mongodump --host localhost:27017 --db openstack --out /hom
 
 
 To restore the database:
-mongorestore --db yourNewDatabaseName /path/to/yourBackupDir/yourDatabaseName
+mongorestore --host localhost:27017 --db yourNewDatabaseName /path/to/yourBackupDir/yourDatabaseName
 
 
 To login to database:
