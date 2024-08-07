@@ -4,6 +4,7 @@ import pandas as pd
 import json
 import random
 import string
+import math
 
 from pymongo import MongoClient
 from gridfs import GridFS
@@ -48,6 +49,9 @@ def microseconds_to_time_string(microseconds):
     milliseconds = (microseconds % 1000000) // 1000
     microseconds = microseconds % 1000
     return "{:02}.{:03}.{:03}".format(seconds, milliseconds, microseconds)
+
+def is_nan(value):
+    return isinstance(value, (int, float)) and math.isnan(value)
 
 def find_min_max_times(d):
     """Find min and max times for each key in the dictionary."""
@@ -137,6 +141,7 @@ try:
 
     
     for filepath in csv_files:
+        skip_parent = False
         file_name = os.path.basename(filepath).replace(".csv", "")
         # Split the file name by dashes
         parts = file_name.split('-')
@@ -169,6 +174,15 @@ try:
             count += 4
             icount += 4
         
+        for values in data.values():
+            for value in values:
+                if is_nan(value):
+                    skip_parent = True
+                    print("Item is NaN")
+
+        if skip_parent:
+            continue  # Continue to the next iteration of the parent loop
+
         min_max_times = find_min_max_times(data)
         dashboard_id = 'REC-{}'.format(generate_random_suffix())
         
