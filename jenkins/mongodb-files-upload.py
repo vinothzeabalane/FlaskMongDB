@@ -167,6 +167,9 @@ try:
         count = 0
         icount = 2
         
+        if len(df) == 0:
+            continue
+
         # Collect data from DataFrame
         for _ in range(33):
             l1 = [df.iat[icount, j] for j in range(1, 6)]
