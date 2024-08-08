@@ -57,8 +57,12 @@ def find_min_max_times(d):
     """Find min and max times for each key in the dictionary."""
     result = {}
     for key, time_strings in d.items():
+        if isinstance(key, float) and math.isnan(key):
+            key = 'NONE'
         # Convert time strings to microseconds
-        time_values = [time_string_to_microseconds(ts) for ts in time_strings]
+        filtered_time_strings = [s for s in time_strings if isinstance(s, str) and not (isinstance(s, float))]
+        time_values = [time_string_to_microseconds(ts) for ts in filtered_time_strings]
+        # time_values = [time_string_to_microseconds(ts) for ts in time_strings]
         
         # Find min and max values
         min_time = min(time_values)
@@ -183,8 +187,8 @@ try:
                     skip_parent = True
                     print("Item is NaN")
 
-        if skip_parent:
-            continue  # Continue to the next iteration of the parent loop
+        # if skip_parent:
+        #     continue  # Continue to the next iteration of the parent loop
 
         min_max_times = find_min_max_times(data)
         dashboard_id = 'REC-{}'.format(generate_random_suffix())
