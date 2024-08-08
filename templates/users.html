@@ -63,7 +63,7 @@
         #userTable_length label {
             display: flex;               
             gap: 5px;
-        }       
+        }                    
    </style>
     {% endblock %}
 </head>
@@ -105,7 +105,7 @@
 
                                     <label><b>Group Name</b></label>
                                     <select id="ddlGroup" tabindex="3"  name="group" required>
-                                        <option value="">Select Group</option>
+                                        <option value="" selected disabled>-Select-</option>
                                         {% for value in groups %}
                                         <option value="{{value.name}}">{{value.name}}</option>
                                         {% endfor %}
