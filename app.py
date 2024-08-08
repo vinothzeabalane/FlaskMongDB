@@ -240,6 +240,7 @@ class MyApp:
             group_access = self.conn.users_aggregate_access(username=session['user'])
             data = self.conn.get_dashboard_details()
             if res:
+                self.conn.update_last_login(session['user'])
                 return render_template('dashboard.html', hostData=data, user_access=group_access[0], user=session['user'])
             else:
                 return render_template('login.html', error="Invalid Username or Password")

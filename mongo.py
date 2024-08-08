@@ -7,6 +7,7 @@ import gridfs
 import random
 import string
 import logging
+import pytz
 
 class MongoDB:
     
@@ -196,6 +197,15 @@ class MongoDB:
                 self.db.users.update_one({"username": user}, {"$set": {"password": newpass}})
                 return True
             return False
+        except Exception as e:
+            self._log_error(e)
+
+    def update_last_login(self, username):
+        try:
+            self.db.users.update_one({"username": username},
+            {"$set": {"last_login": datetime.now(pytz.utc)}}
+            )
+            return True
         except Exception as e:
             self._log_error(e)
 
