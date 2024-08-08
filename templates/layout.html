@@ -64,7 +64,7 @@
                               {% if user %}
                                 <input type="hidden" id="hdnPwd" value="{{password}}">
                                 <img src="{{ url_for('static', filename='img/user.jpg') }}" alt="User" width="30" height="30">
-                                <a href="void(0)">{{user}}</a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="{{ url_for('logout') }}"> <span class="glyphicon glyphicon-log-out"></span> Log out </a>
+                                <a href="#">{{user}}</a>&nbsp;&nbsp;&nbsp;&nbsp; <a href="{{ url_for('logout') }}"> <span class="glyphicon glyphicon-log-out"></span> Log out </a>
                               {% endif %}
                             </li>
                           </ul>

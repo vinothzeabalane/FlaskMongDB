@@ -85,10 +85,7 @@
         .tab__content input[type=text]{
             width: 60%;
         }
-        .ui-datepicker select.ui-datepicker-month,
-        .ui-datepicker select.ui-datepicker-year {
-            width: 50% !important;
-        }
+    
         .tab__close {
             justify-content: flex-end;
             padding: 0.5rem 1rem;
@@ -123,6 +120,7 @@
       position: -webkit-sticky; /* For Safari */
       position: sticky;     
       z-index: 2;
+      text-align: center;
     } 
    
     thead .scrollmain-header {    
@@ -155,6 +153,7 @@
     } 
     th { 
       background: darkgray !important;
+      text-align: center !important;
     } 
     table.dataTable thead th, table.dataTable thead td {
     padding: 6px 18px;
@@ -169,85 +168,89 @@
 </head>
 <body>
     {% block content %}
-    <section class="accordion accordion--radio">
-        {% for item in hostData %}
-        {% if item != None and item != Empty%}
-        <div class="tab">
-            {% if loop.index == 1 %}
-            <input type="radio" name="accordion-2" id="rd{{loop.index}}" checked>
-            {% else %}
-            <input type="radio" name="accordion-2" id="rd{{loop.index}}">
-            {% endif %}
-            <label for="rd{{loop.index}}" class="tab__label">{{item[0].hostname +" - "+ item[0].sku}}</label>
-            <div class="tab__content">
-                <div class="divDate">
-                    <label class="lblDate">Pick any date to view:</label>
-                    &nbsp;&nbsp;&nbsp;<input id="UploadedDate{{loop.index}}"  maxlength="10" name="UploadedDate{{loop.index}}" size="16" type="text">&nbsp;&nbsp;&nbsp;
-                    <button type="button" name="filter{{loop.index}}" class="btn btn-primary login-button" id="btnFilter{{loop.index}}" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
+    <div class="row">
+        <div class="container">
+            <section class="accordion accordion--radio">
+                {% for item in hostData %}
+                {% if item != None and item != Empty%}
+                <div class="tab">
+                    {% if loop.index == 1 %}
+                    <input type="radio" name="accordion-2" id="rd{{loop.index}}" checked>
+                    {% else %}
+                    <input type="radio" name="accordion-2" id="rd{{loop.index}}">
+                    {% endif %}
+                    <label for="rd{{loop.index}}" class="tab__label">{{item[0].hostname +" - "+ item[0].sku}}</label>
+                    <div class="tab__content">
+                        <div class="divDate">
+                            <label class="lblDate">Pick any date to view:</label>
+                            &nbsp;&nbsp;&nbsp;<input id="UploadedDate{{loop.index}}" class="dtpicker" placeholder="-Select-"  maxlength="10" name="UploadedDate{{loop.index}}" size="16" type="text">&nbsp;&nbsp;&nbsp;
+                            <button type="button" name="filter{{loop.index}}" class="btn btn-primary login-button" id="btnFilter{{loop.index}}" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
+                        </div>
+                        <div class="fixTableHead">
+                            <table id="tblHost" class="tblHostData">
+                                <thead>
+                                    <tr class="scrollmain-header">
+                                        <th scope="col">Boot Entry</th>
+                                        <th scope="col" colspan="4">{{item[0].date}}</th>
+                                    </tr>
+                                    <tr class="scrollsub-header">
+                                        <th scope="col"></th>
+                                        <th scope="col" colspan="2">{{item[0].bootType}}</th>
+                                        <th scope="col" colspan="2">{{item[1].bootType}}</th>
+                                    </tr>
+                                    <tr class="subSub-header">
+                                        <th scope="col"></th>
+                                        <th scope="col">Min</th>
+                                        <th scope="col">Max</th>
+                                        <th scope="col">Min</th>
+                                        <th scope="col">Max</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="tbody-container">
+                                    {% for number in range(0,32) %}
+                                    <tr>
+                                        {% set mainkeys = item[0]['data'].keys() | list  %}
+                                        {% set boot_key = mainkeys[number] %}
+                                        <td>{{ boot_key }}</td>
+                                        <td>{{ item[0]['data'][boot_key].min }}</td>
+                                        <td>{{ item[0]['data'][boot_key].max }}</td>
+                                        <td>{{ item[1]['data'][boot_key].min }}</td>
+                                        <td>{{ item[1]['data'][boot_key].max }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <div class="fixTableHead">
-                    <table id="tblHost">
-                        <thead>
-                            <tr class="scrollmain-header">
-                                <th scope="col">Boot Entry</th>
-                                <th scope="col" colspan="4">{{item[0].date}}</th>
-                            </tr>
-                            <tr class="scrollsub-header">
-                                <th scope="col"></th>
-                                <th scope="col" colspan="2">{{item[0].bootType}}</th>
-                                <th scope="col" colspan="2">{{item[1].bootType}}</th>
-                            </tr>
-                            <tr class="subSub-header">
-                                <th scope="col"></th>
-                                <th scope="col">Min</th>
-                                <th scope="col">Max</th>
-                                <th scope="col">Min</th>
-                                <th scope="col">Max</th>
-                            </tr>
-                        </thead>
-                        <tbody class="tbody-container">
-                            {% for number in range(0,32) %}
-                            <tr>
-                                {% set mainkeys = item[0]['data'].keys() | list  %}
-                                {% set boot_key = mainkeys[number] %}
-                                <td>{{ boot_key }}</td>
-                                <td>{{ item[0]['data'][boot_key].min }}</td>
-                                <td>{{ item[0]['data'][boot_key].max }}</td>
-                                <td>{{ item[1]['data'][boot_key].min }}</td>
-                                <td>{{ item[1]['data'][boot_key].max }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                {% endif %}
+                {% endfor %}
+                <div class="tab">
+                    <input type="radio" name="accordion-2" id="rd6">
+                    <label for="rd6" class="tab__close">Close open tab &times;</label>
                 </div>
-            </div>
+            </section>
+            <script>
+                    $(document).ready(function() {
+                        
+                        $('.dtpicker').datepicker({     
+                                changeMonth: true,
+                                changeYear: true,
+                                dateFormat: 'yy-mm-dd'
+                                ,maxDate: -1
+                        });
+                        
+                        $('.tblHostData').DataTable({
+                                paging: false,   // Disable pagination
+                                ordering: true, // Disable sorting
+                                searching: false, // Disable searching
+                                info: false  
+                            });
+                            
+                        });    
+            </script>
         </div>
-        {% endif %}
-        {% endfor %}
-        <div class="tab">
-            <input type="radio" name="accordion-2" id="rd6">
-            <label for="rd6" class="tab__close">Close open tab &times;</label>
-        </div>
-    </section>
-    <script>
-             $(document).ready(function() {
-                
-                $([id^='UploadedDate']).datepicker({     
-                        changeMonth: true,
-                        changeYear: true,
-                        dateFormat: 'yy-mm-dd'
-                        ,maxDate: -1
-                  });
-                 
-                  $([id^='tblHost']).DataTable({
-                        paging: false,   // Disable pagination
-                        ordering: true, // Disable sorting
-                        searching: false, // Disable searching
-                        info: false  
-                    });
-                    
-                });    
-    </script>
+    </div>
     {% endblock %}
 </body>
 </html>

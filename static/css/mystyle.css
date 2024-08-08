@@ -169,7 +169,7 @@ input[type=checkbox]:before {
 }
 
 .headerCol {
-    width:1%
+    width:10%
 }
 
 .headerHighlight {
@@ -197,6 +197,10 @@ table {
   th { 
     background-color: #e7b547;
   } 
+  .ui-datepicker select.ui-datepicker-month,
+  .ui-datepicker select.ui-datepicker-year {
+      width: 50% !important;
+  }
   .datepicker-container {
     position: relative;
     display: inline-block;
