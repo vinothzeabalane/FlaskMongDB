@@ -201,18 +201,6 @@ table {
   .ui-datepicker select.ui-datepicker-year {
       width: 50% !important;
   }
-  .datepicker-container {
-    position: relative;
-    display: inline-block;
-}
-.datepicker-container input {
-    padding-right: 30px; /* Adjust for icon width */
-}
-.datepicker-container .ui-datepicker-icon {
-    position: absolute;
-    right: 5px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
-    pointer-events: none; /* Make sure the icon doesn't block input field interaction */
-}
+  input[type="search"] {
+    padding: 0px !important; 
+}   

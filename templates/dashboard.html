@@ -163,6 +163,16 @@
     {
         width: 100% !important;
     }
+       #tblHost_filter {
+             margin-right: 10px;
+        }
+        #tblHost_filter label {
+            display: flex;                              
+        }
+        #tblHost_length label {
+            display: flex;               
+            gap: 5px;
+        } 
     </style>
     {% endblock %}
 </head>
@@ -243,7 +253,7 @@
                         $('.tblHostData').DataTable({
                                 paging: false,   // Disable pagination
                                 ordering: true, // Disable sorting
-                                searching: false, // Disable searching
+                                searching: true, // Disable searching
                                 info: false  
                             });
                             
