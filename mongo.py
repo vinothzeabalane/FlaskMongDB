@@ -207,16 +207,17 @@ class MongoDB:
 
     def get_dashboard_details(self):
         try:
-            # Calculate the start and end of the previous day
-            today = datetime.now().date()
-            start_date = today - timedelta(days=1)
-            
-            # Define the start and end times for the last day
-            start_date_str = start_date.strftime('%Y-%m-%d')
-        
-            # Fetch data for the last day only
+            # Step 1: Find the latest date in the collection
+            latest_date_doc = self.db.dashboard.find().sort('date', -1).limit(1)
+            latest_date_doc_list = list(latest_date_doc)  # Convert cursor to list
+            latest_date = latest_date_doc_list[0]['date'] if latest_date_doc_list else None
+
+            if not latest_date:
+                raise ValueError("No documents found in the collection.")
+
+            # Step 2: Fetch documents for the latest date
             documents = self.db.dashboard.find({
-                'date': start_date_str
+                'date': latest_date
             }).sort('hostname', 1)
             
             grouped_docs = defaultdict(list)
