@@ -157,11 +157,19 @@
                             <table id="grpTable" class="display">
                                 <thead>
                                     <tr>
-                                        <th scope="col" rowspan="2">Select</th>
+                                        {% if user_access != None and user_access != Empty %}
+                                        {% if (user_access['group'][2]) %}
+                                        <th scope="col" class="headerCol" rowspan="2">Select</th>
+                                        {% endif %}
+                                        {% endif %}
                                         <th scope="col" rowspan="2">Name</th>
                                         <th scope="col" colspan="3">User Permissions</th>
                                         <th scope="col" colspan="3">Group Permissions</th>
+                                        {% if user_access != None and user_access != Empty %}
+                                        {% if (user_access['group'][1]) %}
                                         <th scope="col" rowspan="2">Edit</th>
+                                        {% endif %}
+                                        {% endif %}
                                     </tr>
                                     <tr>
                                         <th scope="col">View</th>
@@ -245,7 +253,7 @@
     <script>
 
          function resetFields(){
-            $('#btnAdd').html('Add');
+            $('#btnAdd').text('Add');
             $('#txtGroup').val('');
 
             $('#chkUserView').prop('checked',false);
@@ -293,7 +301,7 @@
         
             $('#hdnGroupID').val($(sData).attr('dataid'));           
             $('#txtGroup').focus();
-            $('#btnAdd').html('Update');
+            $('#btnAdd').text('Update');
 
            // $('#chkUserEdit').attr('checked',false);
          }
@@ -302,14 +310,37 @@
             resetFields();
            
            //alert('hi');
+           // Define the text of the column to sort by initially
+            var initialSortText = "Name"; // Column text you want to sort by initially
+
+            // Function to get the column index based on text
+            function getColumnIndexByText(text) {
+                var index = -1;
+                $("#grpTable thead th").each(function(idx) {
+                    if ($(this).text().trim() === text) {
+                        index = idx;
+                        return false; // Exit loop
+                    }
+                });
+                return index;
+            }
+
+            // Get the column index based on the initial sort text
+            var initialSortColumnIndex = getColumnIndexByText(initialSortText);
+            //alert(initialSortColumnIndex);
+
            var mytable = $("#grpTable").DataTable({                
            "pageLength": 5,
            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-           "order": [[ 1, 'asc' ]],
+           "order": [[ initialSortColumnIndex, 'asc' ]],
            columnDefs: [
                     {
-                        targets: [0,2,3,4,5,6,7,8], // Apply to all columns
+                        targets: ['_all'], // Apply to all columns
                         orderable: false // Disable sorting for all columns
+                    },
+                    {
+                        targets: [initialSortColumnIndex], // Apply to all columns
+                        orderable: true // Disable sorting for all columns
                     }
                 ]
            });  

@@ -215,7 +215,7 @@
     <script>
 
         function resetFields(){
-            $('#btnAdd').html('Submit');
+            $('#btnAdd').text('Submit');
             $('#txtUsername').val('');
             $('#ddlGroup').val('');
             $('#hdnUserID').val('');
@@ -234,10 +234,55 @@
             resetFields();
 
             //alert('hi');
+
+            // Define the text of the column to sort by initially
+            var initialSortText = "UserName"; // Column text you want to sort by initially
+            var UnwantedSortText = "Select";
+            var EditSortText = "Edit";
+
+            // Function to get the column index based on text
+            function getColumnIndexByText(text) {
+                var index = -1;
+                $("#userTable thead th").each(function(idx) {
+                    if ($(this).text().trim() === text) {
+                        index = idx;
+                        return false; // Exit loop
+                    }
+                });
+                return index;
+            }
+
+            // Get the column index based on the initial sort text
+            var initialSortColumnIndex = getColumnIndexByText(initialSortText);
+            var UnwantedSortColumnIndex = getColumnIndexByText(UnwantedSortText);
+            var EditSortColumnIndex = getColumnIndexByText(EditSortText);
+            // alert(UnwantedSortColumnIndex);
+            // alert(EditSortColumnIndex);
+
+            // Determine which columns should have sorting disabled
+            var columnsToDisableSorting = [];
+            if (UnwantedSortColumnIndex !== -1) {
+                columnsToDisableSorting.push(UnwantedSortColumnIndex);
+            }
+            if (EditSortColumnIndex !== -1 && EditSortColumnIndex !== UnwantedSortColumnIndex) {
+                columnsToDisableSorting.push(EditSortColumnIndex);
+            }
+
             var mytable = $("#userTable").DataTable({
-            "pageLength": 5,
-            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]           
-            });     
+                "pageLength": 5,
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                "order": [[initialSortColumnIndex, 'asc']],
+                columnDefs: [
+                    {
+                        targets: columnsToDisableSorting.length > 0 ? columnsToDisableSorting : 'none', // Apply to specified columns or all
+                        orderable: false // Disable sorting
+                    },
+                    {
+                        targets: initialSortColumnIndex, // Enable sorting for specific column
+                        orderable: true
+                    }
+                ]           
+            });    
     
             
             $('#frmTable tbody').off('click').on('click', 'button.edit', function () { // edit token
@@ -251,7 +296,7 @@
             $('#spnpwd').css('display','none');
             $('#txtpwd').prop('required',false);
             $('#txtUsername').focus();
-            $('#btnAdd').html('Update');
+            $('#btnAdd').text('Update');
             });
             
         });

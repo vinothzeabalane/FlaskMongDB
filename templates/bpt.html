@@ -328,12 +328,17 @@
    // d.setMonth(d.getMonth() - 2);
    // $('#StartDate').datepicker('setDate', d);
    // $('#EndDate').datepicker('setDate', new Date());
-
                 
       var table = $("#myTable").DataTable({                                                    
       "pageLength": 10,
       lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
       ,"order":[0,'asc']
+      ,columnDefs: [
+                    {
+                        targets: [2,3], // Apply to View,Download columns
+                        orderable: false // Disable sorting for all columns
+                    }
+                ]
       });    
       
       $('input:radio').on('change', function () {
