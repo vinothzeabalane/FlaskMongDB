@@ -19,7 +19,7 @@
             border-style: groove;
             border-color: rgb(192, 192, 192);
             border-image: initial;                
-            background-color: whitesmoke;          
+            background-color: darkgrey;          
          }
         	 
         #grpTable {
@@ -54,7 +54,7 @@
         }
 
         .panelAccess span {
-            padding-left: 45px;color: #428bca; font-size: 18px !important;
+            padding-left: 45px;color: rgba(0, 37, 107, 0.884); font-size: 18px !important;
         }
 
         .panelAccess b {
@@ -72,12 +72,20 @@
         .pnlTable {
             padding: 35px;
         }
-
+        #grpTable_filter {
+             margin-right: 10px;
+        }
+        #grpTable_filter label {
+            display: flex;                              
+        }
+        #grpTable_length label {
+            display: flex;               
+            gap: 5px;
+        }
+        input[type="search"] {
+            padding: 0px !important; 
+        }        
     </style>
-    <!-- Include ColReorder CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css">
-    <!-- Include ColReorder JS -->
-    <script src="https://cdn.datatables.net/2.1.3/js/dataTables.js"></script>
  {% endblock %}
 </head>
 <body>
@@ -149,105 +157,81 @@
                 <div class="panel-body grey-color pnlTable">
                     <div class="row">
  						<form id="frmTable" action="{{ url_for('update_group') }}" method="post">
-						<table id="grpTable">
-						<thead>
-						          <tr>
+                            <table id="grpTable" class="display">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" rowspan="2">Select</th>
+                                        <th scope="col" rowspan="2">Name</th>
+                                        <th scope="col" colspan="3">User Permissions</th>
+                                        <th scope="col" colspan="3">Group Permissions</th>
+                                        <th scope="col" rowspan="2">Edit</th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="col">View</th>
+                                        <th scope="col">Edit</th>
+                                        <th scope="col">Delete</th>
+                                        <th scope="col">View</th>
+                                        <th scope="col">Edit</th>
+                                        <th scope="col">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for value in groups %}
+                                    {% if value != None and  value != Empty %}
+                                    <tr>
                                         {% if user_access != None and user_access != Empty %}
                                         {% if (user_access['group'][2]) %}
-                                        <th scope="col" class="headerCol">Select</th>
+                                        <td class="centerCol"><input type="checkbox" name="chk" value="{{value.name}}"></td>
                                         {% endif %}
                                         {% endif %}
 
-                                        <th scope="col">Name</th>
-                                        <th scope="col" colspan="3">User</th>
-                                        <th scope="col" colspan="3">Group</th>
+                                        <td>{{value.name}}</td>
 
-                                        {% if user_access != None and user_access != Empty %}
-                                        {% if (user_access['group'][1]) %}
-                                        <th scope="col">Edit</th>
-                                        {% endif %}
-                                        {% endif %}
-								  </tr>
-                                  <tr>
-                                    {% if user_access != None and user_access != Empty %}
-                                    {% if (user_access['group'][2]) %}
-                                    <th scope="col"></th>
-                                    {% endif %}
-                                    {% endif %}
+                                        {% if value.access != None and value.access != Empty %}
+                                            {% for item in value.access['user'] %}
+                                                {% if (item == True) %}
+                                                <td class="centerCol"><i class="fa fa-check"></i></td>
+                                                {% else %}
+                                                <td class="centerCol"><i class="fa fa-close"></i></td>
+                                                {% endif %}
+                                            {% endfor %}
 
-                                    <th scope="col"></th>
-                                    <th scope="col" rowspan="3" data-dt-order="disable">View</th>
-                                    <th scope="col" rowspan="3" data-dt-order="disable">Edit</th>
-                                    <th scope="col" rowspan="3" data-dt-order="disable">Delete</th>
-                                    <th scope="col" rowspan="3" data-dt-order="disable">View</th>
-                                    <th scope="col" rowspan="3" data-dt-order="disable">Edit</th>
-                                    <th scope="col" rowspan="3" data-dt-order="disable">Delete</th>
+                                            {% for item in value.access['group'] %}
+                                                {% if (item == True) %}
+                                                <td class="centerCol"><i class="fa fa-check"></i></td>
+                                                {% else %}
+                                                <td class="centerCol"><i class="fa fa-close"></i></td>
+                                                {% endif %}
+                                            {% endfor %}
 
-                                    {% if user_access != None and user_access != Empty %}
-                                    {% if (user_access['group'][1]) %}
-                                    <th scope="col"></th>
-                                    {% endif %}
-                                    {% endif %}
+                                            {% if user_access != None and user_access != Empty %}
+                                            {% if (user_access['group'][1]) %}
+                                            <td class="centerCol"><button type="button" onclick="EditData(this)" class="edit btn btn-primary login-button"  dataid="{{value._id}}" datagroup="{{value.access['group']}}" datauser="{{value.access['user']}}" dataname="{{value.name}}"><i class="fa fa-wrench"> Edit</i></button></td>
+                                            {% endif %}
+                                            {% endif %}
 
-                                </tr>
-                        </thead>
-                        <tbody>
-						 	{% for value in groups %}
-                            {% if value != None and  value != Empty %}
-							<tr>
-                                {% if user_access != None and user_access != Empty %}
-                                {% if (user_access['group'][2]) %}
-								<td class="centerCol"><input type="checkbox" name="chk" value="{{value.name}}"></td>
-                                {% endif %}
-                                {% endif %}
-
-                                <td>{{value.name}}</td>
-
-                                {% if value.access != None and value.access != Empty %}
-                                    {% for item in value.access['user'] %}
-                                        {% if (item == True) %}
-                                        <td class="centerCol"><i class="fa fa-check"></i></td>
                                         {% else %}
-                                        <td class="centerCol"><i class="fa fa-close"></i></td>
+                                            <td class="centerCol"><i class="fa fa-close"></i></td>
+                                            <td class="centerCol"><i class="fa fa-close"></i></td>
+                                            <td class="centerCol"><i class="fa fa-close"></i></td>
+
+                                            <td class="centerCol"><i class="fa fa-close"></i></td>
+                                            <td class="centerCol"><i class="fa fa-close"></i></td>
+                                            <td class="centerCol"><i class="fa fa-close"></i></td>
+
+                                            {% if user_access != None and user_access != Empty %}
+                                            {% if (user_access['group'][1]) %}
+                                            <td class="centerCol"><button type="button" onclick="EditData(this)" class="edit btn btn-primary login-button"  dataid="{{value._id}}" datagroup="[False,False,False]" datauser="[False,False,False]" dataname="{{value.name}}"><i class="fa fa-wrench"> Edit</i></button></td>
+                                            {% endif %}
+                                            {% endif %}
+
                                         {% endif %}
+
+                                    </tr>
+                                    {% endif %}
                                     {% endfor %}
-
-                                    {% for item in value.access['group'] %}
-                                        {% if (item == True) %}
-                                        <td class="centerCol"><i class="fa fa-check"></i></td>
-                                        {% else %}
-                                        <td class="centerCol"><i class="fa fa-close"></i></td>
-                                        {% endif %}
-                                    {% endfor %}
-
-                                    {% if user_access != None and user_access != Empty %}
-                                    {% if (user_access['group'][1]) %}
-                                    <td class="centerCol"><button type="button" onclick="EditData(this)" class="edit btn btn-primary login-button"  dataid="{{value._id}}" datagroup="{{value.access['group']}}" datauser="{{value.access['user']}}" dataname="{{value.name}}"><i class="fa fa-wrench"> Edit</i></button></td>
-                                    {% endif %}
-                                    {% endif %}
-
-                                {% else %}
-                                    <td class="centerCol"><i class="fa fa-close"></i></td>
-                                    <td class="centerCol"><i class="fa fa-close"></i></td>
-                                    <td class="centerCol"><i class="fa fa-close"></i></td>
-
-                                    <td class="centerCol"><i class="fa fa-close"></i></td>
-                                    <td class="centerCol"><i class="fa fa-close"></i></td>
-                                    <td class="centerCol"><i class="fa fa-close"></i></td>
-
-                                    {% if user_access != None and user_access != Empty %}
-                                    {% if (user_access['group'][1]) %}
-                                    <td class="centerCol"><button type="button" onclick="EditData(this)" class="edit btn btn-primary login-button"  dataid="{{value._id}}" datagroup="[False,False,False]" datauser="[False,False,False]" dataname="{{value.name}}"><i class="fa fa-wrench"> Edit</i></button></td>
-                                    {% endif %}
-                                    {% endif %}
-
-                                {% endif %}
-
-							</tr>
-                            {% endif %}
-                            {% endfor %}
-                        </tbody>
-						</table>
+                                </tbody>
+                                </table>
 
                         {% if user_access != None and user_access != Empty %}
                         {% if (user_access['group'][2]) %}
@@ -263,17 +247,17 @@
     </div>
     <script>
 
-       function resetFields(){
+         function resetFields(){
             $('#btnAdd').html('Add');
             $('#txtGroup').val('');
 
-            $('#chkUserView').attr('checked',false);
-            $('#chkUserEdit').attr('checked',false);
-            $('#chkUserDelete').attr('checked',false);
+            $('#chkUserView').prop('checked',false);
+            $('#chkUserEdit').prop('checked',false);
+            $('#chkUserDelete').prop('checked',false);
 
-            $('#chkGroupView').attr('checked',false);
-            $('#chkGroupEdit').attr('checked',false);
-            $('#chkGroupDelete').attr('checked',false);
+            $('#chkGroupView').prop('checked',false);
+            $('#chkGroupEdit').prop('checked',false);
+            $('#chkGroupDelete').prop('checked',false);
 
             $('#hdnGroupID').val('');
            
@@ -281,6 +265,7 @@
         }
 
          function EditData(sData){
+           //console.log('Data Attributes:', $(sData).attr('datauser'), $(sData).attr('datagroup'));
            // debugger;
            // alert(sData);
             $('#txtGroup').val($(sData).attr('dataname'));
@@ -289,17 +274,25 @@
             userArray = userArray.replace('[','').replace(']','').split(',');
 
            // alert($.trim(userArray[1]).toLowerCase());
+
+            $('#chkUserView').prop('checked',false);
+            $('#chkUserEdit').prop('checked',false);
+            $('#chkUserDelete').prop('checked',false);
+
+            $('#chkGroupView').prop('checked',false);
+            $('#chkGroupEdit').prop('checked',false);
+            $('#chkGroupDelete').prop('checked',false);
             
-            $('#chkUserView').attr('checked',($.trim(userArray[0]).toLowerCase())== "false"? false :true);
-            $('#chkUserEdit').attr('checked',($.trim(userArray[1]).toLowerCase())== "false"? false :true);
-            $('#chkUserDelete').attr('checked',($.trim(userArray[2]).toLowerCase())== "false"? false :true);
+            $('#chkUserView').prop('checked',($.trim(userArray[0]).toLowerCase())== "false"? false :true);
+            $('#chkUserEdit').prop('checked',($.trim(userArray[1]).toLowerCase())== "false"? false :true);
+            $('#chkUserDelete').prop('checked',($.trim(userArray[2]).toLowerCase())== "false"? false :true);
 
             var groupArray = $(sData).attr('datagroup');
             groupArray = groupArray.replace('[','').replace(']','').split(',');
 
-            $('#chkGroupView').attr('checked',($.trim(groupArray[0]).toLowerCase())== "false"? false :true);
-            $('#chkGroupEdit').attr('checked',($.trim(groupArray[1]).toLowerCase())== "false"? false :true);
-            $('#chkGroupDelete').attr('checked',($.trim(groupArray[2]).toLowerCase())== "false"? false :true);
+            $('#chkGroupView').prop('checked',($.trim(groupArray[0]).toLowerCase())== "false"? false :true);
+            $('#chkGroupEdit').prop('checked',($.trim(groupArray[1]).toLowerCase())== "false"? false :true);
+            $('#chkGroupDelete').prop('checked',($.trim(groupArray[2]).toLowerCase())== "false"? false :true);
         
             $('#hdnGroupID').val($(sData).attr('dataid'));           
             $('#txtGroup').focus();
@@ -312,13 +305,18 @@
             resetFields();
            
            //alert('hi');
-           var mytable = $("#grpTable").DataTable({    
-        //    "colReorder": true,                                                         
+           var mytable = $("#grpTable").DataTable({                
            "pageLength": 5,
            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-           "order": [[1, 'asc']]
+           "order": [[ 1, 'asc' ]],
+           columnDefs: [
+                    {
+                        targets: [0,2,3,4,5,6,7,8], // Apply to all columns
+                        orderable: false // Disable sorting for all columns
+                    }
+                ]
            });  
-              
+        
        });
 
        $('#frmTable').submit(function () {
