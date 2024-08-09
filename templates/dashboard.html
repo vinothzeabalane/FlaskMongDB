@@ -217,18 +217,19 @@
                                     </tr>
                                 </thead>
                                 <tbody class="tbody-container">
+
                                     {% for number in range(0, 32) %}
                                     <tr>
                                         {% set mainkeys = [] %}
-                                        {% if item[0] != None and item[0] != Empty %}
+                                        {% if item[0]['data'] != None and item[0]['data'] != Empty and item[0]['data'] != {}  %}
                                             {% set mainkeys = item[0]['data'].keys() | list %}
-                                        {% elif item[1] !=  None and item[1] != Empty %}
+                                        {% elif item[1]['data'] !=  None and item[1]['data'] != Empty and item[1]['data'] != {}  %}
                                             {% set mainkeys = item[1]['data'].keys() | list %}
                                         {% endif %}
 
                                         {% if ((mainkeys | length) != 0) %}
-                                            {% set boot_key = mainkeys[number] %}
-                                            <td>{{ boot_key }}</td>
+                                                {% set boot_key = mainkeys[number] %}
+                                                <td>{{ boot_key }}</td>
 
                                             {% if item[0] !=  None and boot_key in item[0]['data'] %}
                                                 <td>{{ item[0]['data'][boot_key].min }}</td>
@@ -245,12 +246,10 @@
                                                 <td>N/A</td>
                                                 <td>N/A</td>
                                             {% endif %}
-
-                                        {% else %}
-                                            <td colspan="5">No data available</td>
-                                        {% endif %}
                                     </tr>
-                                {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+
                                 </tbody>
                             </table>
                         </div>
