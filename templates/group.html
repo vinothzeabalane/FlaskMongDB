@@ -311,15 +311,30 @@
            
            //alert('hi');
            // Define the text of the column to sort by initially
-            var initialSortText = "Name"; // Column text you want to sort by initially
+            var initialSortText = "Name"; // Column text you want to sort by initially            
+            var colArray = [];
 
             // Function to get the column index based on text
             function getColumnIndexByText(text) {
-                var index = -1;
-                $("#grpTable thead th").each(function(idx) {
+                var index = -1;                
+                $("#grpTable > thead > tr:first-child > th").each(function(idx) {                   
                     if ($(this).text().trim() === text) {
-                        index = idx;
-                        return false; // Exit loop
+                        index = idx;                       
+                    }
+                    else {
+                        if ($(this).text().trim() == 'User Permissions'){
+                            colArray.push(idx);
+                            colArray.push(idx+1);
+                            colArray.push(idx+2);
+                        }
+                        else if ($(this).text().trim() == 'Group Permissions'){
+                            idx = idx + 2;
+                            colArray.push(idx);
+                            colArray.push(idx+1);
+                            colArray.push(idx+2);
+                        }
+                        else 
+                            colArray.push(idx);
                     }
                 });
                 return index;
@@ -329,23 +344,22 @@
             var initialSortColumnIndex = getColumnIndexByText(initialSortText);
             //alert(initialSortColumnIndex);
 
+           // alert(colArray);
+
            var mytable = $("#grpTable").DataTable({                
            "pageLength": 5,
            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
            "order": [[ initialSortColumnIndex, 'asc' ]],
            columnDefs: [
-                    {
-                        targets: ['_all'], // Apply to all columns
-                        orderable: false // Disable sorting for all columns
-                    },
-                    {
-                        targets: [initialSortColumnIndex], // Apply to all columns
-                        orderable: true // Disable sorting for all columns
-                    }
+                {
+                    "targets": colArray, // '_all' Apply to other columns
+                    "orderable": false // Disable sorting for all columns
+                }
                 ]
            });  
         
        });
+       
 
        $('#frmTable').submit(function () {
            var grpID = $('#hdnGroupID').val();
