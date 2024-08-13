@@ -20,6 +20,9 @@ cd /home/remlab || exit
 # Remove files with 'sudo rm -r' and ignore errors if files do not exist
 sudo rm -r /home/remlab/cmdline.cfg /home/remlab/"$filename" 2>/dev/null || true
 
+# Create the file
+touch /home/remlab/$filename
+
 # Create cmdline.cfg file with commands
 echo -e "selectdev 1\ntc-unlock\nfwdownload -f /mnt/udrive/ozeabalx/ps-bootprofile/unified_image.bin\nfwcommit -s 1 -c 1 -b 0\nexit" > /home/remlab/cmdline.cfg
 
