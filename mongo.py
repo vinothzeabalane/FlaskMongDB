@@ -251,7 +251,7 @@ class MongoDB:
 
     def get_dashboard_details_filter(self, date= None, hostname=None):
         try:
-            fields_to_exclude = ['bootType', 'date', 'sku']
+            fields_to_exclude = ['BootType', 'Date', 'sku', 'HOST']
             documents = self.db.dashboard.find({
                 'date': date,
                 'hostname': hostname
@@ -260,12 +260,14 @@ class MongoDB:
             grouped_docs = defaultdict(list)
 
             for doc in documents:
+                filtered_doc = {key: value for key, value in doc.items()}
 
-                filtered_doc = {key: value for key, value in doc.items() if key not in fields_to_exclude}
-
-                # Remove specified fields from the nested 'data' field
+                # Check if the key 'data' exists in the dictionary 'filtered_doc'
                 if 'data' in filtered_doc:
-                    filtered_doc['data'] = {key: value for key, value in filtered_doc['data'].items() if key not in fields_to_exclude}
+                    # Use dictionary comprehension to filter out keys in 'fields_to_exclude'
+                    filtered_doc['data'] = {
+                        key: value for key, value in filtered_doc['data'].items() if key not in fields_to_exclude
+                    }
 
                 # Get hostname, default to 'Unknown' if not present
                 host = doc.get('hostname', 'Unknown')

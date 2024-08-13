@@ -111,7 +111,7 @@ try:
         filename = str(os.path.basename(file)).replace('.csv','')
         is_file_exit = db.fs.files.find_one({"filename": filename})
         if is_file_exit:
-            print('File name already exists in the files')
+            print('File name {} already exists in the files'.format(filename))
             continue
         with open(file, 'rb') as f:
             # Store data in GridFS, which handles chunking automatically
@@ -146,6 +146,7 @@ try:
     
     for filepath in csv_files:
         skip_parent = False
+        do_data_format = True
         file_name = os.path.basename(filepath).replace(".csv", "")
         # Split the file name by dashes
         parts = file_name.split('-')
@@ -158,7 +159,7 @@ try:
 
         is_filename_exit = db.dashboard.find_one({"filename": file_name})
         if is_filename_exit:
-            print('File name already exists in the dashboard collection')
+            print('File name: {} already exists in the dashboard collection'.format(file_name))
             continue
         df = pd.read_excel(filepath)
         
@@ -172,37 +173,42 @@ try:
         icount = 2
         
         if len(df) == 0:
-            continue
+            print('File name: {} is emptpy, and has no data'.format(file_name))
+            do_data_format = False
 
-        # Collect data from DataFrame
-        for _ in range(33):
-            l1 = [df.iat[icount, j] for j in range(1, 6)]
-            data[df.iat[count, 0]] = l1
-            count += 4
-            icount += 4
-        
-        for values in data.values():
-            for value in values:
-                if is_nan(value):
-                    skip_parent = True
-                    print("Item is NaN")
+        if do_data_format:
+            # Collect data from DataFrame
+            for _ in range(33):
+                l1 = [df.iat[icount, j] for j in range(1, 6)]
+                data[df.iat[count, 0]] = l1
+                count += 4
+                icount += 4
+            
+            for values in data.values():
+                for value in values:
+                    if is_nan(value):
+                        skip_parent = True
+                        print("Item is NaN")
 
         # if skip_parent:
         #     continue  # Continue to the next iteration of the parent loop
 
-        min_max_times = find_min_max_times(data)
+            min_max_times = find_min_max_times(data)
+        
+        
         dashboard_id = 'REC-{}'.format(generate_random_suffix())
         
         # Insert into database
         res = db.dashboard.insert_one({
             "_id": dashboard_id,
-            "data": min_max_times,
+            "data": globals().get('min_max_times', {}),
             "filename": file_name,
             "hostname": hostname,
             "sku": skuSize,
             "bootType": bootTpye,
             "date": date
         })
+        print ("Output: {}".format(res))
 
 except Exception as e:
     print ("Exception : {}".format(e))
