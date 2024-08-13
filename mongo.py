@@ -248,3 +248,38 @@ class MongoDB:
             return result_list
         except Exception as e:
             self._log_error(e)
+
+    def get_dashboard_details_filter(self, date= None, hostname=None):
+        try:
+            fields_to_exclude = ['bootType', 'date', 'sku']
+            documents = self.db.dashboard.find({
+                'date': date,
+                'hostname': hostname
+            })
+            
+            grouped_docs = defaultdict(list)
+
+            for doc in documents:
+
+                filtered_doc = {key: value for key, value in doc.items() if key not in fields_to_exclude}
+
+                # Remove specified fields from the nested 'data' field
+                if 'data' in filtered_doc:
+                    filtered_doc['data'] = {key: value for key, value in filtered_doc['data'].items() if key not in fields_to_exclude}
+
+                # Get hostname, default to 'Unknown' if not present
+                host = doc.get('hostname', 'Unknown')
+                grouped_docs[host].append(filtered_doc)
+
+            # Convert grouped results to a list of lists
+            result_list = list(grouped_docs.values())
+
+            # Print the results
+            for group in result_list:
+                print(f"Group for hostname: {group[0]['hostname']}")
+                for doc in group:
+                    print(doc)
+            
+            return result_list
+        except Exception as e:
+            self._log_error(e)

@@ -183,25 +183,25 @@
             <section class="accordion accordion--radio">
                 {% for item in hostData %}
                 {% if item != None and item != Empty%}
-                <div class="tab">
+                <div class="tab loopData" id="{{loop.index}}">
                     {% if loop.index == 1 %}
                     <input type="radio" name="accordion-2" id="rd{{loop.index}}" checked>
                     {% else %}
                     <input type="radio" name="accordion-2" id="rd{{loop.index}}">
                     {% endif %}
                     <label for="rd{{loop.index}}" class="tab__label">{{item[0].hostname +" - "+ item[0].sku}}</label>
-                    <div class="tab__content">
+                    <div class="tab__content" id="tab{{loop.index}}">
                         <div class="divDate">
                             <label class="lblDate">Pick any date to view:</label>
                             &nbsp;&nbsp;&nbsp;<input id="UploadedDate{{loop.index}}" class="dtpicker" placeholder="-Select-"  maxlength="10" name="UploadedDate{{loop.index}}" size="16" type="text">&nbsp;&nbsp;&nbsp;
-                            <button type="button" name="filter{{loop.index}}" class="btn btn-primary login-button" id="btnFilter{{loop.index}}" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
+                            <button type="button" selindex="{{loop.index}}" seldate="{{item[0].date}}" selhost="{{item[0].hostname}}" seltable="table{{loop.index}}" name="filter{{loop.index}}" class="btn btn-primary login-button filterbutton" id="btnFilter{{loop.index}}" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
                         </div>
-                        <div class="fixTableHead">
+                        <div class="fixTableHead" id="table{{loop.index}}">
                             <table id="tblHost" class="tblHostData">
                                 <thead>
                                     <tr class="scrollmain-header">
                                         <th scope="col">Boot Entry</th>
-                                        <th scope="col" colspan="4">{{item[0].date}}</th>
+                                        <th scope="col" colspan="4" id="thDate{{loop.index}}">{{item[0].date}}</th>
                                     </tr>
                                     <tr class="scrollsub-header">
                                         <th scope="col"></th>
@@ -251,7 +251,11 @@
                                     {% endfor %}
 
                                 </tbody>
+                                <tfoot>
+                                    <!-- The message will be inserted here -->
+                                </tfoot>
                             </table>
+                            <br>
                         </div>
                     </div>
                 </div>
@@ -271,13 +275,148 @@
                                 dateFormat: 'yy-mm-dd'
                                 ,maxDate: -1
                         });
+
+                        var bootDate,divId;
+
+                        // Select all divs with class 'my-class'
+                        $('.loopData').each(function(index, element) {
+                            divId = $(this).attr('id').toString();
+                            bootDate = $("#thDate"+divId).html().trim();   // Use text() if it's plain text
+                            if (bootDate) {
+                                $("#UploadedDate"+divId).datepicker("setDate", bootDate);
+                            }
+                        });
                         
                         $('.tblHostData').DataTable({
                                 paging: false,   // Disable pagination
-                                ordering: true, // Disable sorting
+                                ordering: false, // Disable sorting
                                 searching: true, // Disable searching
                                 info: false  
                             });
+
+                            function formatDateToYyMmDd(date) {
+                                if (!date) return ''; // Handle cases where the date is null or undefined
+                                var year = date.getFullYear().toString(); // .slice(-2)  last two digits of the year
+                                var month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+                                var day = date.getDate().toString().padStart(2, '0');
+                                return `${year}-${month}-${day}`;
+                            }
+
+                            $('.filterbutton').click(function() {                                
+                            // Retrieve values from input fields or define your parameters here
+                           // var selDate = $(this).attr('seldate');
+                            var loopId = $(this).attr('selindex').toString();
+                            var sIndex = ("UploadedDate"+ $(this).attr('selindex')).toString();
+                            var selDate = $('#'+sIndex).datepicker('getDate');
+
+                            if(selDate) {
+                            var formattedDate = formatDateToYyMmDd(selDate);
+                            var selHost = $(this).attr('selhost');
+                            var selTable = $(this).attr('seltable');
+                            var table = $('#'+selTable).find('table');
+                            var tbody = table.find('tbody');
+                            var tfoot = table.find('tfoot');
+                            //alert(selDate);
+                            $("#thDate"+loopId).html(formattedDate);
+
+                            $.ajax({
+                                url: '/getHostData',
+                                method: 'GET',
+                                data: {
+                                    sDate: formattedDate,
+                                    hostName: selHost
+                                },
+                                success: function(response) {
+                                //debugger; 
+                              
+                                    if(response){                               
+                                    //debugger;
+                                    var $tbody = tbody;//$('.tbody-container');
+                                    var $tfoot = tfoot;
+                                    $tfoot.empty(); 
+
+                                    if(response.length > 0) {                                         
+                                        $tbody.empty(); // Clear the existing content
+                                        var item0 = response[0][0] || {};
+                                        var item1 = response[0][1] || {};
+                                        
+                                        var mainkeys = [];
+                                        
+                                        // Determine the keys from item[0] or item[1]
+                                        if (item0.data && !$.isEmptyObject(item0.data)) {
+                                            mainkeys = Object.keys(item0.data);
+                                        } else if (item1.data && !$.isEmptyObject(item1.data)) {
+                                            mainkeys = Object.keys(item1.data);
+                                        }
+                                        
+                                        // Generate table rows based on the keys
+                                        for (var i = 0; i < mainkeys.length; i++) {
+                                            var boot_key = mainkeys[i];
+                                            var row = $('<tr></tr>');
+                                            
+                                            row.append('<td>' + boot_key + '</td>');
+                                            
+                                            // Handle item[0] data
+                                            if (item0.data && item0.data.hasOwnProperty(boot_key)) {
+                                                var item0Data = item0.data[boot_key];
+                                                row.append('<td>' + (item0Data.min !== undefined ? item0Data.min : 'N/A') + '</td>');
+                                                row.append('<td>' + (item0Data.max !== undefined ? item0Data.max : 'N/A') + '</td>');
+                                            } else {
+                                                row.append('<td>N/A</td>');
+                                                row.append('<td>N/A</td>');
+                                            }
+                                            
+                                            // Handle item[1] data
+                                            if (item1.data && item1.data.hasOwnProperty(boot_key)) {
+                                                var item1Data = item1.data[boot_key];
+                                                row.append('<td>' + (item1Data.min !== undefined ? item1Data.min : 'N/A') + '</td>');
+                                                row.append('<td>' + (item1Data.max !== undefined ? item1Data.max : 'N/A') + '</td>');
+                                            } else {
+                                                row.append('<td>N/A</td>');
+                                                row.append('<td>N/A</td>');
+                                            }
+                                            
+                                            $tbody.append(row);                                     
+                                            }
+                                      }
+                                      else {
+                                            $tbody.empty(); // Clear the existing content
+                                            //alert("No Data available");
+                                            debugger;
+                                          
+                                            var numCols = 5; //table.columns().header().length;
+                                            $tfoot.html(
+                                                '<tr><td colspan="' + numCols + '" style="text-align:center !important;">No Data Available</td></tr>'
+                                            );
+                                            
+                                        }
+                                    }
+                                    else {
+                                        //alert("No Data available");
+                                        $tbody.empty(); // Clear the existing content                                           
+                                        var numCols = 5; 
+                                        $tfoot.html(
+                                            '<tr><td colspan="' + numCols + '" style="text-align:center !important;">No Data Available</td></tr>'
+                                        );
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('AJAX Error:', status, error);
+                                },
+                                complete: function(xhr, status) {
+                                    // This function is called after the request completes, regardless of its outcome
+                                    //$('#'+sIndex)('setDate', d);
+                                    console.log('Request complete. Status:', status);
+                                    $("#thDate"+loopId).html(formattedDate);
+                                }
+                                });
+                            }
+                            else {
+                                console.log('No date selected.');
+                                alert('No Date selected.');
+                            }                                
+                            
+                        });
                             
                         });    
             </script>
