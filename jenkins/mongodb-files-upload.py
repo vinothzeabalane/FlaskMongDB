@@ -6,7 +6,7 @@ import random
 import string
 import math
 
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
 from gridfs import GridFS
 from bson import ObjectId
 from datetime import date
@@ -194,22 +194,29 @@ try:
         #     continue  # Continue to the next iteration of the parent loop
 
             min_max_times = find_min_max_times(data)
-        
-        
-        dashboard_id = 'REC-{}'.format(generate_random_suffix())
-        
-        # Insert into database
-        res = db.dashboard.insert_one({
-            "_id": dashboard_id,
-            "data": globals().get('min_max_times', {}),
-            "filename": file_name,
-            "hostname": hostname,
-            "sku": skuSize,
-            "bootType": bootTpye,
-            "date": date
-        })
-        print ("Output: {}".format(res))
 
+        retries = 3
+        while retries > 0:
+            try:
+                dashboard_id = 'REC-{}'.format(generate_random_suffix())
+                # Insert into database
+                res = db.dashboard.insert_one({
+                    "_id": dashboard_id,
+                    "data": globals().get('min_max_times', {}),
+                    "filename": file_name,
+                    "hostname": hostname,
+                    "sku": skuSize,
+                    "bootType": bootTpye,
+                    "date": date
+                })
+                print ("Output: {}".format(res))
+
+            except errors.DuplicateKeyError as e:
+                print(f"Duplicate key error: {e}")
+                # Generate a new unique ID
+                retries -= 1
+                print(f"Retrying with dashboard ID: {dashboard_id}")
+    
 except Exception as e:
     print ("Exception : {}".format(e))
 
