@@ -85,7 +85,7 @@
         .tab__content input[type=text]{
             width: 60%;
         }
-    
+
         .tab__close {
             justify-content: flex-end;
             padding: 0.5rem 1rem;
@@ -109,52 +109,52 @@
             padding-left: 2%;
         }
 
-        .fixTableHead { 
-      overflow-y: auto; 
+        .fixTableHead {
+      overflow-y: auto;
       overflow-x: hidden;
       width: 100%;
       /* height: 110px;  */
       display: inline-flex;
-    } 
-    .fixTableHead thead th { 
+    }
+    .fixTableHead thead th {
       position: -webkit-sticky; /* For Safari */
-      position: sticky;     
+      position: sticky;
       z-index: 2;
       text-align: center;
-    } 
-   
-    thead .scrollmain-header {    
-        position: -webkit-sticky; /* For Safari */
-        position: sticky;     
-        top: 0;       
     }
 
-    thead .scrollsub-header {   
+    thead .scrollmain-header {
         position: -webkit-sticky; /* For Safari */
-        position: sticky;   
+        position: sticky;
+        top: 0;
+    }
+
+    thead .scrollsub-header {
+        position: -webkit-sticky; /* For Safari */
+        position: sticky;
         top: 30px; /* Adjust based on the height of the main header row */
         z-index: 1; /* Ensure subheader is below the main header */
     }
-    thead .subSub-header {     
+    thead .subSub-header {
         position: -webkit-sticky; /* For Safari */
-        position: sticky;     
+        position: sticky;
         top: 60px; /* Adjust based on the height of the main header row */
         z-index: 1; /* Ensure subheader is below the main header */
     }
-    table { 
-      border-collapse: collapse;         
-      width: 100%; 
+    table {
+      border-collapse: collapse;
+      width: 100%;
       border: none;
-    } 
-    th, 
-    td { 
-      padding: 8px 15px; 
-      border: 1px solid var(--theme); 
-    } 
-    th { 
+    }
+    th,
+    td {
+      padding: 8px 15px;
+      border: 1px solid var(--theme);
+    }
+    th {
       background: darkgray !important;
       text-align: center !important;
-    } 
+    }
     table.dataTable thead th, table.dataTable thead td {
     padding: 6px 18px;
     border-bottom: 1px solid #111;
@@ -167,12 +167,12 @@
              margin-right: 10px;
         }
         #tblHost_filter label {
-            display: flex;                              
+            display: flex;
         }
         #tblHost_length label {
-            display: flex;               
+            display: flex;
             gap: 5px;
-        } 
+        }
     </style>
     {% endblock %}
 </head>
@@ -194,7 +194,7 @@
                         <div class="divDate">
                             <label class="lblDate">Pick any date to view:</label>
                             &nbsp;&nbsp;&nbsp;<input id="UploadedDate{{loop.index}}" class="dtpicker" placeholder="-Select-"  maxlength="10" name="UploadedDate{{loop.index}}" size="16" type="text">&nbsp;&nbsp;&nbsp;
-                            <button type="button" selindex="{{loop.index}}" seldate="{{item[0].date}}" selhost="{{item[0].hostname}}" seltable="table{{loop.index}}" name="filter{{loop.index}}" class="btn btn-primary login-button filterbutton" id="btnFilter{{loop.index}}" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
+                            <button type="button" onclick="fetchData(this)" selindex="{{loop.index}}" seldate="{{item[0].date}}" selhost="{{item[0].hostname}}" seltable="table{{loop.index}}" name="filter{{loop.index}}" class="btn btn-primary login-button filterbutton" id="btnFilter{{loop.index}}" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
                         </div>
                         <div class="fixTableHead" id="table{{loop.index}}">
                             <table id="tblHost" class="tblHostData">
@@ -217,40 +217,41 @@
                                     </tr>
                                 </thead>
                                 <tbody class="tbody-container">
+                                    {% set mainkeys = [] %}
+                                    {% if item[0]['data'] != None and item[0]['data'] != Empty and item[0]['data'] != {} %}
+                                        {% set mainkeys = item[0]['data'].keys() | list %}
+                                    {% elif item[1]['data'] != None and item[1]['data'] != Empty and item[1]['data'] != {} %}
+                                        {% set mainkeys = item[1]['data'].keys() | list %}
+                                    {% endif %}
 
-                                    {% for number in range(0, 32) %}
-                                    <tr>
-                                        {% set mainkeys = [] %}
-                                        {% if item[0]['data'] != None and item[0]['data'] != Empty and item[0]['data'] != {}  %}
-                                            {% set mainkeys = item[0]['data'].keys() | list %}
-                                        {% elif item[1]['data'] !=  None and item[1]['data'] != Empty and item[1]['data'] != {}  %}
-                                            {% set mainkeys = item[1]['data'].keys() | list %}
-                                        {% endif %}
+                                    {% if mainkeys | length != 0 %}
+                                        {% for number in range(0, 32) %}
+                                            {% if (mainkeys | length) != 0 %}
+                                                <tr>
+                                                    {% set boot_key = mainkeys[number] %}
+                                                    <td>{{ boot_key }}</td>
 
-                                        {% if ((mainkeys | length) != 0) %}
-                                                {% set boot_key = mainkeys[number] %}
-                                                <td>{{ boot_key }}</td>
+                                                    {% if item[0] != None and boot_key in item[0]['data'] %}
+                                                        <td>{{ item[0]['data'][boot_key].min }}</td>
+                                                        <td>{{ item[0]['data'][boot_key].max }}</td>
+                                                    {% else %}
+                                                        <td>N/A</td>
+                                                        <td>N/A</td>
+                                                    {% endif %}
 
-                                            {% if item[0] !=  None and boot_key in item[0]['data'] %}
-                                                <td>{{ item[0]['data'][boot_key].min }}</td>
-                                                <td>{{ item[0]['data'][boot_key].max }}</td>
-                                            {% else %}
-                                                <td>N/A</td>
-                                                <td>N/A</td>
+                                                    {% if item[1] != None and boot_key in item[1]['data'] %}
+                                                        <td>{{ item[1]['data'][boot_key].min }}</td>
+                                                        <td>{{ item[1]['data'][boot_key].max }}</td>
+                                                    {% else %}
+                                                        <td>N/A</td>
+                                                        <td>N/A</td>
+                                                    {% endif %}
+                                                </tr>
                                             {% endif %}
-
-                                            {% if item[1] != None and boot_key in item[1]['data'] %}
-                                                <td>{{ item[1]['data'][boot_key].min }}</td>
-                                                <td>{{ item[1]['data'][boot_key].max }}</td>
-                                            {% else %}
-                                                <td>N/A</td>
-                                                <td>N/A</td>
-                                            {% endif %}
-                                    </tr>
-                                        {% endif %}
-                                    {% endfor %}
-
+                                        {% endfor %}
+                                    {% endif %}
                                 </tbody>
+
                                 <tfoot>
                                     <!-- The message will be inserted here -->
                                 </tfoot>
@@ -268,8 +269,8 @@
             </section>
             <script>
                     $(document).ready(function() {
-                        
-                        $('.dtpicker').datepicker({     
+
+                        $('.dtpicker').datepicker({
                                 changeMonth: true,
                                 changeYear: true,
                                 dateFormat: 'yy-mm-dd'
@@ -286,38 +287,64 @@
                                 $("#UploadedDate"+divId).datepicker("setDate", bootDate);
                             }
                         });
-                        
-                        $('.tblHostData').DataTable({
+
+                                let dTable = $('.tblHostData').DataTable({
+                                    paging: false,   // Disable pagination
+                                    ordering: false, // Disable sorting
+                                    searching: true, // Disable searching
+                                    info: false
+                                });
+
+                                // Apply custom styling when no data is available
+                                dTable.on('draw', function() {
+                                if (dTable.data().count() === 0) {
+                                    dTable.addClass('dataTables_empty');
+                                } else {
+                                    dTable.removeClass('dataTables_empty');
+                                }
+                            });
+                            
+                        });
+
+
+                        function initializeDataTable(sTable) {
+                            sTable.DataTable({
                                 paging: false,   // Disable pagination
                                 ordering: false, // Disable sorting
-                                searching: true, // Disable searching
-                                info: false  
+                                searching: false, // Disable searching
+                                info: false                                
+                                ,columnDefs: [
+                                    {
+                                        targets: 0, // Index of the first column
+                                        orderable: false // Disable sorting for the first column
+                                    }
+                                ]
+                                ,order: [] // Clear default sorting, or specify other columns if needed
+                                ,destroy: true // Ensures that the table is destroyed and reinitialized
                             });
+                        }
 
-                            function formatDateToYyMmDd(date) {
-                                if (!date) return ''; // Handle cases where the date is null or undefined
-                                var year = date.getFullYear().toString(); // .slice(-2)  last two digits of the year
-                                var month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
-                                var day = date.getDate().toString().padStart(2, '0');
-                                return `${year}-${month}-${day}`;
-                            }
-
-                            $('.filterbutton').click(function() {                                
+                        function fetchData(selectedInfo){
+                           // debugger;
                             // Retrieve values from input fields or define your parameters here
                            // var selDate = $(this).attr('seldate');
-                            var loopId = $(this).attr('selindex').toString();
-                            var sIndex = ("UploadedDate"+ $(this).attr('selindex')).toString();
+                            var loopId = $(selectedInfo).attr('selindex').toString();
+                            var sIndex = ("UploadedDate"+ $(selectedInfo).attr('selindex')).toString();
                             var selDate = $('#'+sIndex).datepicker('getDate');
 
                             if(selDate) {
                             var formattedDate = formatDateToYyMmDd(selDate);
-                            var selHost = $(this).attr('selhost');
-                            var selTable = $(this).attr('seltable');
+                            var selHost = $(selectedInfo).attr('selhost');
+                            var selTable = $(selectedInfo).attr('seltable');
                             var table = $('#'+selTable).find('table');
+                            var searchField = $('#'+selTable).find('input');
                             var tbody = table.find('tbody');
                             var tfoot = table.find('tfoot');
                             //alert(selDate);
                             $("#thDate"+loopId).html(formattedDate);
+                            var numCols = 5;
+                            var $tbody = tbody;//$('.tbody-container');
+                            var $tfoot = tfoot;
 
                             $.ajax({
                                 url: '/getHostData',
@@ -327,35 +354,39 @@
                                     hostName: selHost
                                 },
                                 success: function(response) {
-                                //debugger; 
-                              
-                                    if(response){                               
-                                    //debugger;
-                                    var $tbody = tbody;//$('.tbody-container');
-                                    var $tfoot = tfoot;
-                                    $tfoot.empty(); 
+                                //debugger;
 
-                                    if(response.length > 0) {                                         
+                                    if(response){
+                                    //debugger;
+                                    
+                                    $tfoot.empty();
+
+                                    if(response.length > 0) {
                                         $tbody.empty(); // Clear the existing content
+                                        //table.DataTable().clear().draw();
+
+                                        // debugger;
                                         var item0 = response[0][0] || {};
                                         var item1 = response[0][1] || {};
-                                        
+
                                         var mainkeys = [];
-                                        
+
                                         // Determine the keys from item[0] or item[1]
                                         if (item0.data && !$.isEmptyObject(item0.data)) {
                                             mainkeys = Object.keys(item0.data);
                                         } else if (item1.data && !$.isEmptyObject(item1.data)) {
                                             mainkeys = Object.keys(item1.data);
                                         }
-                                        
+
+                                        //debugger;
                                         // Generate table rows based on the keys
+                                        if(mainkeys.length > 0){
                                         for (var i = 0; i < mainkeys.length; i++) {
                                             var boot_key = mainkeys[i];
                                             var row = $('<tr></tr>');
-                                            
+
                                             row.append('<td>' + boot_key + '</td>');
-                                            
+
                                             // Handle item[0] data
                                             if (item0.data && item0.data.hasOwnProperty(boot_key)) {
                                                 var item0Data = item0.data[boot_key];
@@ -365,7 +396,7 @@
                                                 row.append('<td>N/A</td>');
                                                 row.append('<td>N/A</td>');
                                             }
-                                            
+
                                             // Handle item[1] data
                                             if (item1.data && item1.data.hasOwnProperty(boot_key)) {
                                                 var item1Data = item1.data[boot_key];
@@ -375,29 +406,57 @@
                                                 row.append('<td>N/A</td>');
                                                 row.append('<td>N/A</td>');
                                             }
-                                            
-                                            $tbody.append(row);                                     
+
+                                            $tbody.append(row);
                                             }
+                                        }
+                                        else {
+                                           // debugger;
+                                            $tbody.empty();
+                                          //  if ($.fn.DataTable.isDataTable('#'+selTable)) {
+                                                table.DataTable().destroy(); // Destroy the existing DataTable
+                                             //    table.DataTable().clear().draw();
+                                                // table.DataTable().search('').draw();
+                                                searchField.val('');
+                                           // }
+                                            initializeDataTable(table); // Reinitialize DataTable
+                                            // $tfoot.html(
+                                            //     '<tr><td colspan="' + numCols + '" style="text-align:center !important;">No Data Available</td></tr>'
+                                            // );
+                                        }
                                       }
                                       else {
-                                            $tbody.empty(); // Clear the existing content
-                                            //alert("No Data available");
-                                            debugger;
-                                          
-                                            var numCols = 5; //table.columns().header().length;
-                                            $tfoot.html(
-                                                '<tr><td colspan="' + numCols + '" style="text-align:center !important;">No Data Available</td></tr>'
-                                            );
-                                            
+                                        //debugger;
+                                        $tbody.empty();
+                                       // if ($.fn.DataTable.isDataTable('#'+selTable)) {
+                                           table.DataTable().destroy(); // Destroy the existing DataTable
+                                          //  table.DataTable().clear().draw();
+                                            // table.DataTable().search('').draw();
+                                            searchField.val('');
+                                       // }
+                                        initializeDataTable(table); // Reinitialize DataTable
+                                            // $tfoot.html(
+                                            //     '<tr><td colspan="' + numCols + '" style="text-align:center !important;">No Data Available</td></tr>'
+                                            // );
+
                                         }
                                     }
                                     else {
                                         //alert("No Data available");
-                                        $tbody.empty(); // Clear the existing content                                           
-                                        var numCols = 5; 
-                                        $tfoot.html(
-                                            '<tr><td colspan="' + numCols + '" style="text-align:center !important;">No Data Available</td></tr>'
-                                        );
+                                        $tbody.empty();
+                                        //debugger;
+                                        //if ($.fn.DataTable.isDataTable('#'+selTable)) {
+                                        table.DataTable().destroy(); // Destroy the existing DataTable
+                                        //table.DataTable().clear().draw();
+                                        // table.DataTable().search('').draw();
+                                        searchField.val('');
+                                       // }
+                                        initializeDataTable(table); // Reinitialize DataTable
+                                        
+                                        
+                                        // $tfoot.html(
+                                        //     '<tr><td colspan="' + numCols + '" style="text-align:center !important;">No Data Available</td></tr>'
+                                        // );
                                     }
                                 },
                                 error: function(xhr, status, error) {
@@ -405,20 +464,35 @@
                                 },
                                 complete: function(xhr, status) {
                                     // This function is called after the request completes, regardless of its outcome
-                                    //$('#'+sIndex)('setDate', d);
                                     console.log('Request complete. Status:', status);
                                     $("#thDate"+loopId).html(formattedDate);
+                                    searchField.val('');
+                                    //$tbody.empty(); // Clear the existing content
+                                    // table.DataTable().clear().draw();
+                                    // table.DataTable().search('').draw();
+                                    // debugger;
+                                    // if (table.DataTable().data().count() === 0) {
+                                    //     table.addClass('dataTables_empty');
+                                    // } else {
+                                    //     table.removeClass('dataTables_empty');
+                                    // }
                                 }
                                 });
                             }
                             else {
                                 console.log('No date selected.');
                                 alert('No Date selected.');
-                            }                                
-                            
-                        });
-                            
-                        });    
+                            }
+                        }
+
+                        function formatDateToYyMmDd(date) {
+                                if (!date) return ''; // Handle cases where the date is null or undefined
+                                var year = date.getFullYear().toString(); // .slice(-2)  last two digits of the year
+                                var month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+                                var day = date.getDate().toString().padStart(2, '0');
+                                return `${year}-${month}-${day}`;
+                            }
+
             </script>
         </div>
     </div>
