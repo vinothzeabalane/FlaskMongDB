@@ -195,27 +195,18 @@ try:
 
             min_max_times = find_min_max_times(data)
 
-        retries = 3
-        while retries > 0:
-            try:
-                dashboard_id = 'REC-{}'.format(generate_random_suffix())
-                # Insert into database
-                res = db.dashboard.insert_one({
-                    "_id": dashboard_id,
-                    "data": globals().get('min_max_times', {}),
-                    "filename": file_name,
-                    "hostname": hostname,
-                    "sku": skuSize,
-                    "bootType": bootTpye,
-                    "date": date
-                })
-                print ("Output: {}".format(res))
 
-            except errors.DuplicateKeyError as e:
-                print(f"Duplicate key error: {e}")
-                # Generate a new unique ID
-                retries -= 1
-                print(f"Retrying with dashboard ID: {dashboard_id}")
+        res = db.dashboard.insert_one({
+            "data": globals().get('min_max_times', {}),
+            "filename": file_name,
+            "hostname": hostname,
+            "sku": skuSize,
+            "bootType": bootTpye,
+            "date": date
+        })
+        print ("Output: {}".format(res))
+
+
     
 except Exception as e:
     print ("Exception : {}".format(e))
