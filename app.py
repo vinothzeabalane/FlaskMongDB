@@ -271,16 +271,31 @@ class MyApp:
         data = []
         return render_template('dashboard.html',data=data)
     
+    # Function to convert ObjectId to string
+    def convert_objectid(self, data):
+        if isinstance(data, ObjectId):
+            return str(data)
+        elif isinstance(data, dict):
+            return {k: self.convert_objectid(v) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self.convert_objectid(item) for item in data]
+        else:
+            return data
+    
     def getHostData(self):
+        result = []
         # Example of retrieving parameters
         filter_Date = request.args.get('sDate', default='', type=str)
         filter_Host = request.args.get('hostName', default='', type=str)
 
         # Filter data based on parameters (if provided)
         filtered_data = self.conn.get_dashboard_details_filter(filter_Date,filter_Host)
-        
-        return jsonify(filtered_data)  
 
+        if filtered_data:
+            result = self.convert_objectid(filtered_data)
+    
+        return jsonify(result)
+    
     def run(self):
         self.app.run(debug=True, host=self.app.config['FLASK_HOST'], port=self.app.config['FLASK_PORT'], threaded=True)
 

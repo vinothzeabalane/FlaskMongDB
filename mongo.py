@@ -251,7 +251,7 @@ class MongoDB:
 
     def get_dashboard_details_filter(self, date= None, hostname=None):
         try:
-            fields_to_exclude = ['BootType', 'Date', 'sku', 'HOST']
+            fields_to_exclude = ['BootType', 'Date', 'HOST']
             documents = self.db.dashboard.find({
                 'date': date,
                 'hostname': hostname
@@ -270,7 +270,7 @@ class MongoDB:
                     }
 
                 # Get hostname, default to 'Unknown' if not present
-                host = doc.get('hostname', 'Unknown')
+                host = filtered_doc.get('hostname', 'Unknown')
                 grouped_docs[host].append(filtered_doc)
 
             # Convert grouped results to a list of lists
