@@ -1,253 +1,359 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="" class="no-js">
 <head>
     {% extends "layout.html" %}
-    {% block nav_home %}headerHighlight{% endblock %}
-    <title>{% block title %}My Dashboard{% endblock %}</title>
+    {% block nav_group %}headerHighlight{% endblock %}
+    <title>{% block title %} Groups {% endblock %}</title>
     {% block head %}
     {{ super() }}
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-    <style>
-        :root {
-            --primary: #e7b547;
-            --secondary: var(--theme);
-            --background: #eee;
-            --highlight: #ffda79;
-            /* Theme color */
-            --theme: var(--primary);
+    <style>				
+        div.panelAccess {                  
+            display: block;         
+            margin-inline-end: -1px;
+            padding-block-start: 0.35em;
+            padding-inline-start: 0.75em;
+            padding-inline-end: 1.75em;
+            padding-block-end: 0.625em;
+            min-inline-size: min-content;
+            border-width: 2px;
+            border-style: groove;
+            border-color: rgb(192, 192, 192);
+            border-image: initial;                
+            background-color: darkgrey;          
+         }
+        	 
+        #grpTable {
+        border-collapse: collapse; /* Collapse borders */
+        width: 100%; /* Full-width */                     
+        font-size: 18px; /* Increase font-size */
         }
-        *, *::before, *::after {
-            box-sizing: border-box;
+        #grpTable th, #grpTable td {
+        text-align: left; /* Left-align text */
+        padding: 5px; /* Add padding */
+        font-size: 14px;
         }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        #grpTable th {
+        text-align: center; /* Left-align text */                    
         }
-        tr:hover {
-            background-color: #ddd;
+        #grpTable tr {
+        /* Add a bottom border to all table rows */
+        border-bottom: 1px solid #ddd;
         }
-        .tab input[type=radio] {
-            position: absolute;
-            opacity: 0;
-            z-index: -1;
+        #grpTable tr.header, #grpTable tr:hover {
+        /* Add a grey background color to the table header and on hover */
+        background-color: #818aa2;
+        color: white;
         }
-        .tab__content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.35s;
-            display: flex;
-            /* gap: 20px;            */
-            margin: -2px;
+
+        #txtGroup {
+            width: 322px;margin-left: 25px;
         }
-        .tab__content table {
-            width: 100%;
-            margin-left: 1%;
-            margin-right: 1%;
+
+        .panelAccess {
+            text-align: center !important;
         }
-        .tab__content tbody-container {
-            max-height: 10rem; /* Adjust height as needed */
-            overflow-y: auto;
+
+        .panelAccess span {
+            padding-left: 45px;color: rgba(0, 37, 107, 0.884); font-size: 18px !important;
         }
-        .tab input:checked ~ .tab__content {
-            max-height: 20rem; /* Adjust height as needed */
+
+        .panelAccess b {
+            color: black; margin-right: 35px;padding-left: 0px !important;
         }
-        .accordion {
-            color: var(--theme);
-            border: 2px solid;
-            border-radius: 0.5rem;
-            overflow: hidden;
-            margin: 15px;
-        }
-        .tab__label, .tab__close {
-            display: flex;
-            /* color: white; */
-            background: var(--theme);
-            cursor: pointer;
-        }
-        .tab__label {
-            justify-content: space-between;
-            padding: 1rem;
-        }
-        .tab__label::after {
-            content: "\276F";
-            width: 1em;
-            height: 1em;
+
+        .subbuttons {
             text-align: center;
-            transform: rotate(90deg);
-            transition: transform 0.35s;
-        }
-        .tab input:checked + .tab__label::after {
-            transform: rotate(270deg);
-        }
-        .tab__content p {
-            margin: 0;
-            padding: 1rem;
-        }
-        .tab__content input[type=text]{
-            width: 60%;
-        }
-        .ui-datepicker select.ui-datepicker-month,
-        .ui-datepicker select.ui-datepicker-year {
-            width: 50% !important;
-        }
-        .tab__close {
-            justify-content: flex-end;
-            padding: 0.5rem 1rem;
-            font-size: 0.75rem;
-        }
-        .accordion--radio {
-            --theme: var(--secondary);
-        }
-        .tab input:not(:checked) + .tab__label:hover::after {
-            animation: bounce 0.5s infinite;
-        }
-        @keyframes bounce {
-            25% {
-                transform: rotate(90deg) translate(0.25rem);
-            }
-            75% {
-                transform: rotate(90deg) translate(-0.25rem);
-            }
-        }
-        .divDate {
-            padding-left: 2%;
         }
 
-        .fixTableHead { 
-      overflow-y: auto; 
-      overflow-x: hidden;
-      width: 100%;
-      /* height: 110px;  */
-      display: inline-flex;
-    } 
-    .fixTableHead thead th { 
-      position: -webkit-sticky; /* For Safari */
-      position: sticky;     
-      z-index: 2;
-    } 
-   
-    thead .scrollmain-header {    
-        position: -webkit-sticky; /* For Safari */
-        position: sticky;     
-        top: 0;       
-    }
+        .subbuttons button {
+            margin-top: 0px;
+        }
 
-    thead .scrollsub-header {   
-        position: -webkit-sticky; /* For Safari */
-        position: sticky;   
-        top: 30px; /* Adjust based on the height of the main header row */
-        z-index: 1; /* Ensure subheader is below the main header */
-    }
-    thead .subSub-header {     
-        position: -webkit-sticky; /* For Safari */
-        position: sticky;     
-        top: 60px; /* Adjust based on the height of the main header row */
-        z-index: 1; /* Ensure subheader is below the main header */
-    }
-    table { 
-      border-collapse: collapse;         
-      width: 100%; 
-      border: none;
-    } 
-    th, 
-    td { 
-      padding: 8px 15px; 
-      border: 1px solid var(--theme); 
-    } 
-    th { 
-      background: darkgray !important;
-    } 
-    table.dataTable thead th, table.dataTable thead td {
-    padding: 6px 18px;
-    border-bottom: 1px solid #111;
-    }
-    table[id^="tblHost"], #tblHost_wrapper
-    {
-        width: 100% !important;
-    }
+        .pnlTable {
+            padding: 35px;
+        }
+        #grpTable_filter {
+             margin-right: 10px;
+        }
+        #grpTable_filter label {
+            display: flex;                              
+        }
+        #grpTable_length label {
+            display: flex;               
+            gap: 5px;
+        }
+        input[type="search"] {
+            padding: 0px !important; 
+        }
+
     </style>
-    {% endblock %}
+ {% endblock %}
 </head>
 <body>
     {% block content %}
-    <section class="accordion accordion--radio">
-        {% for item in hostData %}
-        {% if item != None and item != Empty%}
-        <div class="tab">
-            {% if loop.index == 1 %}
-            <input type="radio" name="accordion-2" id="rd{{loop.index}}" checked>
+    <div class="row">
+        <div class="container">
+            {% if error %}
+            <p class="error"><strong id="sWarning">{{ error }}</strong></p>
+            {% elif warning %}
+	        <div class="alert">
+	  			<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+	  			<strong>Warning!&nbsp;&nbsp;&nbsp;</strong> Group Name already exists.
+			</div>
             {% else %}
-            <input type="radio" name="accordion-2" id="rd{{loop.index}}">
+            <p class="error" id="sMsg"></p>
             {% endif %}
-            <label for="rd{{loop.index}}" class="tab__label">{{item[0].hostname +" - "+ item[0].sku}}</label>
-            <div class="tab__content">
-                <div class="divDate">
-                    <label class="lblDate">Pick any date to view:</label>
-                    &nbsp;&nbsp;&nbsp;<input id="UploadedDate{{loop.index}}"  maxlength="10" name="UploadedDate{{loop.index}}" size="16" type="text">&nbsp;&nbsp;&nbsp;
-                    <button type="button" name="filter{{loop.index}}" class="btn btn-primary login-button" id="btnFilter{{loop.index}}" value="Filter"><i class="fa fa-filter">&nbsp;&nbsp;Fetch</i></button>
+
+            {% if user_access != None and user_access != Empty %}
+            {% if (user_access['group'][1]) %}
+            <form id="frmAdd" action="{{ url_for('create_group') }}" method="post">
+                <div class="row">
+                    <input type="hidden" id="hdnGroupID" name="hdnGroupID" value="">
+                    <div class="col-md-12 colpanel">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <span class="heading">Add/Edit Groups</span>
+                            </div>
+                            <div class="panel-body grey-color">
+                                <div class="row userpanel">
+                                    <label><b>Group Name</b></label>
+                                    <input type="text" tabindex="1" id="txtGroup" name="name" maxlength="20" required>
+                                </div>
+                                <br>
+                                <div class="panelAccess">
+                                        <label></label>
+                                        <label><span>VIEW</span></label>
+                                        <label><span>EDIT</span></label>
+                                        <label><span>DELETE</span></label>
+                                        <br>
+                                        <br>
+                                        <label><b>User&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></label>
+                                        <input type="checkbox" id="chkUserView" name="chkUserView" tabindex="2">
+                                        <input type="checkbox" id="chkUserEdit" name="chkUserEdit"  tabindex="3">
+                                        <input type="checkbox" id="chkUserDelete" name="chkUserDelete"  tabindex="4">
+                                    <br> <br>
+                                        <label><b>Group&nbsp;&nbsp;&nbsp;&nbsp;</b></label>
+                                        <input type="checkbox" id="chkGroupView" name="chkGroupView"  tabindex="5">
+                                        <input type="checkbox" id="chkGroupEdit" name="chkGroupEdit"  tabindex="6">
+                                        <input type="checkbox" id="chkGroupDelete" name="chkGroupDelete"  tabindex="7">
+                                </div>
+                                <br>
+                                <br>
+                                <div class="row subbuttons">
+                                    <button type="submit" id="btnAdd" tabindex="8" class="btn btn-primary login-button">Add</button>
+                                    <button type="button" tabindex="9" class="btn btn-primary login-button" onclick="resetFields();">Clear</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="fixTableHead">
-                    <table id="tblHost">
-                        <thead>
-                            <tr class="scrollmain-header">
-                                <th scope="col">Boot Entry</th>
-                                <th scope="col" colspan="4">{{item[0].date}}</th>
-                            </tr>
-                            <tr class="scrollsub-header">
-                                <th scope="col"></th>
-                                <th scope="col" colspan="2">{{item[0].bootType}}</th>
-                                <th scope="col" colspan="2">{{item[1].bootType}}</th>
-                            </tr>
-                            <tr class="subSub-header">
-                                <th scope="col"></th>
-                                <th scope="col">Min</th>
-                                <th scope="col">Max</th>
-                                <th scope="col">Min</th>
-                                <th scope="col">Max</th>
-                            </tr>
+            </form>
+            {% endif %}
+            {% endif %}
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span class="heading">Existing Groups</span>
+                </div>
+                <div class="panel-body grey-color pnlTable">
+                    <div class="row">
+ 						<form id="frmTable" action="{{ url_for('update_group') }}" method="post">
+						<table id="grpTable">
+						<thead>
+						          <tr>
+                                        {% if user_access != None and user_access != Empty %}
+                                        {% if (user_access['group'][2]) %}
+                                        <th scope="col" class="headerCol">Select</th>
+                                        {% endif %}
+                                        {% endif %}
+
+                                        <th scope="col">Name</th>
+                                        <th scope="col" colspan="3">User</th>
+                                        <th scope="col" colspan="3">Group</th>
+
+                                        {% if user_access != None and user_access != Empty %}
+                                        {% if (user_access['group'][1]) %}
+                                        <th scope="col">Edit</th>
+                                        {% endif %}
+                                        {% endif %}
+								  </tr>
+                                  <tr>
+                                    {% if user_access != None and user_access != Empty %}
+                                    {% if (user_access['group'][2]) %}
+                                    <th scope="col"></th>
+                                    {% endif %}
+                                    {% endif %}
+
+                                    <th scope="col"></th>
+                                    <th scope="col" rowspan="3" data-dt-order="disable">View</th>
+                                    <th scope="col" rowspan="3" data-dt-order="disable">Edit</th>
+                                    <th scope="col" rowspan="3" data-dt-order="disable">Delete</th>
+                                    <th scope="col" rowspan="3" data-dt-order="disable">View</th>
+                                    <th scope="col" rowspan="3" data-dt-order="disable">Edit</th>
+                                    <th scope="col" rowspan="3" data-dt-order="disable">Delete</th>
+
+                                    {% if user_access != None and user_access != Empty %}
+                                    {% if (user_access['group'][1]) %}
+                                    <th scope="col"></th>
+                                    {% endif %}
+                                    {% endif %}
+
+                                </tr>
                         </thead>
-                        <tbody class="tbody-container">
-                            {% for number in range(0,32) %}
-                            <tr>
-                                {% set mainkeys = item[0]['data'].keys() | list  %}
-                                {% set boot_key = mainkeys[number] %}
-                                <td>{{ boot_key }}</td>
-                                <td>{{ item[0]['data'][boot_key].min }}</td>
-                                <td>{{ item[0]['data'][boot_key].min }}</td>
-                                <td>{{ item[1]['data'][boot_key].min }}</td>
-                                <td>{{ item[1]['data'][boot_key].min }}</td>
-                            </tr>
+                        <tbody>
+						 	{% for value in groups %}
+                            {% if value != None and  value != Empty %}
+							<tr>
+                                {% if user_access != None and user_access != Empty %}
+                                {% if (user_access['group'][2]) %}
+								<td class="centerCol"><input type="checkbox" name="chk" value="{{value.name}}"></td>
+                                {% endif %}
+                                {% endif %}
+
+                                <td>{{value.name}}</td>
+
+                                {% if value.access != None and value.access != Empty %}
+                                    {% for item in value.access['user'] %}
+                                        {% if (item == True) %}
+                                        <td class="centerCol"><i class="fa fa-check"></i></td>
+                                        {% else %}
+                                        <td class="centerCol"><i class="fa fa-close"></i></td>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% for item in value.access['group'] %}
+                                        {% if (item == True) %}
+                                        <td class="centerCol"><i class="fa fa-check"></i></td>
+                                        {% else %}
+                                        <td class="centerCol"><i class="fa fa-close"></i></td>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if user_access != None and user_access != Empty %}
+                                    {% if (user_access['group'][1]) %}
+                                    <td class="centerCol"><button type="button" onclick="EditData(this)" class="edit btn btn-primary login-button"  dataid="{{value._id}}" datagroup="{{value.access['group']}}" datauser="{{value.access['user']}}" dataname="{{value.name}}"><i class="fa fa-wrench"> Edit</i></button></td>
+                                    {% endif %}
+                                    {% endif %}
+
+                                {% else %}
+                                    <td class="centerCol"><i class="fa fa-close"></i></td>
+                                    <td class="centerCol"><i class="fa fa-close"></i></td>
+                                    <td class="centerCol"><i class="fa fa-close"></i></td>
+
+                                    <td class="centerCol"><i class="fa fa-close"></i></td>
+                                    <td class="centerCol"><i class="fa fa-close"></i></td>
+                                    <td class="centerCol"><i class="fa fa-close"></i></td>
+
+                                    {% if user_access != None and user_access != Empty %}
+                                    {% if (user_access['group'][1]) %}
+                                    <td class="centerCol"><button type="button" onclick="EditData(this)" class="edit btn btn-primary login-button"  dataid="{{value._id}}" datagroup="[False,False,False]" datauser="[False,False,False]" dataname="{{value.name}}"><i class="fa fa-wrench"> Edit</i></button></td>
+                                    {% endif %}
+                                    {% endif %}
+
+                                {% endif %}
+
+							</tr>
+                            {% endif %}
                             {% endfor %}
                         </tbody>
-                    </table>
+						</table>
+
+                        {% if user_access != None and user_access != Empty %}
+                        {% if (user_access['group'][2]) %}
+						<button type="submit" class="btn btn-primary login-button">Delete</button>
+                        {% endif %}
+                        {% endif %}
+
+						</form>
+                    </div>
                 </div>
             </div>
         </div>
-        {% endif %}
-        {% endfor %}
-        <div class="tab">
-            <input type="radio" name="accordion-2" id="rd6">
-            <label for="rd6" class="tab__close">Close open tab &times;</label>
-        </div>
-    </section>
+    </div>
     <script>
-             $(document).ready(function() {
-                
-                $([id^='UploadedDate']).datepicker({     
-                        changeMonth: true,
-                        changeYear: true,
-                        dateFormat: 'yy-mm-dd'
-                        ,maxDate: -1
-                  });
-                 
-                  $([id^='tblHost']).DataTable({
-                        paging: false,   // Disable pagination
-                        ordering: true, // Disable sorting
-                        searching: false, // Disable searching
-                        info: false  
-                    });
-                    
-                });    
-    </script>
+
+       function resetFields(){
+            $('#btnAdd').html('Add');
+            $('#txtGroup').val('');
+
+            $('#chkUserView').prop('checked',false);
+            $('#chkUserEdit').prop('checked',false);
+            $('#chkUserDelete').prop('checked',false);
+
+            $('#chkGroupView').prop('checked',false);
+            $('#chkGroupEdit').prop('checked',false);
+            $('#chkGroupDelete').prop('checked',false);
+
+            $('#hdnGroupID').val('');
+           
+            $('#sMsg').css('display','none');            
+        }
+
+         function EditData(sData){
+           //console.log('Data Attributes:', $(sData).attr('datauser'), $(sData).attr('datagroup'));
+           // debugger;
+           // alert(sData);
+            $('#txtGroup').val($(sData).attr('dataname'));
+
+            var userArray = $(sData).attr('datauser');
+            userArray = userArray.replace('[','').replace(']','').split(',');
+
+           // alert($.trim(userArray[1]).toLowerCase());
+
+            $('#chkUserView').prop('checked',false);
+            $('#chkUserEdit').prop('checked',false);
+            $('#chkUserDelete').prop('checked',false);
+
+            $('#chkGroupView').prop('checked',false);
+            $('#chkGroupEdit').prop('checked',false);
+            $('#chkGroupDelete').prop('checked',false);
+            
+            $('#chkUserView').prop('checked',($.trim(userArray[0]).toLowerCase())== "false"? false :true);
+            $('#chkUserEdit').prop('checked',($.trim(userArray[1]).toLowerCase())== "false"? false :true);
+            $('#chkUserDelete').prop('checked',($.trim(userArray[2]).toLowerCase())== "false"? false :true);
+
+            var groupArray = $(sData).attr('datagroup');
+            groupArray = groupArray.replace('[','').replace(']','').split(',');
+
+            $('#chkGroupView').prop('checked',($.trim(groupArray[0]).toLowerCase())== "false"? false :true);
+            $('#chkGroupEdit').prop('checked',($.trim(groupArray[1]).toLowerCase())== "false"? false :true);
+            $('#chkGroupDelete').prop('checked',($.trim(groupArray[2]).toLowerCase())== "false"? false :true);
+        
+            $('#hdnGroupID').val($(sData).attr('dataid'));           
+            $('#txtGroup').focus();
+            $('#btnAdd').html('Update');
+
+           // $('#chkUserEdit').attr('checked',false);
+         }
+
+        $(document).ready(function() {
+            resetFields();
+           
+           //alert('hi');
+           var mytable = $("#grpTable").DataTable({                
+           "pageLength": 5,
+           lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+           "order": [[1, 'asc']]
+           });  
+              
+       });
+
+       $('#frmTable').submit(function () {
+           var grpID = $('#hdnGroupID').val();
+          // if(grpID == "") {
+                var array = []
+                var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
+                if(checkboxes.length == 0){
+                    //alert("Please at least one option to delete!");                   
+                    $('#sMsg').css('display','block');
+                    $('#sMsg').html('<strong>Please at least one option to delete!</strong>');
+                    window.scrollTo(0, 0);
+                    return false;
+                }
+            //}
+        });
+      
+   </script>
     {% endblock %}
 </body>
 </html>
