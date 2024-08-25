@@ -206,9 +206,9 @@ table {
 }   
 
  /* Custom CSS to hide sorting symbols when no data is available */
- .dataTables_empty {
-    display: none; /* Hide the empty data message */
-}
+ /* .dataTables_empty {
+    display: none; 
+} *//* Hide the empty data message */
 .dataTables_wrapper .dataTables_paginate,
 .dataTables_wrapper .dataTables_info {
     display: none; /* Hide pagination and info elements */
