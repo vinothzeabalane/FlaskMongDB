@@ -276,12 +276,29 @@ class MongoDB:
             # Convert grouped results to a list of lists
             result_list = list(grouped_docs.values())
 
-            # Print the results
-            for group in result_list:
-                print(f"Group for hostname: {group[0]['hostname']}")
-                for doc in group:
-                    print(doc)
-            
+            # Update the data in the result_list
+            for sublist in result_list:
+                for item in sublist:
+                    # Access the data dictionary
+                    data = item['data']
+                    # Reformat the data
+                    item['data'] = self.reformat_data(data)
+
+            # Print the updated result_list
+            for sublist in result_list:
+                for item in sublist:
+                    print(item)
+
+
             return result_list
         except Exception as e:
             self._log_error(e)
+
+    # Function to reformat the data dictionary
+    def reformat_data(self, data):
+        formatted_data = {}
+        for index, (key, value) in enumerate(data.items()):
+            new_key = f"{index:02d}-{key}"
+            formatted_data[new_key] = value
+        return formatted_data
+

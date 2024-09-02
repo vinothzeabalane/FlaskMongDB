@@ -283,7 +283,7 @@
                         // Select all divs with class 'my-class'
                         $('.loopData').each(function(index, element) {
                             divId = $(this).attr('id').toString();
-                            bootDate = $("#thDate"+divId).html().trim();   // Use text() if it's plain text
+                            bootDate = $("#thDate"+divId).text().trim();  
                             if (bootDate) {
                                 $("#UploadedDate"+divId).datepicker("setDate", bootDate);
                             }
@@ -293,13 +293,9 @@
                             paging: false,   // Disable pagination
                             ordering: false, // Disable sorting
                             searching: true, // Disable searching
-                            info: false
-                           // ,initComplete: function(settings, json) {
-                            // Trigger the initial check after DataTables has been initialized                                
-                           //}
+                            info: false                           
                         });
-
-                        //checkDataState();
+                       
 
                         // Apply custom styling when no data is available
                         dTable.on('draw', function() {
@@ -312,17 +308,15 @@
                         }
                     });
 
-                        // Check if data is available and toggle the search box visibility
+                    // Check if data is available and toggle the search box visibility
                     function checkDataState() {
                         var data = dTable.rows().data().length;
                         if (data === 0) {
                             dTable.find('input[type=search]').hide(); // Hide the search box
-                            dTable.addClass('dataTables_empty');
-                            //$('#noDataMessage').show(); // Show no data message
+                            dTable.addClass('dataTables_empty');                            
                         } else {
                             dTable.find('input[type=search]').show(); // Show the search box
-                            dTable.removeClass('dataTables_empty');
-                            //$('#noDataMessage').hide(); // Hide no data message
+                            dTable.removeClass('dataTables_empty');                            
                         }
                     }
                             
@@ -346,11 +340,11 @@
                             emptyTable: "No data available in table"
                             }
                     });
-                    //sTable.rows().clear().draw();
+                    
                   
                     $('#tab'+loopId).find('input[type=search]').hide(); // Hide the search box
                     $('#table'+loopId).find('label').hide(); 
-                    //sTable.addClass('dataTables_empty');                      
+                  
                            
                 }
 
@@ -373,7 +367,7 @@
                     //alert(selDate);
                     $("#thDate"+loopId).html(formattedDate);
                     var numCols = 5;
-                    var $tbody = tbody;//$('.tbody-container');
+                    var $tbody = tbody;
                     var $tfoot = tfoot;
 
                     $.ajax({
@@ -388,13 +382,15 @@
 
                             if(response){
                             //debugger;
-                            
+                           // alert(response[0][0].data.toString())
+                           //var formattedResponse = JSON.stringify(response[0][0].data, null, 4); // Indent with 4 spaces
+                            //alert('Response data:\n' + formattedResponse);
+
                             $tfoot.empty();
 
                             if(response.length > 0) {
                                 $tbody.empty(); // Clear the existing content
-                                //table.DataTable().clear().draw();
-
+                                
                                 // debugger;
                                 var item0 = response[0][0] || {};
                                 var item1 = response[0][1] || {};
@@ -415,7 +411,7 @@
                                     var boot_key = mainkeys[i];
                                     var row = $('<tr></tr>');
 
-                                    row.append('<td>' + boot_key + '</td>');
+                                    row.append('<td>' + boot_key.split('-')[1] + '</td>');
 
                                     // Handle item[0] data
                                     if (item0.data && item0.data.hasOwnProperty(boot_key)) {
@@ -439,60 +435,46 @@
 
                                     $tbody.append(row);
                                     }
-                                    // $('#noDataMessage').hide();
+                                    
                                     $('#tab'+loopId).find('input[type=search]').show();                                    
                                     $('#table'+loopId).find('label').show(); 
                                 }
                                 else {
                                     // debugger;
                                     $tbody.empty();
-                                    //  if ($.fn.DataTable.isDataTable('#'+selTable)) {
-                                        table.DataTable().destroy(); // Destroy the existing DataTable
-                                        //    table.DataTable().clear().draw();
-                                        // table.DataTable().search('').draw();
-                                        searchField.val('');
-                                        table.find('th').removeClass('sorting_asc');
-                                    // }
+                                   
+                                    table.DataTable().destroy(); // Destroy the existing DataTable
+                                    
+                                    searchField.val('');
+                                    table.find('th').removeClass('sorting_asc');
+                                    
                                     initializeDataTable(table,loopId); // Reinitialize DataTable
-                                    // $tfoot.html(
-                                    //     '<tr><td colspan="' + numCols + '" style="text-align:center !important;">No Data Available</td></tr>'
-                                    // );
+                                    
                                 }
                                 }
                                 else {
                                 //debugger;
-                                $tbody.empty();
-                                // if ($.fn.DataTable.isDataTable('#'+selTable)) {
-                                    table.DataTable().destroy(); // Destroy the existing DataTable
-                                    //  table.DataTable().clear().draw();
-                                    // table.DataTable().search('').draw();
-                                    searchField.val('');
-                                    table.find('th').removeClass('sorting_asc');
-                                // }
+                                $tbody.empty();                                
+                                table.DataTable().destroy(); // Destroy the existing DataTable                                   
+                                searchField.val('');
+                                table.find('th').removeClass('sorting_asc');
+                                
                                 initializeDataTable(table,loopId); // Reinitialize DataTable
-                                    // $tfoot.html(
-                                    //     '<tr><td colspan="' + numCols + '" style="text-align:center !important;">No Data Available</td></tr>'
-                                    // );
-
+                                    
                                 }
                             }
                             else {
                                 //alert("No Data available");
                                 $tbody.empty();
                                 //debugger;
-                                //if ($.fn.DataTable.isDataTable('#'+selTable)) {
+                                
                                 table.DataTable().destroy(); // Destroy the existing DataTable
-                                //table.DataTable().clear().draw();
-                                // table.DataTable().search('').draw();
+                               
                                 searchField.val('');
                                 table.find('th').removeClass('sorting_asc');
-                                // }
+                              
                                 initializeDataTable(table,loopId); // Reinitialize DataTable
-                                
-                                
-                                // $tfoot.html(
-                                //     '<tr><td colspan="' + numCols + '" style="text-align:center !important;">No Data Available</td></tr>'
-                                // );
+                               
                             }
                         },
                         error: function(xhr, status, error) {
@@ -504,15 +486,7 @@
                             $("#thDate"+loopId).html(formattedDate);
                             searchField.val('');
                             table.find('th').removeClass('sorting_asc');
-                            //$tbody.empty(); // Clear the existing content
-                            // table.DataTable().clear().draw();
-                            // table.DataTable().search('').draw();
-                            // debugger;
-                            // if (table.DataTable().data().count() === 0) {
-                            //     table.addClass('dataTables_empty');
-                            // } else {
-                            //     table.removeClass('dataTables_empty');
-                            // }
+                           
                         }
                         });
                     }
