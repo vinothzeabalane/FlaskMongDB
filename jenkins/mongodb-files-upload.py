@@ -175,6 +175,7 @@ try:
         if len(df) == 0:
             print('File name: {} is emptpy, and has no data'.format(file_name))
             do_data_format = False
+            data = {}
 
         if do_data_format:
             # Collect data from DataFrame
@@ -193,7 +194,7 @@ try:
         # if skip_parent:
         #     continue  # Continue to the next iteration of the parent loop
 
-            min_max_times = find_min_max_times(data)
+        min_max_times = find_min_max_times(data)
 
 
         res = db.dashboard.insert_one({
