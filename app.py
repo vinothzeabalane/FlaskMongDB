@@ -8,6 +8,7 @@ from pathlib import Path
 from gevent.pywsgi import WSGIServer
 from datetime import timedelta, datetime, timezone
 from bson.objectid import ObjectId
+import random
 
 class MyApp:
     def __init__(self):
@@ -33,6 +34,7 @@ class MyApp:
 
     def add_routes(self):
         self.app.add_url_rule('/account', 'account', self.account)
+        self.app.add_url_rule('/chart', 'chart', self.chart)
         self.app.add_url_rule('/account_update', 'account_update', self.account_update, methods=['GET', 'POST'])
         self.app.add_url_rule('/create_group', 'create_group', self.create_group, methods=['GET', 'POST'])
         self.app.add_url_rule('/groups', 'groups', self.groups)
@@ -50,6 +52,7 @@ class MyApp:
         self.app.add_url_rule('/login', 'login', self.login)
         self.app.add_url_rule('/', 'index', self.index)
         self.app.add_url_rule('/getHostData', 'getHostData', self.getHostData, methods=['GET'])
+        self.app.add_url_rule('/sampleChart', 'sampleChart', self.sampleChart)
 
     def before_request(self):
         session.permanent = True
@@ -296,6 +299,43 @@ class MyApp:
     
         return jsonify(result)
     
+    # Generate sample data
+    def generate_data(self):
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=6)  # 7 days of data including today
+        dates = [start_date + timedelta(days=i) for i in range(7)]
+        
+        # Generate log values
+        log_values = {i: [random.randint(1, 10) for _ in range(7)] for i in range(4)}
+        
+        # Generate commit IDs
+        commit_ids = [f'commit_{i:04d}' for i in range(len(dates))]
+
+        # Return both dates, log values, and commit IDs
+        return dates, log_values, commit_ids
+    
+    def sampleChart(self):
+        dates, log_values, commit_ids = self.generate_data()
+        data = {
+            'dates': [date.strftime('%Y-%m-%d') for date in dates],
+            'commitIDs': commit_ids,
+            'logs': {i: values for i, values in log_values.items()}
+        }
+        return render_template('sampleChart.html', data=data)
+    
+    def chart(self):
+        if session.get("user"):
+            group_access = self.conn.users_aggregate_access(username=session['user'])
+            dates, log_values, commit_ids = self.generate_data()
+            data = {
+                'dates': [date.strftime('%Y-%m-%d') for date in dates],
+                'commitIDs': commit_ids,
+                'logs': {i: values for i, values in log_values.items()}
+            }
+            return render_template('chart.html', data=data, user_access=group_access[0], user=session['user'], password=session['password'])
+        else:
+            return render_template('login.html', error="Your Session Expired")
+            
     def run(self):
         self.app.run(debug=True, host=self.app.config['FLASK_HOST'], port=self.app.config['FLASK_PORT'], threaded=True)
 

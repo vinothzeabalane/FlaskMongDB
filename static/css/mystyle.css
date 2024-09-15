@@ -209,10 +209,10 @@ table {
  /* .dataTables_empty {
     display: none; 
 } *//* Hide the empty data message */
-.dataTables_wrapper .dataTables_paginate,
+/* .dataTables_wrapper .dataTables_paginate,
 .dataTables_wrapper .dataTables_info {
-    display: none; /* Hide pagination and info elements */
-}
+    display: none; 
+} */
 /* Hide sorting symbols on the first column when no data is available */
 .dataTables_empty ~ table thead th:first-child {
     pointer-events: none; /* Prevent interaction */

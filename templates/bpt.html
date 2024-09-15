@@ -252,23 +252,6 @@
       form.setAttribute("action", isView ? "{{ url_for('view_bpt') }}" : (button.name === "download" ? "{{ url_for('download_bpt') }}" : "{{ url_for('bpt') }}"));
    }
 
-         // function changeFormAttr(selValue){
-         //       //alert(selValue.name);
-         //    var sData = selValue.name;
-         //    var sTarget = sData == "view"  ? "_blank" : "_self";            
-         //    var sAction = "";
-         //    if(sData == "view")
-         //    sAction = "{{ url_for('view_bpt') }}";
-         //    else if(sData == "download")
-         //       sAction ="{{ url_for('download_bpt') }}";
-         //       else
-         //       sAction ="{{ url_for('bpt') }}";
-      
-         //    document.getElementById("frmbpt").setAttribute("target",sTarget);
-         //    document.getElementById("frmbpt").setAttribute("action",sAction);               
-         // }
-
-
  $(document).ready(function() {
 
     // Get the current date
@@ -323,11 +306,6 @@
     if (endDate) {
         $("#EndDate").datepicker("setDate", endDate);
     }
-
-   // var d = new Date();
-   // d.setMonth(d.getMonth() - 2);
-   // $('#StartDate').datepicker('setDate', d);
-   // $('#EndDate').datepicker('setDate', new Date());
                 
       var table = $("#myTable").DataTable({                                                    
       "pageLength": 10,

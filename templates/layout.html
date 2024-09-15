@@ -82,6 +82,7 @@
                           <div class="list-menu">
                               <ul class="my-list">
                                   <li><a class="{% block nav_home %}{% endblock %}" href="{{ url_for('dashboard') }}">My Dashboard</a></li>
+                                  <!-- <li><a class="{% block nav_chart %}{% endblock %}" href="{{ url_for('chart') }}">Bootflow Graph</a></li> -->
                                   {% if user_access != None and user_access != Empty %}
 
                                   {% if (user_access['group'][0]) %}

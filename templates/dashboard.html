@@ -173,6 +173,10 @@
             display: flex;
             gap: 5px;
         }
+        .dataTables_wrapper .dataTables_paginate,
+        .dataTables_wrapper .dataTables_info {
+            display: none; /* Hide pagination and info elements */
+        }
     </style>
     {% endblock %}
 </head>
@@ -378,7 +382,7 @@
                             hostName: selHost
                         },
                         success: function(response) {
-                        debugger;
+                        //debugger;
 
                             if(response){
                             //debugger;

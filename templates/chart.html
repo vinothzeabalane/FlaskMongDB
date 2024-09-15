@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    {% extends "layout.html" %}
+    {% block nav_chart %}headerHighlight{% endblock %}
+    <title>{% block title %} Bootflow Chart {% endblock %}</title>
+    {% block head %}
+    {{ super() }}
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <style>
+         .div_content {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .div_filter {
+            margin-left: 10px;
+            width: 25%;
+        }
+        #chart-container {
+            width: 75%; /* Set container width */
+            height: 50%; /* Set container height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px; /* Add space above the chart */
+        }
+        canvas {
+            width: 100% !important; /* Stretch to fit the container width */
+            height: 100% !important; /* Stretch to fit the container height */
+        }
+        .chart-annotation {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+       
+       /* Style for the panel container */
+        .panel {
+            background-color: #e2c687; /* Light grey background for the panel */
+            border: 1px solid #ddd; /* Light border around the panel */
+            border-radius: 8px; /* Rounded corners */
+            padding: 15px; /* Padding inside the panel */
+            margin-bottom: 15px; /* Space below the panel */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            width: 25%;
+        }
+
+        /* Style for the filter container inside the panel */
+        .panel .filter {
+            display: flex;
+            flex-direction: row; /* Stack items vertically */
+            gap: 10px; /* Space between each filter element */
+            margin-bottom: 20px; /* Space below the filters */
+        }
+
+        /* Container for each radio button and label pair */
+        .radio-container {
+            display: flex;
+            align-items: center; /* Align items vertically in the center */
+        }
+
+        /* Style for the radio buttons */
+        input[type=radio] {
+            margin-right: 10px; /* Space between radio button and label */
+            accent-color: rgb(67, 111, 163);
+            border-radius: 50%;
+            background: #e8e8e8;
+            border: 3px solid #FFF;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Style for the labels */
+        label {
+            margin: 0; /* Remove default margin */
+        }
+
+        /* Style for the select element inside the panel */
+        select {
+            width: 100%; /* Full width of the container */
+            padding: 5px; /* Padding inside the select element */
+            border: 1px solid #ccc; /* Border around the select element */
+            border-radius: 4px; /* Rounded corners */
+            background-color: #fff; /* White background for the select element */
+        }
+
+           /* Style for the date filter labels */
+           .date-filter {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 20px; /* Add space between the Host dropdown and date filter */
+            margin-bottom: 15px; /* Space below the date filter section */
+        }
+
+        .date-filter label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+       
+        /* Style for the date input elements */
+        .date-filter input {
+            width: calc(50% - 10px); /* Adjust width to fit in two columns */
+        }
+
+        /* Center align the button container */
+        .fetch {
+            display: flex;
+            justify-content: center;
+        }
+
+        .fetch button {
+            align-items: center;
+        }
+        .tooltiphelp {
+               position: relative;
+               display: inline-block;   
+               padding-top: 8px;        
+            }
+
+            .tooltiphelp .tooltiptexthelp {
+               width: 245px;
+               background-color: black;
+               color: #fff;
+               text-align: center;
+               border-radius: 6px;
+               padding: 7px 0;
+
+               /* Position the tooltip */
+               position: absolute;
+               z-index: 1;
+               display: none;         
+            }
+
+            .tooltiphelp:hover .tooltiptexthelp {
+               visibility: visible;
+               display: block;
+               opacity: 5;
+            }
+
+            .tooltiphelp i {
+              color: purple;
+            }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script> <!-- Include ChartDataLabels plugin -->
+    {% endblock %}
+</head>
+<body>
+    {% block content %}
+    <div class="row">
+        <div class="container div_content">
+            <div class="panel">
+                <label for="ddlHost">Host</label>
+                <select id="ddlHost" tabindex="1" name="host" required>
+                    <option value="" selected disabled>-Select-</option>
+                    <!-- {% for value in hostData %}
+                    <option value="{{value.name}}">{{value.name}}</option>
+                    {% endfor %} -->
+                    <option value="1">chewy20 - 8TB</option>
+                    <option value="2">lm-302-04-s2 - 2TB</option>
+                    <option value="3">lm-302-05-s2 - 4TB</option>
+                    <option value="4">lm-302-17-s2 - 8TB</option>
+                    <option value="5">lm-302-24-s2 - 8TB</option>
+                </select>
+                <br>
+                <br>
+                <!-- Date filter section with labels and tooltip -->
+                <span>Pick date range</span> <span class="tooltiphelp"><i class="fa fa-info-circle"></i><span class="tooltiptexthelp">You can select any dates with the maximum range of 7 days.</span></span>
+                <div class="date-filter">
+                    <label for="fromDate">
+                        From
+                    </label>
+                    <input  maxlength="10" name="fromDate" size="16" type="text" id="fromDate" tabindex="2">
+
+                    <label for="toDate">
+                        To
+                    </label>
+                    <input  maxlength="10" name="toDate" size="16" type="text" id="toDate" tabindex="3">
+                </div>
+                <br>
+                <br>
+                <div class="filter">
+                    <label>Flow</label>
+                    <div class="radio-container">
+                        <input type="radio" id="chkspi" name="chkflow" value="spi" tabindex="4" checked>
+                        <label for="chkspi">SPI</label>
+                    </div>
+                    <div class="radio-container">
+                        <input type="radio" id="chkeb0" name="chkflow" value="eb0" tabindex="5">
+                        <label for="chkeb0">EB0</label>
+                    </div>
+                </div>
+
+                <!-- Centered Fetch button -->
+                <div class="fetch">
+                    <button type="button" tabindex="6" onclick="fetchData()" name="filter" class="btn btn-primary login-button filterbutton" id="btnFilter" value="Filter">
+                        <i class="fa fa-filter">&nbsp;&nbsp;Fetch</i>
+                    </button>
+                </div>
+            </div>
+            <div id="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
+
+            <div class="chart-annotation" id="x-axis-info"></div>
+
+            <script>
+                // Parse the JSON data passed from Flask
+                const data = JSON.parse('{{ data | tojson | safe }}');
+
+                // Extract the dates, commit IDs, and log values
+                const dates = data.dates;
+                const commitIDs = data.commitIDs; // Array of commit IDs
+                const logs = data.logs;
+
+                // Define the labels you want to use
+                const labels = ["SBL_TOTAL", "TBL_TOTAL", "PBL_TOTAL", "SBL_TO_PBL_TOTAL"];
+
+                // Create datasets for Chart.js
+                const datasets = Object.keys(logs).map((key, index) => ({
+                    label: labels[index] || `Log ${index + 1}`, // Use specific labels or fallback to generic ones
+                    data: Object.values(logs[key]),
+                    backgroundColor: `rgba(${randomColor()}, 0.2)`,
+                    borderColor: `rgba(${randomColor()}, 1)`,
+                    borderWidth: 3,
+                    datalabels: {
+                        display: true,
+                        formatter: (value) => formatY(value),
+                        color: '#000',
+                        //align: 'top',
+                        anchor: 'end',
+                        font: {
+                            size: 8
+                        },
+                        padding: {
+                            bottom: -10
+                        }
+                    }
+                }));
+
+                // Function to generate random colors for the chart
+                function randomColor() {
+                    return `${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}`;
+                }
+
+                // Function to format Y-axis values
+                function formatY(value) {
+                    if (value >= 1_000_000) {
+                        return `${(value / 1_000_000).toFixed(2)} µs`;
+                    } else if (value >= 1_000) {
+                        return `${(value / 1_000).toFixed(2)} ms`;
+                    } else {
+                        return `${value} s`;
+                    }
+                }
+
+                // Chart.js configuration
+                const ctx = document.getElementById('myChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line', // or 'bar', based on your requirements
+                    data: {
+                        labels: data.dates,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right', // Set legend position to right
+                                align: 'center', // Align legend items vertically
+                                padding: {
+                                    top: -28 // Padding from the top of the chart container
+                                    //bottom: 0 // Padding from the bottom of the chart container
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += formatY(context.parsed.y);
+                                            const index = context.dataIndex;
+                                            label += ` (Commit ID: ${commitIDs[index] || ''})`;
+                                        }
+                                        return label;
+                                    }
+                                }
+                            },
+                            datalabels: {
+                                display: true,
+                                color: '#000',
+                                formatter: (value) => formatY(value),
+                                anchor: 'end',
+                                align: 'top', // Align legend items vertically
+                                padding: {
+                                    top: -2//, // Padding from the top of the chart container
+                                    //bottom: -8 // Padding from the bottom of the chart container
+                                }
+                            }
+                        },
+                        layout: {
+                            padding: {
+                                right: 15//, // Adjust padding on the right to accommodate the legend
+                                //bottom: -1 // Add bottom padding if needed
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    callback: function(value) {
+                                        return formatY(value);
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Time (seconds, milliseconds, microseconds)'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Dates'
+                                }
+                            }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                });
+
+
+                // Call the function to update x-axis information
+                //updateXAxisInfo();
+
+            $(function() {
+                // Get today's date
+                var today = new Date();
+
+                // Initialize Start Datepicker
+                $("#fromDate").datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: 'yy-mm-dd',
+                    maxDate: today,
+                    onSelect: function(selectedDate) {
+                        var selected = new Date(selectedDate);
+                        // Set minDate and maxDate for #toDate based on #fromDate selection
+                        var maxEndDate = new Date(selected);
+                        maxEndDate.setDate(selected.getDate() + 7); // 7 days after the selected start date
+                        if (maxEndDate > today) {
+                            maxEndDate = today; // Ensure the maxEndDate does not exceed today
+                        }
+                        
+                        $("#toDate").datepicker("option", {
+                            minDate: selected,
+                            maxDate: maxEndDate
+                        });
+
+                        // If the selected start date is after the end date, reset the end date
+                        var toDate = $("#toDate").datepicker("getDate");
+                        if (toDate && toDate < selected) {
+                            $("#toDate").datepicker("setDate", selected);
+                        }
+                    }
+                });
+
+                // Initialize End Datepicker
+                $("#toDate").datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: 'yy-mm-dd',
+                    maxDate: today,
+                    onSelect: function(selectedDate) {
+                        var selected = new Date(selectedDate);
+                        // Set minDate for #fromDate based on #toDate selection
+                        var minStartDate = new Date(selected);
+                        minStartDate.setDate(selected.getDate() - 7); // 7 days before the selected end date
+                        
+                        $("#fromDate").datepicker("option", {
+                            minDate: minStartDate,
+                            maxDate: selected
+                        });
+
+                        // If the selected end date is before the start date, reset the start date
+                        var fromDate = $("#fromDate").datepicker("getDate");
+                        if (fromDate && fromDate > selected) {
+                            $("#fromDate").datepicker("setDate", selected);
+                        }
+                    }
+                });
+
+                // Set the date for #toDate to today's date
+                $("#toDate").datepicker("setDate", today);
+
+                // Calculate the date 7 days ago
+                var fromDate = new Date(today);
+                fromDate.setDate(today.getDate() - 7);
+
+                // Set the date for #fromDate to the date 7 days ago
+                $("#fromDate").datepicker("setDate", fromDate);
+            });
+
+
+
+            </script>
+        </div>
+    </div>
+    {% endblock %}
+    <script>
+        $('.my-list').on('click', 'li a', function(e) {
+          const sText = $(this).text();
+          debugger;
+          $(this).css('font-size','25px');
+          $(this).css('text-decoration','underline !important');
+          e.preventDefault();
+       });
+    </script>
+</body>
+</html>

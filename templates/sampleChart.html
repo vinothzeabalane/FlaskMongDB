@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Center vertically */
+        }
+        #chart-container {
+            width: 75%; /* Set container width */
+            height: 50%; /* Set container height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        canvas {
+            width: 100% !important; /* Stretch to fit the container width */
+            height: 100% !important; /* Stretch to fit the container height */
+        }
+        .chart-annotation {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="chart-container">
+        <canvas id="myChart" width="400" height="300"></canvas>
+    </div>
+    <div class="chart-annotation" id="x-axis-info"></div>
+    <script>
+        // Parse the JSON data passed from Flask
+        const data = JSON.parse('{{ data | tojson | safe }}');
+
+        // Extract the dates, commit IDs, and log values
+        const dates = data.dates;
+        const commitIDs = data.commitIDs; // Array of commit IDs
+        const logs = data.logs;
+
+        // Define the labels you want to use
+        const labels = ["SBL_TOTAL", "TBL_TOTAL", "PBL_TOTAL", "SBL_TO_PBL_TOTAL"];
+
+        // Create datasets for Chart.js
+        const datasets = Object.keys(logs).map((key, index) => ({
+            label: labels[index] || `Log ${index + 1}`, // Use specific labels or fallback to generic ones
+            data: Object.values(logs[key]),
+            backgroundColor: `rgba(${randomColor()}, 0.2)`,
+            borderColor: `rgba(${randomColor()}, 1)`,
+            borderWidth: 1
+        }));
+
+        // Generate a random color for the chart
+        function randomColor() {
+            return `${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}`;
+        }
+
+        // Custom y-axis tick formatting
+        function formatY(value) {
+            if (value >= 1_000_000) {
+                return `${(value / 1_000_000).toFixed(2)} µs`;
+            } else if (value >= 1_000) {
+                return `${(value / 1_000).toFixed(2)} ms`;
+            } else {
+                return `${value} s`;
+            }
+        }
+
+        // Update the x-axis labels with commit IDs
+        function updateXAxisInfo() {
+            const container = document.getElementById('x-axis-info');
+            container.innerHTML = dates.map((date, index) => `<div><strong>${date}</strong><br>Commit ID: ${commitIDs[index] || ''}</div>`).join('');
+        }
+
+        // Chart.js configuration
+        const ctx = document.getElementById('myChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line', // or 'bar'
+            data: {
+                labels: data.dates,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += formatY(context.parsed.y);
+                                    // Add commit ID in the tooltip
+                                    const index = context.dataIndex;
+                                    label += ` (Commit ID: ${commitIDs[index] || ''})`;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return formatY(value);
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time (seconds, milliseconds, microseconds)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Dates'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Call the function to update x-axis information
+        //updateXAxisInfo();
+    </script>
+</body>
+</html>
