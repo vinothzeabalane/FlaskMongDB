@@ -37,7 +37,7 @@
         }
        
        /* Style for the panel container */
-        .panel {
+        .panelchart {
             background-color: #e2c687; /* Light grey background for the panel */
             border: 1px solid #ddd; /* Light border around the panel */
             border-radius: 8px; /* Rounded corners */
@@ -48,7 +48,7 @@
         }
 
         /* Style for the filter container inside the panel */
-        .panel .filter {
+        .panelchart .filter {
             display: flex;
             flex-direction: row; /* Stack items vertically */
             gap: 10px; /* Space between each filter element */
@@ -152,62 +152,72 @@
 <body>
     {% block content %}
     <div class="row">
-        <div class="container div_content">
-            <div class="panel">
-                <label for="ddlHost">Host</label>
-                <select id="ddlHost" tabindex="1" name="host" required>
-                    <option value="" selected disabled>-Select-</option>
-                    <!-- {% for value in hostData %}
-                    <option value="{{value.name}}">{{value.name}}</option>
-                    {% endfor %} -->
-                    <option value="1">chewy20 - 8TB</option>
-                    <option value="2">lm-302-04-s2 - 2TB</option>
-                    <option value="3">lm-302-05-s2 - 4TB</option>
-                    <option value="4">lm-302-17-s2 - 8TB</option>
-                    <option value="5">lm-302-24-s2 - 8TB</option>
-                </select>
-                <br>
-                <br>
-                <!-- Date filter section with labels and tooltip -->
-                <span>Pick date range</span> <span class="tooltiphelp"><i class="fa fa-info-circle"></i><span class="tooltiptexthelp">You can select any dates with the maximum range of 7 days.</span></span>
-                <div class="date-filter">
-                    <label for="fromDate">
-                        From
-                    </label>
-                    <input  maxlength="10" name="fromDate" size="16" type="text" id="fromDate" tabindex="2">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 colpanel">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <span class="heading">Bootflow Graph View</span>
+                        </div>
+                        <div class="panel-body grey-color div_content">
+                            <div class="panelchart">
+                                <label for="ddlHost">Host</label>
+                                <select id="ddlHost" tabindex="1" name="host" required>
+                                    <option value="" selected disabled>-Select-</option>
+                                    <!-- {% for value in hostData %}
+                                    <option value="{{value.name}}">{{value.name}}</option>
+                                    {% endfor %} -->
+                                    <option value="1">chewy20 - 8TB</option>
+                                    <option value="2">lm-302-04-s2 - 2TB</option>
+                                    <option value="3">lm-302-05-s2 - 4TB</option>
+                                    <option value="4">lm-302-17-s2 - 8TB</option>
+                                    <option value="5">lm-302-24-s2 - 8TB</option>
+                                </select>
+                                <br>
+                                <br>
+                                <!-- Date filter section with labels and tooltip -->
+                                <span>Pick date range</span> <span class="tooltiphelp"><i class="fa fa-info-circle"></i><span class="tooltiptexthelp">You can select any dates with the maximum range of 7 days.</span></span>
+                                <div class="date-filter">
+                                    <label for="fromDate">
+                                        From
+                                    </label>
+                                    <input  maxlength="10" readonly name="fromDate" size="16" type="text" id="fromDate" tabindex="2">
 
-                    <label for="toDate">
-                        To
-                    </label>
-                    <input  maxlength="10" name="toDate" size="16" type="text" id="toDate" tabindex="3">
-                </div>
-                <br>
-                <br>
-                <div class="filter">
-                    <label>Flow</label>
-                    <div class="radio-container">
-                        <input type="radio" id="chkspi" name="chkflow" value="spi" tabindex="4" checked>
-                        <label for="chkspi">SPI</label>
-                    </div>
-                    <div class="radio-container">
-                        <input type="radio" id="chkeb0" name="chkflow" value="eb0" tabindex="5">
-                        <label for="chkeb0">EB0</label>
-                    </div>
-                </div>
+                                    <label for="toDate">
+                                        To
+                                    </label>
+                                    <input  maxlength="10" readonly name="toDate" size="16" type="text" id="toDate" tabindex="3">
+                                </div>
+                                <br>
+                                <br>
+                                <div class="filter">
+                                    <label>Flow</label>
+                                    <div class="radio-container">
+                                        <input type="radio" id="chkspi" name="chkflow" value="spi" tabindex="4" checked>
+                                        <label for="chkspi">SPI</label>
+                                    </div>
+                                    <div class="radio-container">
+                                        <input type="radio" id="chkeb0" name="chkflow" value="eb0" tabindex="5">
+                                        <label for="chkeb0">EB0</label>
+                                    </div>
+                                </div>
 
-                <!-- Centered Fetch button -->
-                <div class="fetch">
-                    <button type="button" tabindex="6" onclick="fetchData()" name="filter" class="btn btn-primary login-button filterbutton" id="btnFilter" value="Filter">
-                        <i class="fa fa-filter">&nbsp;&nbsp;Fetch</i>
-                    </button>
+                                <!-- Centered Fetch button -->
+                                <div class="fetch">
+                                    <button type="button" tabindex="6" onclick="fetchData()" name="filter" class="btn btn-primary login-button filterbutton" id="btnFilter" value="Filter">
+                                        <i class="fa fa-filter">&nbsp;&nbsp;Fetch</i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="chart-container">
+                                <canvas id="myChart"></canvas>
+                            </div>
+
+                            <div class="chart-annotation" id="x-axis-info"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div id="chart-container">
-                <canvas id="myChart"></canvas>
-            </div>
-
-            <div class="chart-annotation" id="x-axis-info"></div>
-
             <script>
                 // Parse the JSON data passed from Flask
                 const data = JSON.parse('{{ data | tojson | safe }}');
@@ -237,7 +247,8 @@
                             size: 8
                         },
                         padding: {
-                            bottom: -10
+                            bottom: -10,
+                            top: 0
                         }
                     }
                 }));
