@@ -43,6 +43,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Script to execute commands on hosts.')
     parser.add_argument('--ww', type=float, help='Width argument')
     parser.add_argument('--fwversion', type=str, help='Firmware version argument')
+    parser.add_argument('--fwbinary', type=str, help='Firmware binary')
 
     return parser.parse_args()
 
@@ -91,7 +92,7 @@ def execute_commands_on_all_hosts(hosts, commands, picocom_commands, log_dir, ww
             if 'FW-PREP' in commands:
                 for cmd in commands['FW-PREP']:
                     if 'manufacturing_fw' in cmd:
-                        eeprom_bin = str(host['eeprom']).replace('XX.X', str(ww)).replace("YY.ZZ", str(fw_version))
+                        eeprom_bin = str(host['eeprom']).replace("YY-ZZ", str(fw_binary))
                         cmd = str(cmd).replace('XX.X', str(ww)).replace("YY.ZZ", str(fw_version)) + eeprom_bin
 
                     if '/dev/ttyACM' in cmd:
@@ -181,6 +182,7 @@ if __name__ == "__main__":
     print(f"Width: {args.ww}")
     print(f"Firmware Version: {args.fwversion}")
     ww = args.ww
+    fw_binary = args.fwbinary
     fw_version = args.fwversion
     ini_file = '/home/remlab/ps-bpt/FlaskMongDB/conval_host.ini'
     log_dir = 'logs'  # Directory to store downloaded log files
