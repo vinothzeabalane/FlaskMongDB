@@ -3,11 +3,8 @@ import xlsxwriter
 from datetime import datetime
 
 
-entry=  ['SBL_LLOG_INIT',
-    'SBL_WAKE_ALL',
-    'SBL_SPI_INIT',
+entry=  ['SBL_SPI_INIT',
     'SBL_FCONFIG_LOAD',
-    'SBL_TRNG_INIT',
     'SBL_CRYPTO_INIT',
     'SBL_CRITICAL_BOOT_LOAD',
     'SBL_UFH_LOAD_AND_VERIFY',
@@ -15,13 +12,12 @@ entry=  ['SBL_LLOG_INIT',
     'SBL_LOAD_TBL_IMAGE',
     'SBL_RIOT',
     'SBL_TOTAL',
-    'TBL_GIC_INIT',
     'TBL_SPI_INIT',
     'TBL_FCONFIG_LOAD',
     'TBL_PCIE_INIT',
-    'TBL_PCIE_CRS_START',
     'TBL_LOAD_PBL_IMAGE',
     'TBL_RIOT',
+    'TBL_PRETOTAL',
     'TBL_TOTAL',
     'PBL_SPI_INIT',
     'PBL_PARSE_FCONFIG',
@@ -34,8 +30,11 @@ entry=  ['SBL_LLOG_INIT',
     'PBL_RIOT',
     'PBL_WAKE_CORES_JUMP',
     'PBL_TOTAL',
-    'SBL_TO_PBL_TOTAL',
-    'MAX_NUM_BL_MODULES' ]
+    'BOOTLOADERS_TOTAL',
+    'MAINFW_PRE_TIMER_INIT',
+    'MAINFW_PRE_PMU_INIT',
+    'MAINFW_PRE_KERNEL_ENTER_SCHEDULER',
+    'OVERALL_TOTAL']
 
 # Get today's date
 today = datetime.now().date()
