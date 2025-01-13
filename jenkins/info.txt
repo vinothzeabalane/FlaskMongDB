@@ -1,10 +1,13 @@
 To export the database:
-seyon@seyon:/usr/bin$ mongodump --host localhost:27017 --db openstack --out /home/seyon/Desktop/
+seyon@seyon:/usr/bin$ mongodump --host localhost:27017 --db openstack --out /home/remlab/Desktop/
+
+To zip the directory:
+remlab@vc-ps-chewy-10:~/Desktop$ tar -czvf /home/remlab/Desktop/openstack.tgz /home/remlab/Desktop/openstack/
 
 
 To restore the database:
 mongorestore --host localhost:27017 --db yourNewDatabaseName /path/to/yourBackupDir/yourDatabaseName
-
+C:\Program Files\MongoDB\Tools\100\bin>mongorestore --host localhost:27017 --db openstack C:\Users\ozeabala\Downloads\openstack
 
 To login to database:
 seyon@seyon:/usr/bin$ mongosh --host localhost:27017
