@@ -41,7 +41,7 @@ def read_picocom_config(file_path):
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Script to execute commands on hosts.')
-    parser.add_argument('--ww', type=float, help='Width argument')
+    parser.add_argument("--ww", type=str, help="The WW value with a leading zero")
     parser.add_argument('--fwversion', type=str, help='Firmware version argument')
     parser.add_argument('--fwbinary', type=str, help='Firmware binary')
 
