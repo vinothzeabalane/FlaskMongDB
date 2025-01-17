@@ -321,10 +321,10 @@ class MyApp:
             end_date = datetime.now()
             start_date = end_date - timedelta(days=7)  # 7 days of data including today
             dates, log_values, commit_ids = self.generate_data_based_on_request(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'), "lm-302-04-s2", "OVERALL_TOTAL", "spi")
-            print(log_values)
+            # print(log_values)
 
             data = {
-                'dates': [date.strftime('%Y-%m-%d') for date in dates],
+                'dates': dates,
                 'commit_id': commit_ids,
                 'logs': log_values  # Return log data as dictionary with meaningful keys
             }
@@ -348,7 +348,7 @@ class MyApp:
 
         # Generate the data
         dates, log_values, commit_ids = self.generate_data_based_on_request(from_date, to_date, host, flow_type, boot_type)
-        print(log_values)
+        # print(log_values)
 
         # Format the response
         data = {
@@ -372,19 +372,24 @@ class MyApp:
         commit_ids = [i['metadata']['commit_id'] for i in chart_data if 'metadata' in i and 'commit_id' in i['metadata']]
         dashboard_data = self.conn.get_dashboard_chart(from_date, to_date, host, is_spiflow)
 
+        x_dates =  [date.strftime('%Y-%m-%d') for date in dates]   # filter the dates which don't have values
+        y_dates =  [date.strftime('%Y-%m-%d') for date in dates]   # dates
         max_value = []
         for i in dashboard_data:
             for j in i['data']:
-                if j == flowtype:
-                    print (i['data'][j]['max'])
+                if j == flowtype and i['data']['Date']:
+                    x_dates.pop(x_dates.index(i['data']['Date']))
+                    # print (i['data'][j]['max'])
                     max_value.append(i['data'][j]['max'])
 
+        # print (x_dates)
         # Generate log values (replace with real data logic)
         log_values = {
             flowtype: max_value
         }
 
-        return dates, log_values, commit_ids
+        y_dates_filtered = [date for date in y_dates if date not in x_dates]
+        return y_dates_filtered, log_values, commit_ids
 
     def sampleChart(self):
         dates, log_values, commit_ids = self.generate_data()
