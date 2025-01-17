@@ -130,7 +130,9 @@
         var newpwd = $.trim($('#newpass').val());
         var conpwd = $.trim($('#conpass').val());
         var loginpwd = $.trim($('#hdnPwd').val());
-        // Check condition        
+        // Check condition   
+        $('#sMsg').css('display','none');
+
         if(loginpwd != oldpwd) {
             $('#sMsg').css('display','block');
             $('#sMsg').html('<strong>Current Password is invalid</strong>');
@@ -184,8 +186,7 @@
     {% endblock %}
             <script>
           $('.my-list').on('click', 'li a', function(e) {
-            const sText = $(this).text();
-            debugger;
+            const sText = $(this).text();            
             $(this).css('font-size','25px');
             $(this).css('text-decoration','underline !important');
             e.preventDefault();

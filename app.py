@@ -53,6 +53,7 @@ class MyApp:
         self.app.add_url_rule('/', 'index', self.index)
         self.app.add_url_rule('/getHostData', 'getHostData', self.getHostData, methods=['GET'])
         self.app.add_url_rule('/sampleChart', 'sampleChart', self.sampleChart)
+        self.app.add_url_rule('/fetch_chart_data', 'fetch_chart_data', self.fetch_chart_data, methods=['POST'])
 
     def before_request(self):
         session.permanent = True
@@ -298,22 +299,93 @@ class MyApp:
             result = self.convert_objectid(filtered_data)
     
         return jsonify(result)
-    
+ 
     # Generate sample data
     def generate_data(self):
         end_date = datetime.now()
-        start_date = end_date - timedelta(days=6)  # 7 days of data including today
-        dates = [start_date + timedelta(days=i) for i in range(7)]
+        start_date = end_date - timedelta(days=29)  # 30 days of data including today
+        dates = [start_date + timedelta(days=i) for i in range(30)]  # Adjust to 30 days
         
         # Generate log values
-        log_values = {i: [random.randint(1, 10) for _ in range(7)] for i in range(4)}
+        log_values = {i: [random.randint(1, 10) for _ in range(30)] for i in range(4)}  # Change range to 30
         
         # Generate commit IDs
         commit_ids = [f'commit_{i:04d}' for i in range(len(dates))]
-
         # Return both dates, log values, and commit IDs
         return dates, log_values, commit_ids
-    
+
+    def chart(self):
+        if session.get("user"):
+            group_access = self.conn.users_aggregate_access(username=session['user'])
+             # Generate the data
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=7)  # 7 days of data including today
+            dates, log_values, commit_ids = self.generate_data_based_on_request(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'), "lm-302-04-s2", "SBL_TOTAL", "spi")
+            print(log_values)
+
+            data = {
+                'dates': [date.strftime('%Y-%m-%d') for date in dates],
+                'commit_id': commit_ids,
+                'logs': log_values  # Return log data as dictionary with meaningful keys
+            }
+
+            return render_template('chart.html', data=data, user_access=group_access[0], user=session['user'], password=session['password'])
+        else:
+            return render_template('login.html', error="Your Session Expired")
+
+    def fetch_chart_data(self):
+        # Extract data from the request
+        request_data = request.get_json()
+        from_date = request_data.get('fromDate')
+        to_date = request_data.get('toDate')
+        host = request_data.get('host')
+        flow_type = request_data.get('flowType')
+        boot_type = request_data.get('bootflow')
+
+        # Validate input
+        if not host or not from_date or not to_date:
+            return jsonify({"error": "host, fromDate, and toDate are required"}), 400
+
+        # Generate the data
+        dates, log_values, commit_ids = self.generate_data_based_on_request(from_date, to_date, host, flow_type, boot_type)
+        print(log_values)
+
+        # Format the response
+        data = {
+            'dates': [date.strftime('%Y-%m-%d') for date in dates],
+            'commit_id': commit_ids,
+            'logs': log_values  # Return log data as dictionary with meaningful keys
+        }
+        try:
+            return jsonify(data)
+        except Exception as e:
+            return jsonify({"error": str(e)})
+
+    def generate_data_based_on_request(self, from_date, to_date, host, flowtype, boot_type):
+        # Generate dates based on the given range
+        end_date = datetime.strptime(to_date, '%Y-%m-%d')
+        start_date = datetime.strptime(from_date, '%Y-%m-%d')
+        dates = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
+        
+        is_spiflow = True if boot_type == 'spi' else False
+        chart_data = self.conn.get_files_chart(from_date, to_date, host, is_spiflow)
+        commit_ids = [i['metadata']['commit_id'] for i in chart_data if 'metadata' in i and 'commit_id' in i['metadata']]
+        dashboard_data = self.conn.get_dashboard_chart(from_date, to_date, host, is_spiflow)
+
+        max_value = []
+        for i in dashboard_data:
+            for j in i['data']:
+                if j == flowtype:
+                    print (i['data'][j]['max'])
+                    max_value.append(i['data'][j]['max'])
+
+        # Generate log values (replace with real data logic)
+        log_values = {
+            flowtype: max_value
+        }
+
+        return dates, log_values, commit_ids
+
     def sampleChart(self):
         dates, log_values, commit_ids = self.generate_data()
         data = {
@@ -322,22 +394,10 @@ class MyApp:
             'logs': {i: values for i, values in log_values.items()}
         }
         return render_template('sampleChart.html', data=data)
-    
-    def chart(self):
-        if session.get("user"):
-            group_access = self.conn.users_aggregate_access(username=session['user'])
-            dates, log_values, commit_ids = self.generate_data()
-            data = {
-                'dates': [date.strftime('%Y-%m-%d') for date in dates],
-                'commitIDs': commit_ids,
-                'logs': {i: values for i, values in log_values.items()}
-            }
-            return render_template('chart.html', data=data, user_access=group_access[0], user=session['user'], password=session['password'])
-        else:
-            return render_template('login.html', error="Your Session Expired")
+        
             
     def run(self):
-        self.app.run(debug=True, host=self.app.config['FLASK_HOST'], port=self.app.config['FLASK_PORT'], threaded=True)
+        self.app.run(debug=False, host=self.app.config['FLASK_HOST'], port=self.app.config['FLASK_PORT'], threaded=True)
 
 if __name__ == "__main__":
     app_instance = MyApp()

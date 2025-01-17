@@ -130,6 +130,45 @@ class MongoDB:
         except Exception as e:
             self._log_error(e)
 
+    def get_files_chart(self, from_date, to_date, host, is_spiflow):
+        try:
+            query = {
+                    "metadata.date": {
+                        "$gte": from_date,
+                        "$lte": to_date
+                    },
+                    "filename": {
+                        "$regex": host, 
+                        "$options": "i" 
+                    },
+                    "metadata.is_spiflow" : is_spiflow
+                    
+            }
+
+            # Query the collection and sort by date in descending order
+            return self.db.fs.files.find(query)
+        except Exception as e:
+            self._log_error(e)
+
+    def get_dashboard_chart(self, from_date, to_date, host, is_spiflow):
+
+        value = "SPI" if is_spiflow == True else "EB0"
+        try:
+            query = {
+                    "date": {
+                        "$gte": from_date,
+                        "$lte": to_date
+                    },
+                    "bootType" : value,
+                    "hostname" : host
+                    
+            }
+
+            # Query the collection and sort by date in descending order
+            return self.db.dashboard.find(query)
+        except Exception as e:
+            self._log_error(e)
+
     def check_group_in_users(self, group):
         try:
             return self.db.users.find_one({"group_id": group})
