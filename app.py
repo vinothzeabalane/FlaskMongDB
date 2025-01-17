@@ -320,7 +320,7 @@ class MyApp:
              # Generate the data
             end_date = datetime.now()
             start_date = end_date - timedelta(days=7)  # 7 days of data including today
-            dates, log_values, commit_ids = self.generate_data_based_on_request(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'), "lm-302-04-s2", "SBL_TOTAL", "spi")
+            dates, log_values, commit_ids = self.generate_data_based_on_request(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'), "lm-302-04-s2", "OVERALL_TOTAL", "spi")
             print(log_values)
 
             data = {
