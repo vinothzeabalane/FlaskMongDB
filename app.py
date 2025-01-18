@@ -382,8 +382,6 @@ class MyApp:
                     # print (i['data'][j]['max'])
                     max_value.append(i['data'][j]['max'])
 
-        # print (x_dates)
-        # Generate log values (replace with real data logic)
         log_values = {
             flowtype: max_value
         }
@@ -402,7 +400,7 @@ class MyApp:
         
             
     def run(self):
-        self.app.run(debug=False, host=self.app.config['FLASK_HOST'], port=self.app.config['FLASK_PORT'], threaded=True)
+        self.app.run(debug=True, host=self.app.config['FLASK_HOST'], port=self.app.config['FLASK_PORT'], threaded=True)
 
 if __name__ == "__main__":
     app_instance = MyApp()

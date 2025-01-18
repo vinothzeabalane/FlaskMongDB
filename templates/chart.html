@@ -250,7 +250,6 @@
                             return seconds + milliseconds / 1000 + microseconds / 1000000;
                         });
                     }
-                    
                     return processedLogs;
                 }
             
@@ -439,22 +438,40 @@
 
                 function updateChart(selectedLogType, logData) {
 
-                    // Preprocess all log data into numeric values for plotting
-                    const processedLogs = preprocessLogs(logData.logs);
-                    console.error("Boot Values before process:", processedLogs );
-                    // Extract relevant data for the selected log type
-                    const logData1 = processedLogs[selectedLogType] || [];
-                    console.error("Boot Values:", logData1 );
                     if (!logData || logData.length === 0) {
                         console.error("No data available for the selected log type.");
                         alert("No data available for the selected log type.");
                         return;
                     }
+
+                    // Preprocess all log data into numeric values for plotting
+                    const processedLogs = preprocessLogs(logData.logs);
+                    
+                    // Extract relevant data for the selected log type
+                    const logDataX = processedLogs[selectedLogType] || [];
+
                     // Update chart with new data (example for a line chart)
                     myChart.data.labels = logData.Dates;  // Assume `data.dates` contains the x-axis labels
                     myChart.data.datasets = [{
                         label: selectedLogType,
-                        data: logData1,  // Use the preprocessed log data
+                        data: logDataX,  // Use the preprocessed log data
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        datalabels: {
+                            display: true,
+                            formatter: (value, context) => {
+                                const originalValue = logData.logs[selectedLogType][context.dataIndex]; // Fetch the original value
+                                return originalValue;
+                            },
+                            color: '#000',
+                            anchor: 'end',
+                            font: { size: 10 },
+                            padding: { bottom: -10, top: 0 }
+                        }
                     }];
                     myChart.update();  // Refresh the chart
                 }
