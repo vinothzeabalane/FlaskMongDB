@@ -446,7 +446,7 @@
 
                     // Preprocess all log data into numeric values for plotting
                     const processedLogs = preprocessLogs(logData.logs);
-                    
+
                     // Extract relevant data for the selected log type
                     const logDataX = processedLogs[selectedLogType] || [];
 
@@ -473,6 +473,81 @@
                             padding: { bottom: -10, top: 0 }
                         }
                     }];
+                    myChart.options = {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                left: 20,
+                                right: 20,
+                                top: 20,
+                                bottom: 20
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                borderColor: '#fff',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            const originalValue = logData.logs[selectedLogType][context.dataIndex];
+                                            label += originalValue; // Show the original value (SS.mmm.xxx)
+                                        }
+                                        const index = context.dataIndex;
+                                        const commitId = logData.commit_id[index];
+                                        label += ` (Commit: ${commitId})`; // Add commit ID info to the tooltip
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    callback: function(value) {
+                                        // Check if processedLogs[selectedLogType] is defined and contains data
+                                        const logValues = processedLogs[selectedLogType];
+                                        if (logValues) {
+                                            // Find the index of the value in the processed logs array
+                                            const indexOfValue = logValues.indexOf(value);
+                                            if (indexOfValue !== -1) {
+                                                return logData.logs[selectedLogType][indexOfValue]; // Return the original format (SS.mmm.xxx)
+                                            }
+                                        }
+                                        // Return the numeric value if no match is found or logValues is undefined
+                                        return value.toFixed(3); // Fallback to formatted number
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Time (s, ms, μs)'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Dates (Dates are skipped for no values)'
+                                }
+                            }
+                        }
+
+                    },
                     myChart.update();  // Refresh the chart
                 }
 
