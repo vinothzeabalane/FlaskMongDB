@@ -369,8 +369,6 @@
                 });
                 
                 //  Call the function to update x-axis information
-                // updateXAxisInfo();
-
                 $(function() {
                 // Get today's date
                 var today = new Date();
@@ -439,110 +437,83 @@
                 $("#fromDate").datepicker("setDate", fromDate);
                 });
 
-                // Set default dataset color and type when the page loads
-                const host = 'lm-302-04-s2';
-                const defaultLogType = 'SBL_TOTAL';
-                const logTypeColors = {
-                'SBL_TOTAL': 'rgba(255, 99, 132, 0.2)', // Red color
-                'TBL_TOTAL': 'rgba(75, 192, 192, 0.2)', // Green color
-                'PBL_TOTAL': 'rgba(54, 162, 235, 0.2)', // Blue color
-                'BOOTLOADERS_TOTAL': 'rgba(255, 159, 64, 0.2)', // Yellow color
-                'OVERALL_TOTAL': 'rgba(255, 105, 180, 1)' // pink color
-                };
+                function updateChart(selectedLogType, logData) {
 
-                // Function to update the chart based on selected log type
-                function updateChart(selectedLabel, logs) {
-                if (!logs[selectedLabel]) {
-                console.error(`No data found for label: ${selectedLabel}`);
-                return;
-                }
-                const dataset = {
-                    label: selectedLabel,
-                    data: Object.values(logs[selectedLabel]),
-                    backgroundColor: logTypeColors[selectedLabel], // Get the color based on the log type
-                    borderColor: logTypeColors[selectedLabel].replace('0.2', '1'), // Solid color for the border
-                    borderWidth: 2, // Slightly thicker border for visibility
-                    datalabels: {
-                        display: true,
-                        formatter: (value) => formatY(value),
-                        color: '#000',
-                        anchor: 'end',
-                        font: { size: 8 },
-                        padding: { bottom: -10, top: 0 }
+                    // Preprocess all log data into numeric values for plotting
+                    const processedLogs = preprocessLogs(logData.logs);
+                    console.error("Boot Values before process:", processedLogs );
+                    // Extract relevant data for the selected log type
+                    const logData1 = processedLogs[selectedLogType] || [];
+                    console.error("Boot Values:", logData1 );
+                    if (!logData || logData.length === 0) {
+                        console.error("No data available for the selected log type.");
+                        alert("No data available for the selected log type.");
+                        return;
                     }
-                };
-
-                // Update chart data with the new dataset
-                myChart.data.labels = data.dates;
-                myChart.data.datasets = [dataset]; // Only one dataset for the selected log type
-                myChart.update(); // Refresh the chart
+                    // Update chart with new data (example for a line chart)
+                    myChart.data.labels = logData.Dates;  // Assume `data.dates` contains the x-axis labels
+                    myChart.data.datasets = [{
+                        label: selectedLogType,
+                        data: logData1,  // Use the preprocessed log data
+                    }];
+                    myChart.update();  // Refresh the chart
                 }
-
-                // On page load, set default values for SBL_TOTAL
-                $(document).ready(function() {
-                // Default data setup for SBL_TOTAL when the page loads
-                updateChart(defaultLogType, logs);  // Assuming 'logs' is your data object
-                });
-
 
                 // Event handler for the "Fetch" button
                 function fetchData() {
-                const host = $("#ddlHost").val();
-                const fromDate = $("#fromDate").val();
-                const toDate = $("#toDate").val();
-                const selectedLabel = $("#ddlLabels").val(); // Get selected log type
+                    const host = $("#ddlHost").val();
+                    const fromDate = $("#fromDate").val();
+                    const toDate = $("#toDate").val();
+                    const selectedLogType = $("#ddlLabels").val(); // Get selected log type
 
-                // Get the selected flow types (SPI or EB0)
-                const selectedbootflow = $("input[name='chkflow']:checked").val(); // This gets the selected value for SPI or EB0
+                    // Get the selected flow types (SPI or EB0)
+                    const selectedbootflow = $("input[name='chkflow']:checked").val(); // This gets the selected value for SPI or EB0
 
-                //alert(selectedLabel);
-                //alert(logTypeColors[selectedLabel]);
+                    //alert(selectedLabel);
+                    //alert(logTypeColors[selectedLabel]);
 
-                // Validate input
-                if (!host) {
-                $('#sMsg').css('display','block');
-                $('#sMsg').html('<strong>Please select the Host</strong>');
-                $('#ddlHost').focus();
-                return;
+                    // Validate input
+                    if (!host) {
+                    $('#sMsg').css('display','block');
+                    $('#sMsg').html('<strong>Please select the Host</strong>');
+                    $('#ddlHost').focus();
+                    return;
+                    }
+
+                    // AJAX request to fetch data
+                    $.ajax({
+                        url: '/fetch_chart_data',  // Server endpoint
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            host: host,
+                            fromDate: fromDate,
+                            toDate: toDate,
+                            flowType: selectedLogType,
+                            bootflow: selectedbootflow
+                        }),
+                        success: function(response) {
+                            console.log("Full Server Response: ", response);  // Log the entire response to the console
+
+                            // Ensure the response contains the expected structure
+                            if (!response || !response.data) {
+                                console.error("Invalid response: Missing 'data' key", response);
+                                alert("The server response is missing or invalid.");
+                                return;
+                            }
+
+                            // Validate if the logs contain the selected log type
+                            const selectedLogType = $("#ddlLabels").val();  // Get selected log type from dropdown
+
+                            // Call the updateChart function with the correct data
+                            updateChart(selectedLogType, response.data);
+                        },
+                        error: function(error) {
+                            console.error("Error fetching data:", error);
+                            alert("Failed to fetch data. Please try again.");
+                        }
+                    });
                 }
-
-                // AJAX request to fetch data
-                $.ajax({
-                url: '/fetch_chart_data', // Change this to your server endpoint
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    host: host,
-                    fromDate: fromDate,
-                    toDate: toDate,
-                    flowType: selectedLabel, // Send the selected label
-                    bootflow: selectedbootflow
-                }),
-                success: function(response) {
-                    // alert("hi");
-                    const data = JSON.parse(response.data);
-
-                    console.log("Fetched Data: ", data);  // Debugging: Log the received data
-                                        
-                    // Extract the dates, commit IDs, and log values
-                    const datesData = data.dates;
-                    const commitIDsData = data.commitIDs; // Array of commit IDs                
-                    const logsData = data.logs;
-
-                    console.log("Logs Data: ", logsData);  // Debugging: Log the logs data
-                    
-                    // Call the function to update the chart with new data based on selected log type
-                    updateChart(selectedLabel, logsData);  // Update chart data for the selected log type
-                },
-                error: function(error) {
-                    console.error("Error fetching data:", error);
-                    alert("Failed to fetch data. Please try again.");
-                }
-                });
-                }
-
-
-
             </script>
         </div>
     </div>

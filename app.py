@@ -352,12 +352,12 @@ class MyApp:
 
         # Format the response
         data = {
-            'dates': [date.strftime('%Y-%m-%d') for date in dates],
             'commit_id': commit_ids,
-            'logs': log_values  # Return log data as dictionary with meaningful keys
+            'logs': log_values,  # Return log data as dictionary with meaningful keys
+            'Dates': dates
         }
         try:
-            return jsonify(data)
+            return jsonify(data=data)
         except Exception as e:
             return jsonify({"error": str(e)})
 
