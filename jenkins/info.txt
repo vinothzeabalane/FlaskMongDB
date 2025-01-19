@@ -11,3 +11,10 @@ C:\Program Files\MongoDB\Tools\100\bin>mongorestore --host localhost:27017 --db 
 
 To login to database:
 seyon@seyon:/usr/bin$ mongosh --host localhost:27017
+
+To reboot the host without password.
+Open the sudoers file using the visudo command:  sudo visudo
+
+Add the following line to allow the intel user to execute the reboot command without requiring a password:intel ALL=(ALL) NOPASSWD: /bin/systemctl reboot -i
+
+sudo systemctl reboot -i
