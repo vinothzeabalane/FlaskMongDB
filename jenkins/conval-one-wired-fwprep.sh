@@ -34,9 +34,17 @@ corrupt_eeprom() {
 }
 
 # Corrupt slot-0 and slot-1 of the EEPROM
-
+# TBL Trap mode
 corrupt_eeprom 917520 "000e0010" eeprom-SBBPH28X019TGF_MC0B271.bin
 corrupt_eeprom 3276816 "00320010" eeprom-SBBPH28X019TGF_MC0B271.bin
+
+# SBL Trap mode
+# corrupt_eeprom 458768 "00070010" eeprom-SBBPH28X019TGF_MC0B271.bin
+# corrupt_eeprom 2818064 "002b0010" eeprom-SBBPH28X019TGF_MC0B271.bin
+
+# PBL Trap mode
+# corrupt_eeprom 9166864 "008be010" eeprom-SBBPH28X019TGF_MC0B271.bin
+# corrupt_eeprom 19128336 "0123e010" eeprom-SBBPH28X019TGF_MC0B271.bin
 
 echo "You can find the corrputed EERPOM binary at /mnt/udrive/ozeabalx/one-wired/"
 
