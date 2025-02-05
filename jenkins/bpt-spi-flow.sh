@@ -26,6 +26,9 @@ touch /home/remlab/$filename
 # Create cmdline.cfg file with commands
 echo -e "selectdev 1\ntc-unlock\ntc-boot-profile\nexit" > /home/remlab/cmdline.cfg
 
+# Create the file
+touch /home/remlab/$filename
+
 # Loop to execute commands 5 times
 for (( i = 1; i <= 5; i++ ))
 do
