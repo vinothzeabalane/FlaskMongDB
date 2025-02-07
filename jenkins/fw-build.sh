@@ -6,7 +6,8 @@ git log -1
 
 echo "********* COMPILE THE BINARY *******"
 cd; cd /home/jenkins/repos/trenton;
-sudo echo -e '\n source /home/jenkins/repos/trenton/hud/build-hudhwfwprep.sh -v kv7 -r c0' > /home/jenkins/repos/ps_bash.sh
+#sudo echo -e '\n source /home/jenkins/repos/trenton/hud/build-hudhwfwprep.sh -v kv7 -r c0' > /home/jenkins/repos/ps_bash.sh
+echo -e '\n source  ./clean-cmakebuild.sh  && /home/jenkins/repos/trenton/hud/build-hudhwfwprep.sh -v kv7 -r c0' | sudo tee /home/jenkins/repos/ps_bash.sh > /dev/null
 sudo cat /home/ozeabalx/env.sh /home/jenkins/repos/ps_bash.sh > /home/jenkins/repos/final_bash.sh
 sudo chmod u+x /home/jenkins/repos/final_bash.sh
 sudo cp -r /home/jenkins/repos/final_bash.sh /home/jenkins/repos/trenton/
