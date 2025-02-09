@@ -29,14 +29,41 @@ echo -e "selectdev 1\ntc-unlock\ntc-boot-profile\nexit" > /home/remlab/cmdline.c
 # Create the file
 touch /home/remlab/$filename
 
+echo "create a file"
+touch "/home/remlab/$filename"
+
 # Loop to execute commands 5 times
 for (( i = 1; i <= 5; i++ ))
 do
-    echo "Iteration:  $i " >> "/home/remlab/$filename"
-
-    # Setup environment
     cd /home/jenkins/repos/ent_ssd_test/lib/spdk/scripts/ || exit
     sudo ./setup.sh
+
+    if sudo ./setup.sh status | grep -qi 'uio_pci_generic'; then
+        echo "uio_pci_generic found"
+        # Perform any additional actions here
+    else
+        echo "uio_pci_generic not found"
+        cd /home/jenkins/repos/ent_ssd_test/lib/spdk/scripts/ || exit
+        sudo ./setup.sh reset
+        continue
+    fi
+
+    # Execute spdktest and check if the result contains "ConnectToSpdk() call failed"
+    cd /home/jenkins/repos/ent_ssd_test/spdktest/ || exit
+    result=$(sudo ./spdktest -t -l /home/remlab/cmdline.cfg)
+    echo "***********************************************************"
+    echo "spdk result -  $result"
+    echo "***********************************************************"
+    echo "$result" | grep -q "ConnectToSpdk() call failed"
+    if [ $? -eq 0 ]; then
+        echo "ConnectToSpdk() call failed. Skipping iteration."
+        continue
+    fi
+
+    echo "Iteration:  $i " >> "/home/remlab/$filename"
+    # Setup environment
+    # cd /home/jenkins/repos/ent_ssd_test/lib/spdk/scripts/ || exit
+    # sudo ./setup.sh
 
     # Execute spdktest and append output to $filename
     cd /home/jenkins/repos/ent_ssd_test/spdktest/ || exit

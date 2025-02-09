@@ -177,10 +177,11 @@ try:
             do_data_format = False
             data = {}
 
+        iter_count = df.shape[1]
         if do_data_format:
             # Collect data from DataFrame
             for _ in range(32):
-                l1 = [df.iat[icount, j] for j in range(1, 6)]
+                l1 = [df.iat[icount, j] for j in range(1, iter_count)]
                 data[df.iat[count, 0]] = l1
                 count += 4
                 icount += 4
