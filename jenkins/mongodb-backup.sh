@@ -18,3 +18,23 @@ echo "Backup and cleanup completed successfully."
 #mongorestore --host 10.74.135.88 --port 27017 --db mydatabase /backups/mongo_dump/mydatabase
 #mongorestore --host 10.74.135.88 --port 27017 --username <your_username> --password <your_password> --authenticationDatabase admin /path/to/backup/folder
 
+#Start the MongoDB - Terminal1 ( Container)
+sudo mongod --bind_ip_all
+
+#restore
+mongorestore --host localhost --port 27017 --archive=/mnt/ps-share/20250210/openstack/archive_file.archive
+
+#Verify
+mongosh --host localhost --port 27017
+use openstack
+show collections
+
+# MongoDB Starts on Container Restart
+docker run -d --name ps-mongod -p 27017:27017 --restart always mongo --bind_ip_all
+
+sudo docker run -d -it --name ps-mongod -p 27017:27017 --network=bridge --restart always \
+  --mount type=bind,source=/mnt/ps-share,target=/mnt/ps-share \
+  --mount type=volume,source=ps_val,target=/mnt/ps_vol \
+  vinothzeabalane/ps-mongod:v1 mongod --bind_ip_all
+
+
