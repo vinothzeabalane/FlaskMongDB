@@ -5,6 +5,7 @@ import json
 import random
 import string
 import math
+import argparse
 
 from pymongo import MongoClient, errors
 from gridfs import GridFS
@@ -21,8 +22,16 @@ commid_id = None
 last_updated = []
 pattern = r'\b\d{4}-\d{2}-\d{2}\b'
 
-# Connect to MongoDB
-client = MongoClient('mongodb://localhost:27017/')
+# Setup argument parser
+parser = argparse.ArgumentParser(description="Upload files to MongoDB GridFS")
+parser.add_argument('--server', type=str, required=True, help="MongoDB server address")
+args = parser.parse_args()
+
+# Use the server address provided by the user as a command-line argument
+server = args.server
+
+# Connect to MongoDB using the provided server address
+client = MongoClient(f'mongodb://{server}:27017/')
 db = client['openstack']  # Replace with your database name
 
 # Access GridFS
