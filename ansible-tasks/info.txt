@@ -1,0 +1,5 @@
+# To run playbook
+remlab@vc-ps-server-1:~/ansible-tutorial$ ansible-playbook -f 2  conval_server_erase.yaml -v
+
+# To run specific node
+remlab@vc-ps-server-1:~$ ansible-playbook -l node1 conval_server_prep.yaml -e "binary=HDC_M23_WW07.2_C0_B.23.23 fw_version=MC0B271-B2323" -v
