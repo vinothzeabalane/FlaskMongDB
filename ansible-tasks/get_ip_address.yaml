@@ -1,0 +1,9 @@
+---
+- name: Gather IP addresses of nodes
+  hosts: all
+  gather_facts: yes  # This automatically gathers facts, including network interfaces
+
+  tasks:
+    - name: Show the IP address of each node
+      debug:
+        msg: "IP address of {{ inventory_hostname }} is {{ ansible_default_ipv4.address }}"

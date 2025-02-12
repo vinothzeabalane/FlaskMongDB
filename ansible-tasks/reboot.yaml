@@ -1,0 +1,9 @@
+---
+- name: Reboot the nodes
+  hosts: all
+  become: yes  # Ensure to run with sudo privileges
+  tasks:
+    - name: Reboot the node
+      reboot:
+        reboot_timeout: 600  # Maximum wait time for the node to reboot (in seconds)
+        test_command: uptime  # Command to test if the system is back up

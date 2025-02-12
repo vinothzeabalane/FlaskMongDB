@@ -1,0 +1,139 @@
+---
+- name: Execute recovery process
+  hosts: conval-server
+  become: yes  # Ensure to run with sudo privileges for all tasks
+  environment:
+    PYTHONPATH: "/home/remlab/bhb_tools/lib"
+
+  vars_prompt:
+    - name: "binary"
+      prompt: "Enter the binary name"
+      default: "HDC_M23_WW07.2_C0_B.23.23"
+    - name: "fw_version"
+      prompt: "Enter the firmware version"
+      default: "MC0B271-B2323"
+
+  tasks:
+
+    - name: Check current user
+      command: whoami
+      register: result
+
+    - name: Display the current user
+      debug:
+        msg: "Current user is {{ result.stdout }}"
+
+    - name: Recovery process started
+      command: echo "************** Recovery process started **********************************************"
+    
+    # - name: 1. Change directory to SF100Linux and run dpcmd
+    #   command: sudo ./dpcmd -z /mnt/udrive/ozeabalx/HDC_drops/{{binary}}/trenton-kv7/fw_release_package/manufacturing_fw/{{eeprom}}{{fw_version}}.bin
+    #   args:
+    #     chdir: /home/remlab/Desktop/Dediprog-latest/SF100Linux
+
+    - name: 2. Power cycle drive
+      command: sudo ./pita_cycle -a
+      args:
+        chdir: /home/remlab/bhb_tools/
+    
+    - name: 3. List Non-Volatile devices
+      shell: lspci | grep -i Non-Volatile
+      register: nv_devices
+      ignore_errors: yes
+
+    - name: Show Non-Volatile devices if found
+      debug:
+        msg: "{{ nv_devices.stdout }}"
+      when: nv_devices.stdout != ""
+    
+    - name: 4. Sleep 20 seconds
+      pause:
+        seconds: 20
+    
+    - name: 5. Setup SPDK driver
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh && sleep 20
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test
+    
+    - name: 6. Reset SPDK driver
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh reset
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test
+    
+    - name: 7. Sleep 20 seconds
+      pause:
+        seconds: 20
+    
+    - name: 8. Setup SPDK driver again
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test
+    
+    - name: 9. Copy the cmdline.cfg to all nodes
+      become: yes
+      copy:
+        src: "{{ item }}"
+        dest: /home/remlab
+      with_items:
+        - /home/remlab/ansible-tutorial/cmdline.cfg
+        - /home/remlab/ansible-tutorial/spdk.txt
+    
+    - name: 10. Run SPDk test
+      shell: sudo ./spdktest -t -l /home/remlab/cmdline.cfg | sudo tee /home/remlab/spdk.txt > /dev/null
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test/spdktest
+    
+    - name: 11. Power cycle drive
+      command: sudo ./pita_cycle -a
+      args:
+        chdir: /home/remlab/bhb_tools/
+    
+    - name: 12. Sleep 20 seconds
+      pause:
+        seconds: 20
+    
+    - name: 13. Remove cmdline.cfg file
+      become: yes
+      shell: rm -r /home/remlab/cmdline.cfg
+    
+    - name: 14. List Non-Volatile devices again
+      become: yes
+      shell: lspci | grep -i Non-Volatile
+    
+    - name: 15. Sleep 20 seconds
+      pause:
+        seconds: 20
+    
+    - name: 16. Reset SPDK driver again
+      become: yes
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh reset
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test
+    
+    - name: 17. Power cycle drive
+      command: sudo ./pita_cycle -a
+      args:
+        chdir: /home/remlab/bhb_tools/
+    
+    - name: 18. Sleep 20 seconds
+      pause:
+        seconds: 20
+    
+    - name: 19. Reset SPDK driver
+      become: yes
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh reset
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test
+
+    - name: 20. Sleep 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 21. NVMe status
+      become: yes
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh status
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test
+    
+    - name: Recovery process ended
+      command: echo "************** Recovery process ended **********************************************"

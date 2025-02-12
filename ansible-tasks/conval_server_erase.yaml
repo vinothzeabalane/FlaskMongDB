@@ -1,0 +1,24 @@
+---
+- name: Execute firmware erase process
+  hosts: conval-server
+  become: yes  # Ensure to run with sudo privileges for all tasks
+  environment:
+    PYTHONPATH: "/home/remlab/bhb_tools/lib"
+
+
+  tasks:
+    - name: process started
+      command: echo "************** Recovery process started **********************************************"
+    
+    - name: Change directory to SF100Linux and run dpcmd
+      command: sudo ./dpcmd -e
+      args:
+        chdir: /home/remlab/Desktop/Dediprog-latest/SF100Linux
+
+    - name: Power cycle drive
+      command: sudo ./pita_cycle -a
+      args:
+        chdir: /home/remlab/bhb_tools/
+    
+    - name: process ended
+      command: echo "************** Recovery process ended **********************************************"
