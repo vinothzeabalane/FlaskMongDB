@@ -8,10 +8,10 @@
   vars_prompt:
     - name: "binary"
       prompt: "Enter the binary name"
-      default: "HDC_M23_WW07.2_C0_B.23.23"
+      default: "HDC_M23_WW07.3_C0_B.23.24"
     - name: "fw_version"
       prompt: "Enter the firmware version"
-      default: "MC0B271-B2323"
+      default: "MC0B271-B2324"
 
   tasks:
 
@@ -23,13 +23,13 @@
       debug:
         msg: "Current user is {{ result.stdout }}"
 
-    - name: Recovery process started
-      command: echo "************** Recovery process started **********************************************"
-    
-    # - name: 1. Change directory to SF100Linux and run dpcmd
-    #   command: sudo ./dpcmd -z /mnt/udrive/ozeabalx/HDC_drops/{{binary}}/trenton-kv7/fw_release_package/manufacturing_fw/{{eeprom}}{{fw_version}}.bin
-    #   args:
-    #     chdir: /home/remlab/Desktop/Dediprog-latest/SF100Linux
+    - name: Recovery process started with start time
+      command: echo "************** Recovery process started at $(date) **********************************************"
+
+    - name: 1. Change directory to SF100Linux and run dpcmd
+      command: sudo ./dpcmd -z /mnt/udrive/ozeabalx/HDC_drops/{{binary}}/trenton-kv7/fw_release_package/manufacturing_fw/{{eeprom}}{{fw_version}}.bin
+      args:
+        chdir: /home/remlab/Desktop/Dediprog-latest/SF100Linux
 
     - name: 2. Power cycle drive
       command: sudo ./pita_cycle -a
@@ -135,5 +135,5 @@
       args:
         chdir: /home/jenkins/repos/ent_ssd_test
     
-    - name: Recovery process ended
-      command: echo "************** Recovery process ended **********************************************"
+    - name: Recovery process ended time
+      command: echo "************** Recovery process ended at $(date) **********************************************"
