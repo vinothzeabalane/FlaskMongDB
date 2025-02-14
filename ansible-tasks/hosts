@@ -22,8 +22,13 @@ node1 ansible_host=10.74.135.32 ansible_user=remlab ansible_ssh_pass=1001SMT!
 node2 ansible_host=10.74.134.50 ansible_user=remlab ansible_ssh_pass=1001SMT!
 
 [conval-server]
-lm-302-12-s2 ansible_host=10.230.28.62 ansible_user=remlab ansible_ssh_pass=1001SMT! pita=1 eeprom=SPI-SBBPH28X038TGF_
-lm-302-24-s2 ansible_host=10.230.29.207 ansible_user=remlab ansible_ssh_pass=1001SMT! pita=0 eeprom=SPI-SBBPH28X076TGF_
+lm-302-04-s2 ansible_host=10.230.28.149 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X019TGF_
+lm-302-05-s2 ansible_host=10.230.27.88 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X038TGF_
+#lm-302-12-s2 ansible_host=10.230.28.62 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X038TGF_
+lm-302-17-s2 ansible_host=10.230.28.64 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X076TGF_
+lm-302-24-s2 ansible_host=10.230.29.207 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X076TGF_
+vc-ps-fit-chewy-07 ansible_host=10.74.135.69 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X153TGF_
+
 #node1 ansible_host=10.74.135.47 ansible_user=remlab ansible_ssh_pass=1001SMT! pita=0 eeprom=SPI-SBBPH28X038TGF_
 #node2 ansible_host=10.74.135.69 ansible_user=remlab ansible_ssh_pass=1001SMT! pita=0 eeprom=SPI-SBBPH28X153TGF
 

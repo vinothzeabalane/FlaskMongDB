@@ -4,8 +4,8 @@ remlab@vc-ps-server-1:~/FlaskMongDB/ansible-tasks$ ansible-playbook -l lm-302-05
 
 # To run specific node
 remlab@vc-ps-server-1:~$ ansible-playbook -i hosts -e "binary=HDC_M23_WW07.3_C0_B.23.24 fw_version=MC0B271-B2324" -v
-remlab@vc-ps-server-1:~/FlaskMongDB/ansible-tasks$ ansible-playbook -i 
-hosts  conval_server_prep.yaml -v -e "binary=HDC_M23_WW07.3_C0_B.23.24 fw_version=MC0B271-B2324"
+
+remlab@vc-ps-server-1:~/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts  conval_server_prep.yaml -v -e "binary=HDC_M23_WW07.4_C0_B.23.25 fw_version=MC0B271-B2325"
 
 # To skip node
 ansible-playbook your_playbook.yml --limit '!node_to_skip1,!node_to_skip2'

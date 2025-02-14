@@ -1,0 +1,81 @@
+# docker container
+jasonrivers/nagios:latest
+
+# log file location 
+log_file=/opt/nagios/var/nagios.log
+
+# Add Host Configuration
+This configuration file could be placed in /opt/nagios/etc/objects/ or within a separate file under /opt/nagios/etc/objects/hosts/ (for better organization).
+
+define host {
+    use             linux-server          ; Host template
+    host_name       vc-ps-fit-chewy-08    ; Unique host name
+    address         10.74.135.70         ; IP address of the server
+    check_command   check-host-alive     ; Command to check host status
+}
+
+For monitoring SSH on vc-ps-fit-chewy-08:
+define service {
+    use                     generic-service     ; Service template
+    host_name               vc-ps-fit-chewy-08  ; The host this service belongs to
+    service_description     SSH Check           ; Description of the service being monitored
+    check_command           check_by_ssh!remlab@10.74.135.70!/usr/lib/nagios/plugins/check_ping -H 10.74.135.70 -w 100.0,20% -c 200.0,50%
+}
+
+root@1645998b703c:/opt/nagios/etc/objects# ls -lrt
+total 56
+-rw-r--r-- 1 nagios nagios 10996 May 21  2024 templates.cfg
+-rw-r--r-- 1 nagios nagios  5068 May 21  2024 localhost.cfg
+-rw-rw-r-- 1 nagios nagios  4074 Nov  6 09:33 windows.cfg
+-rw-rw-r-- 1 nagios nagios  3512 Nov  6 09:33 timeperiods.cfg
+-rw-rw-r-- 1 nagios nagios  3484 Nov  6 09:33 switch.cfg
+-rw-rw-r-- 1 nagios nagios  3001 Nov  6 09:33 printer.cfg
+-rw-rw-r-- 1 nagios nagios  1797 Nov  6 09:33 contacts.cfg
+-rw-r--r-- 1 nagios nagios   914 Feb 13 23:42 vc-ps-fit-chewy-07.cfg
+-rw-r--r-- 1 nagios nagios  7594 Feb 13 23:44 commands.cfg
+-rw-r--r-- 1 root   root     902 Feb 14 00:14 vc-ps-chewy-14.cfg
+root@1645998b703c:/opt/nagios/etc/objects# 
+
+# Organize Configuration Files
+configure the *.cfg in the nagios.cfg (/opt/nagios/etc)
+cfg_file=/opt/nagios/etc/objects/vc-ps-fit-chewy-08.cfg
+
+
+#  Configure SSH Access (for agentless monitoring)
+•	Make sure the Nagios server can SSH into the target host (vc-ps-fit-chewy-08) using the remlab user.
+•	Set up passwordless SSH access (SSH key authentication) between the Nagios server and the monitored host:
+•	ssh-copy-id remlab@10.74.135.70
+•	Verify SSH access from the Nagios server to the new host:
+•	ssh remlab@10.74.135.70
+
+#  Ensure Plugins are Available
+Ensure the appropriate plugins are available on the Nagios server, particularly check_by_ssh and any other plugins you want to use (e.g., check_ping, check_http, etc.).
+Verify the plugin location:
+ls /usr/lib/nagios/plugins/check_by_ssh
+or
+ls /opt/nagios/libexec/check_by_ssh
+
+
+# Verify the Configuration
+Before restarting Nagios, verify that the configuration files are valid:
+/opt/nagios/bin/nagios -v /opt/nagios/etc/nagios.cfg
+This will check for syntax errors in the configuration files.
+
+# Restart Nagios
+After adding the new host and service definitions, restart Nagios to apply the changes:
+kill -HUP $(pidof nagios)
+Or:
+/opt/nagios/bin/nagios -d /opt/nagios/etc/nagios.cfg
+
+# Check Nagios Web Interface
+Go to the Nagios web interface (http://<nagios-server-ip>:8080) to check that the new server and services are being monitored correctly. You should see the status for the new host and services on the web interface.
+
+
+Summary Checklist:
+1.	Host Configuration: Add a define host block for the new server.
+2.	Service Configuration: Add a define service block for each service (e.g., SSH) to monitor.
+3.	SSH Access: Ensure passwordless SSH access to the new server for agentless monitoring.
+4.	Plugins: Ensure Nagios plugins are installed and available on the server.
+5.	Configuration File Organization: Add new configurations to appropriate files and directories.
+6.	Validate and Restart Nagios: Validate configuration and restart Nagios.
+7.	Web Interface Check: Verify the status of the new host and services in the Nagios web interface.
