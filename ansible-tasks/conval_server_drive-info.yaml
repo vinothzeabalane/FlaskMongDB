@@ -1,0 +1,14 @@
+---
+- name: Execute shell script
+  hosts: conval-server
+  become: yes  # Ensure to run with sudo privileges for all tasks
+
+  tasks:
+    - name: process started
+      command: echo "************** process started **********************************************"
+    
+    - name: Get drive info details
+      shell: sudo nvme list
+    
+    - name: process ended
+      command: echo "************** process ended **********************************************"
