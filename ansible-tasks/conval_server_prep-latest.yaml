@@ -1,0 +1,174 @@
+---
+- name: Execute recovery process
+  hosts: conval-server
+  become: yes  # Ensure to run with sudo privileges for all tasks
+  environment:
+    PYTHONPATH: "/home/remlab/bhb_tools/lib"
+
+  vars_prompt:
+    - name: "binary"
+      prompt: "Enter the binary name (e.g., HDC_M23_WW07.3_C0_B.23.24.tgz)"
+      default: "HDC_M23_WW07.3_C0_B.23.24.tgz"
+
+  tasks:
+
+    - name: Check current user
+      command: whoami
+      register: result
+
+    - name: Display the current user
+      debug:
+        msg: "Current user is {{ result.stdout }}"
+
+    - name: Recovery process started with start time
+      command: echo "************** Recovery process started at $(date) **********************************************"
+
+    - name: 1. Copy the .tgz file to /tmp
+      copy:
+        src: "/mnt/ydrive/fast-data/Releases/CV/HuntsdaleC/Internal/{{ binary }}"
+        dest: "/tmp"
+        remote_src: yes  # This tells Ansible that the file is already on the remote server
+      when: binary is defined
+
+    - name: 2. Extract the .tgz file
+      unarchive:
+        src: "/tmp/{{ binary }}"
+        dest: "/tmp/"
+        remote_src: yes
+      when: binary is defined
+
+    - name: 3. Find the firmware file inside the extracted directory
+      find:
+        paths: "/tmp/{{ binary | regex_replace('.tgz', '') }}/trenton-kv7/fw_release_package/manufacturing_fw"
+        patterns: "SPI-*.bin"
+      register: firmware_files
+      when: binary is defined
+
+    - name: 4. Set firmware file variable
+      set_fact:
+        firmware_file: "{{ firmware_files.files | selectattr('path', 'search', '.*?_MC0B.*\\.bin') | map(attribute='path') | first }}"
+      when: firmware_files.files | length > 0
+
+    - name: 5. Display firmware file path ( this step used to find firmware_version)
+      debug:
+        msg: "Firmware file is located at: {{ firmware_file }}"
+      when: firmware_file is defined
+
+    - name: 6. Extract and store the last 17 characters of the firmware file name
+      set_fact:
+        firmware_version: "{{ firmware_file[-17:] }}"
+      when: firmware_file is defined
+
+    - name: 7. Run the firmware update process
+      command: >
+        sudo ./dpcmd -z /tmp/{{ binary | regex_replace('.tgz', '') }}/trenton-kv7/fw_release_package/manufacturing_fw/{{ eeprom }}{{ firmware_version }}
+      args:
+        chdir: /home/remlab/Desktop/Dediprog-latest/SF100Linux
+      when: firmware_file is defined
+
+    - name: 8. Power cycle drive
+      command: sudo ./pita_cycle -a
+      args:
+        chdir: /home/remlab/bhb_tools/
+
+    - name: 9. List Non-Volatile devices
+      shell: lspci | grep -i Non-Volatile
+      register: nv_devices
+      ignore_errors: yes
+
+    - name: Show Non-Volatile devices if found
+      debug:
+        msg: "{{ nv_devices.stdout }}"
+      when: nv_devices.stdout != ""
+
+    - name: 10. Sleep for 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 11. Setup SPDK driver
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh && sleep 20
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test
+
+    - name: 12. Reset SPDK driver
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh reset
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test
+
+    - name: 13. Sleep for 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 14. Setup SPDK driver again
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test
+
+    - name: 15. Copy cmdline.cfg and spdk.txt to all nodes
+      become: yes
+      copy:
+        src: "{{ item }}"
+        dest: /home/remlab
+      with_items:
+        - /home/remlab/ansible-tutorial/cmdline.cfg
+        - /home/remlab/ansible-tutorial/spdk.txt
+
+    - name: 16. Run SPDk test
+      shell: sudo ./spdktest -t -l /home/remlab/cmdline.cfg | sudo tee /home/remlab/spdk.txt > /dev/null
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test/spdktest
+
+    - name: 17. Power cycle drive
+      command: sudo ./pita_cycle -a
+      args:
+        chdir: /home/remlab/bhb_tools/
+
+    - name: 18. Sleep for 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 19. Remove cmdline.cfg file
+      become: yes
+      shell: rm -r /home/remlab/cmdline.cfg
+
+    - name: 20. List Non-Volatile devices again
+      become: yes
+      shell: lspci | grep -i Non-Volatile
+
+    - name: 21. Sleep for 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 22. Reset SPDK driver again
+      become: yes
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh reset
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test
+
+    - name: 23. Power cycle drive
+      command: sudo ./pita_cycle -a
+      args:
+        chdir: /home/remlab/bhb_tools/
+
+    - name: 24. Sleep for 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 25. Reset SPDK driver
+      become: yes
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh reset
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test
+
+    - name: 26. Sleep for 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 27. NVMe status
+      become: yes
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh status
+      args:
+        chdir: /home/jenkins/repos/ent_ssd_test
+
+    - name: Recovery process ended time
+      command: echo "************** Recovery process ended at $(date) **********************************************"
