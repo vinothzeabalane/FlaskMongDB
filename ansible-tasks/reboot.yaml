@@ -1,6 +1,6 @@
 ---
 - name: Reboot the nodes
-  hosts: all
+  hosts: conval-server
   become: yes  # Ensure to run with sudo privileges
   tasks:
     - name: Reboot the node

@@ -1,0 +1,19 @@
+---
+- name: Execute firmware erase process
+  hosts: conval-server
+  become: yes  # Ensure to run with sudo privileges for all tasks
+  environment:
+    PYTHONPATH: "/home/remlab/bhb_tools/lib"
+
+
+  tasks:
+    - name: process started
+      command: echo "************** Process started **********************************************"
+    
+    - name: Change directory to SF100Linux and run dpcmd
+      command: sudo ./dpcmd -d
+      args:
+        chdir: /home/remlab/Desktop/Dediprog-latest/SF100Linux
+    
+    - name: process ended
+      command: echo "************** Process ended **********************************************"

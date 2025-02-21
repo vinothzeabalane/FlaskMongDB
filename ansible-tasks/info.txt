@@ -1,5 +1,14 @@
 # To run playbook
 remlab@vc-ps-server-1:~/ansible-tutorial$ ansible-playbook -f 2  conval_server_erase.yaml -v
+remlab@vc-ps-server-1:~/FlaskMongDB/ansible-tasks$ ansible-playbook -l lm-302-05-s2 -i /home/remlab/FlaskMongDB/ansible-tasks/hosts conval_server_erase.yaml -v
 
 # To run specific node
-remlab@vc-ps-server-1:~$ ansible-playbook -l node1 conval_server_prep.yaml -e "binary=HDC_M23_WW07.2_C0_B.23.23 fw_version=MC0B271-B2323" -v
+remlab@vc-ps-server-1:~/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts  conval_server_prep.yaml -v -e "binary=HDC_M23_WW07.5_C0_B.23.26 fw_version=MC0B271-B2326"
+
+# To skip node
+ansible-playbook your_playbook.yml --limit '!node_to_skip1,!node_to_skip2'
+
+# conval tag
+
+sudo python yet.py -w -q -t  HDC-NRT-PREFIRMWARE-2025WW07.5_132005   -f "/mnt/ydrive/fast-data/releases/CV/HuntsdaleC/Internal/HDC_M23_WW07.5_C0_B.23.26.tgz:FORCE_REMANUFACTURING" 
+--fw-is-directory /home/remlab/fast-testing/test-plans/HuntsdaleC_PS/hdc-nrt-prefirmware-debug.yml
