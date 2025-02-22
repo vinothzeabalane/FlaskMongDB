@@ -29,10 +29,19 @@ vc-ps-chewyfit-09 ansible_host=10.74.135.91 ansible_user=remlab ansible_ssh_pass
 [conval-server]
 lm-302-04-s2 ansible_host=10.230.28.149 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X019TGF_
 lm-302-05-s2 ansible_host=10.230.27.88 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X038TGF_
-lm-302-12-s2 ansible_host=10.230.28.62 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X038TGF_
+lm-302-12-s2 ansible_host=10.230.28.62 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X153TGF_
 lm-302-17-s2 ansible_host=10.230.28.64 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X076TGF_
 lm-302-24-s2 ansible_host=10.230.29.207 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X076TGF_
-; vc-ps-fit-chewy-07 ansible_host=10.74.135.69 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X153TGF_
+vc-ps-fit-chewy-15 ansible_host=10.74.134.101 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X153TGF_
+
+[conval-server-jtag]
+lm-302-12-s2 ansible_host=10.230.28.62 ansible_user=remlab ansible_ssh_pass=1001SMT! jtag=jtag-recovery-kv7-SBBPH28X153TGF_MC0B271.sh
+lm-302-04-s2 ansible_host=10.230.28.149 ansible_user=remlab ansible_ssh_pass=1001SMT! jtag=jtag-recovery-kv7-SBBPH28X019TGF_MC0B271.sh
+lm-302-05-s2 ansible_host=10.230.27.88 ansible_user=remlab ansible_ssh_pass=1001SMT! jtag=jtag-recovery-kv7-SBBPH28X038TGF_MC0B271.sh
+lm-302-17-s2 ansible_host=10.230.28.64 ansible_user=remlab ansible_ssh_pass=1001SMT! jtag=jtag-recovery-kv7-SBBPH28X076TGF_MC0B271.sh
+lm-302-24-s2 ansible_host=10.230.29.207 ansible_user=remlab ansible_ssh_pass=1001SMT! jtag=jtag-recovery-kv7-SBBPH28X076TGF_MC0B271.sh
+vc-ps-fit-chewy-15 ansible_host=10.74.134.101 ansible_user=remlab ansible_ssh_pass=1001SMT! jtag=jtag-recovery-kv7-SBBPH28X153TGF_MC0B271.sh
+
 
 #node1 ansible_host=10.74.135.47 ansible_user=remlab ansible_ssh_pass=1001SMT! pita=0 eeprom=SPI-SBBPH28X038TGF_
 #node2 ansible_host=10.74.135.69 ansible_user=remlab ansible_ssh_pass=1001SMT! pita=0 eeprom=SPI-SBBPH28X153TGF
