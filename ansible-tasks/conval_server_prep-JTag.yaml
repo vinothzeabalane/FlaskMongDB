@@ -2,6 +2,9 @@
 - name: Execute recovery process
   hosts: conval-server-jtag
   become: yes  # Ensure to run with sudo privileges for all tasks
+  vars:
+    ansible_python_interpreter: /usr/bin/python
+
 
   vars_prompt:
     - name: "binary"
@@ -42,9 +45,11 @@
       shell: "bash -c 'source {{repo}}/env.sh'; ./{{jtag}}"
       args:
         chdir: /tmp/{{ binary | regex_replace('.tgz', '') }}/trenton-kv7/fw_release_package/recovery/
+      async: 1800
       environment:
         REPO_PATH: "{{ repo }}"  # Set REPO_PATH 
         PATH: "/opt/openocd/bin:{{ ansible_env.PATH }}"
+        PYTHONPATH: /home/remlab/bhb_tools/lib
 
     - name: 4. Power cycle drive
       command: ./pita_cycle -a
