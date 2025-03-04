@@ -33,6 +33,7 @@ lm-302-12-s2 ansible_host=10.230.28.62 ansible_user=remlab ansible_ssh_pass=1001
 lm-302-17-s2 ansible_host=10.230.28.64 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X076TGF_
 lm-302-24-s2 ansible_host=10.230.29.207 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X076TGF_
 vc-ps-fit-chewy-15 ansible_host=10.74.134.101 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X153TGF_
+#vc-ps-chewy-17 ansible_host=10.74.134.90 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X153TGF_
 
 [conval-server-jtag]
 lm-302-12-s2 ansible_host=10.230.28.62 ansible_user=remlab ansible_ssh_pass=1001SMT! jtag=jtag-recovery-kv7-SBBPH28X153TGF_MC0B271.sh
