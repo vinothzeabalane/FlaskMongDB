@@ -21,6 +21,8 @@
 node1 ansible_host=10.74.135.32 ansible_user=remlab ansible_ssh_pass=1001SMT!
 node2 ansible_host=10.74.134.50 ansible_user=remlab ansible_ssh_pass=1001SMT!
 
+[jenkins]
+vc-ps-chewyfit-16-duplicate ansible_host=10.74.134.23 ansible_user=remlab ansible_ssh_pass=1001SMT!
 
 [uart-server]
 vc-ps-chewyfit-09 ansible_host=10.74.135.91 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=eeprom-SBBPH28X019TGF_MC0B271.bin
@@ -32,7 +34,7 @@ lm-302-05-s2 ansible_host=10.230.27.88 ansible_user=remlab ansible_ssh_pass=1001
 lm-302-12-s2 ansible_host=10.230.28.62 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X153TGF_
 lm-302-17-s2 ansible_host=10.230.28.64 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X076TGF_
 lm-302-24-s2 ansible_host=10.230.29.207 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X076TGF_
-vc-ps-fit-chewy-15 ansible_host=10.74.134.101 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X153TGF_
+# vc-ps-fit-chewy-15 ansible_host=10.74.134.101 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X153TGF_
 #vc-ps-chewy-17 ansible_host=10.74.134.90 ansible_user=remlab ansible_ssh_pass=1001SMT! eeprom=SPI-SBBPH28X153TGF_
 
 [conval-server-jtag]
