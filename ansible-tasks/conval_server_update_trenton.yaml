@@ -1,0 +1,38 @@
+---
+- name: Execute Git operations in Trenton directory
+  hosts: conval-server
+  become: yes
+  vars:
+    repo: "/home/jenkins/repos/trenton"
+
+  tasks:
+    - name: Check current user
+      command: whoami
+      register: result
+
+    - name: Display the current user
+      debug:
+        msg: "Current user is {{ result.stdout }}"
+
+    - name: Run Git operations (branch, status, pull, log)
+      block:
+        - name: Run Git branch
+          command: git branch
+          args:
+            chdir: "{{ repo }}"
+        
+        - name: Run Git status
+          command: git status
+          args:
+            chdir: "{{ repo }}"
+        
+        - name: Run Git pull
+          command: git pull
+          args:
+            chdir: "{{ repo }}"
+        
+        - name: Run Git log
+          command: git log -1
+          args:
+            chdir: "{{ repo }}"
+      when: repo is defined

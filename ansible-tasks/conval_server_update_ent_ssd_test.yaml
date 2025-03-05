@@ -1,0 +1,50 @@
+---
+- name: Execute Git operations in Trenton directory
+  hosts: conval-server
+  become: yes
+  vars:
+    repo: "/home/jenkins/repos/ent_ssd_test/spdktest"
+
+  tasks:
+    - name: Check current user
+      command: whoami
+      register: result
+
+    - name: Display the current user
+      debug:
+        msg: "Current user is {{ result.stdout }}"
+
+    - name: Run Git operations (branch, status, pull, log)
+      block:
+        - name: Run Git branch
+          command: git branch
+          args:
+            chdir: "{{ repo }}"
+        
+        - name: Run Git status
+          command: git status
+          args:
+            chdir: "{{ repo }}"
+        
+        - name: Run Git pull
+          command: git pull
+          args:
+            chdir: "{{ repo }}"
+        
+        - name: Run Git log
+          command: git log -1
+          args:
+            chdir: "{{ repo }}"
+      when: repo is defined
+
+    - name: Run operations (clean and compile)
+      block:
+        - name: Clean the repo
+          command: sudo make clean
+          args:
+            chdir: "{{ repo }}"
+        
+        - name: Compile the repo
+          command: sudo make hardware-internal
+          args:
+            chdir: "{{ repo }}"

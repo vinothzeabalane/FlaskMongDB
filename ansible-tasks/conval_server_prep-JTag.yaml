@@ -1,0 +1,159 @@
+---
+- name: Execute recovery process
+  hosts: conval-server-jtag
+  become: yes  # Ensure to run with sudo privileges for all tasks
+  vars:
+    ansible_python_interpreter: /usr/bin/python
+
+
+  vars_prompt:
+    - name: "binary"
+      prompt: "Enter the binary name (e.g., HDC_M23_WW07.3_C0_B.23.24.tgz)"
+      default: "HDC_M23_WW07.3_C0_B.23.24.tgz"
+
+    - name: "repo"
+      prompt: "Enter the repo path (e.g., /home/jenkins/repos/trenton/)"
+      default: "/home/jenkins/repos/trenton/"
+
+  tasks:
+    - name: Check current user
+      command: whoami
+      register: result
+
+    - name: Display the current user
+      debug:
+        msg: "Current user is {{ result.stdout }}"
+
+    - name: Recovery process started with start time
+      command: echo "************** Recovery process started at $(date) **********************************************"
+
+    - name: 1. Copy the .tgz file to /tmp
+      copy:
+        src: "/mnt/ydrive/fast-data/Releases/CV/HuntsdaleC/Internal/{{ binary }}"
+        dest: "/tmp"
+        remote_src: yes  # This tells Ansible that the file is already on the remote server
+      when: binary is defined
+
+    - name: 2. Extract the .tgz file
+      unarchive:
+        src: "/tmp/{{ binary }}"
+        dest: "/tmp/"
+        remote_src: yes
+      when: binary is defined
+
+    - name: 3. Run the firmware update process
+      shell: "bash -c 'source {{repo}}/env.sh'; ./{{jtag}}"
+      args:
+        chdir: /tmp/{{ binary | regex_replace('.tgz', '') }}/trenton-kv7/fw_release_package/recovery/
+      async: 1800
+      environment:
+        REPO_PATH: "{{ repo }}"  # Set REPO_PATH 
+        PATH: "/opt/openocd/bin:{{ ansible_env.PATH }}"
+        PYTHONPATH: /home/remlab/bhb_tools/lib
+
+    - name: 4. Power cycle drive
+      command: ./pita_cycle -a
+      args:
+        chdir: "{{ repo }}/tools/scripts/"
+      environment:
+        REPO_PATH: "{{ repo }}"  # Set REPO_PATH here
+
+    - name: 5. List Non-Volatile devices
+      shell: lspci | grep -i Non-Volatile
+      register: nv_devices
+      ignore_errors: yes
+
+    - name: 6. Show Non-Volatile devices if found
+      debug:
+        msg: "{{ nv_devices.stdout }}"
+      when: nv_devices.stdout != ""
+
+    - name: 7. Sleep for 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 8. Setup SPDK driver
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh && sleep 20
+      args:
+        chdir: "{{ repo }}/../ent_ssd_test"
+
+    - name: 9. Reset SPDK driver
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh reset
+      args:
+        chdir: "{{ repo }}/../ent_ssd_test"
+
+    - name: 10. Sleep for 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 11. Setup SPDK driver again
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh
+      args:
+        chdir: "{{ repo }}/../ent_ssd_test"
+
+    - name: 12. Create cmdline.cfg file with commands
+      shell: echo -e "selectdev 1\ntc-unlock\ntc-llf\nexit" > /tmp/cmdline.cfg
+
+    - name: 13. Run SPDk test
+      shell: sudo ./spdktest -t -l /tmp/cmdline.cfg | sudo tee /tmp/spdk.txt > /dev/null
+      args:
+        chdir: "{{ repo }}/../ent_ssd_test/spdktest"
+
+    - name: 14. Power cycle drive
+      command: ./pita_cycle -a
+      args:
+        chdir: "{{ repo }}/tools/scripts/"
+      environment:
+        REPO_PATH: "{{ repo }}"  # Set REPO_PATH here
+
+    - name: 15. Sleep for 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 16. Remove cmdline.cfg file
+      become: yes
+      shell: rm -r /tmp/cmdline.cfg
+
+    - name: 17. List Non-Volatile devices again
+      become: yes
+      shell: lspci | grep -i Non-Volatile
+
+    - name: 19. Sleep for 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 20. Reset SPDK driver again
+      become: yes
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh reset
+      args:
+        chdir: "{{ repo }}/../ent_ssd_test"
+
+    - name: 21. Power cycle drive
+      command: ./pita_cycle -a
+      args:
+        chdir: "{{ repo }}/tools/scripts/"
+      environment:
+        REPO_PATH: "{{ repo }}"  # Set REPO_PATH here
+
+    - name: 22. Sleep for 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 23. Reset SPDK driver
+      become: yes
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh reset
+      args:
+        chdir: "{{ repo }}/../ent_ssd_test"
+
+    - name: 24. Sleep for 20 seconds
+      pause:
+        seconds: 20
+
+    - name: 25. NVMe status
+      become: yes
+      shell: sudo driver-override=uio_pci_generic lib/spdk/scripts/setup.sh status
+      args:
+        chdir: "{{ repo }}/../ent_ssd_test"
+
+    - name: Recovery process ended time
+      command: echo "************** Recovery process ended at $(date) **********************************************"

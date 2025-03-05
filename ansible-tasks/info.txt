@@ -5,10 +5,20 @@ remlab@vc-ps-server-1:~/FlaskMongDB/ansible-tasks$ ansible-playbook -l lm-302-05
 # To run specific node
 remlab@vc-ps-server-1:~/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts  conval_server_prep.yaml -v -e "binary=HDC_M23_WW07.5_C0_B.23.26 fw_version=MC0B271-B2326"
 
+# JTag recovery script
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts -l lm-302-12-s2 conval_server_prep-JTag.yaml -e "repo=/home/jenkins/repos/trenton" -e "binary=HDC_M23_WW08.5_C0_B.23.30.tgz" -v
+
 # To skip node
-ansible-playbook your_playbook.yml --limit '!node_to_skip1,!node_to_skip2'
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts conval_server_prep-latest.yaml -e "binary=HDC_M23_WW08.5_C0_B.23.30.tgz" --limit '!vc-ps-fit-chewy-15' -v
+
+# copy syntax
+ansible all -i /path/to/inventory_file -m copy -a "src=/path/to/local/file dest=/path/to/remote/file"
+
+# to update trenton repo
+ansible-playbook -i hosts conval_server_update_trenton.yaml -
+
+# to update ent_ssd_test repo
+ansible-playbook -i hosts conval_server_update_ent_ssd_test.yaml -v
 
 # conval tag
-
-sudo python yet.py -w -q -t  HDC-NRT-PREFIRMWARE-2025WW07.5_132005   -f "/mnt/ydrive/fast-data/releases/CV/HuntsdaleC/Internal/HDC_M23_WW07.5_C0_B.23.26.tgz:FORCE_REMANUFACTURING" 
---fw-is-directory /home/remlab/fast-testing/test-plans/HuntsdaleC_PS/hdc-nrt-prefirmware-debug.yml
+sudo python yet.py -w -q -t  HDC-NRT-PREFIRMWARE-2025WW09.5_210149  -f "/mnt/ydrive/fast-data/releases/CV/HuntsdaleC/Internal/HDC_M23_WW09.5_C0_B.23.35.tgz:FORCE_REMANUFACTURING" --fw-is-directory /home/remlab/fast-testing/test-plans/HuntsdaleC_PS/hdc-nrt-prefirmware-debug.yml
