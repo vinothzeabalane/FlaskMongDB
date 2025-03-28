@@ -1,0 +1,39 @@
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/dockers$ docker-compose up -d
+Creating dockers_db_1 ... done
+Creating dockers_web_1 ... done
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/dockers$ docker-compose ps
+    Name                   Command              State                              Ports                            
+--------------------------------------------------------------------------------------------------------------------
+dockers_db_1    docker-entrypoint.sh postgres   Up      5432/tcp                                                    
+dockers_web_1   /entrypoint.sh odoo             Up      0.0.0.0:8069->8069/tcp,:::8069->8069/tcp, 8071/tcp, 8072/tcp
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/dockers$ 
+
+Master Password:  yh6s-sg8x-i7pk
+
+login: omprakash.aroumougam@gmail.com
+Password: 123456
+
+remlab@vc-ps-server-1:~$ docker exec -it --user root dockers_web_1 /bin/bash
+
+
+odoo@0501972671b3:/usr/lib/python3/dist-packages/odoo$ pip show odoo
+Name: odoo
+Version: 17.0.post20250320
+Summary: Odoo Server
+Home-page: https://www.odoo.com
+Author: OpenERP S.A.
+Author-email: info@odoo.com
+License: LGPL-3
+Location: /usr/lib/python3/dist-packages
+Requires: 
+Required-by: 
+odoo@0501972671b3:/usr/lib/python3/dist-packages/odoo$ 
+
+
+Rebuild and Restart the Containers: 
+docker-compose down
+docker-compose up -d --build
+
+
+Odoo Forum
+https://www.odoo.com/forum/help-1
