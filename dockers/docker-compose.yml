@@ -11,7 +11,7 @@ services:
       - odoo-web-data:/var/lib/odoo
       - ./config:/etc/odoo
       - ./addons:/mnt/extra-addons
-      - ps_odoo:/usr/lib/python3/dist-packages/odoo  # Mount the Odoo source
+      - seyon_odoo:/usr/lib/python3/dist-packages/odoo  # Mount the Odoo source
 
     environment:
       - HOST=db
@@ -47,7 +47,7 @@ services:
 volumes:
   odoo-web-data:
   odoo-db-data:
-  ps_odoo:
+  seyon_odoo:
 
 networks:
   odoo-network:

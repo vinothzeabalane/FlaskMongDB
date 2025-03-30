@@ -37,3 +37,10 @@ docker-compose up -d --build
 
 Odoo Forum
 https://www.odoo.com/forum/help-1
+
+
+Mount source code:
+remlab@vc-ps-server-1:~/odoo_source$ sudo mount --bind /var/lib/docker/volumes/dockers_seyon_odoo/_data /home/remlab/ps-bpt/FlaskMongDB/odoo
+
+unmount
+sudo umount /home/remlab/odoo_source
