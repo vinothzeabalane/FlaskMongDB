@@ -10,7 +10,7 @@ services:
     volumes:
       - odoo-web-data:/var/lib/odoo
       - ./config:/etc/odoo
-      - ./addons:/mnt/extra-addons
+      - ./addons:/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo
       - seyon_odoo:/usr/lib/python3/dist-packages/odoo  # Mount the Odoo source
 
     environment:

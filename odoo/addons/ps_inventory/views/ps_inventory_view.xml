@@ -1,0 +1,41 @@
+<odoo>
+    <!-- Define the Form View -->
+    <record id="ps_inventory_form_view" model="ir.ui.view">
+        <field name="name">ps.inventory.form</field>
+        <field name="model">ps.inventory</field>
+        <field name="arch" type="xml">
+            <form string="PS Inventory">
+                <group>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="active"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Define the Tree View -->
+    <record id="ps_inventory_tree_view" model="ir.ui.view">
+        <field name="name">ps.inventory.tree</field>
+        <field name="model">ps.inventory</field>
+        <field name="arch" type="xml">
+            <tree string="PS Inventory">
+                <field name="name"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Define the Action for Inventory -->
+    <record id="action_ps_inventory" model="ir.actions.act_window">
+        <field name="name">PS Inventory</field>
+        <field name="res_model">ps.inventory</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="ps_inventory_tree_view"/>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="ps_inventory_menu" name="PS Inventory"
+            action="action_ps_inventory"/>
+
+</odoo>
