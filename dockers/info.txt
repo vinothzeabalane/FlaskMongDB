@@ -44,3 +44,6 @@ remlab@vc-ps-server-1:~/odoo_source$ sudo mount --bind /var/lib/docker/volumes/d
 
 unmount
 sudo umount /home/remlab/odoo_source
+
+Check the ip/ port connection:
+telnet 10.74.134.8 5432
