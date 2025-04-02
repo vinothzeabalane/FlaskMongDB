@@ -11,9 +11,10 @@
                             <field name="name" />
                             <field name="ip_address" />
                             <field name="location" />
+                            <field name="active" />
                         </group>
                         <group>
-                            <field name="active" />
+                            <field name="user_id" string="User" />
                             <field name="drive_info" />
                         </group>
                     </group>
@@ -75,6 +76,7 @@
             <tree string="PS Inventory">
                 <field name="name" />
                 <field name="ip_address" />
+                <field name="user_id" />
                 <field name="active" />
             </tree>
         </field>

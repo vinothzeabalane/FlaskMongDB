@@ -10,6 +10,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/ps_inventory_view.xml',
+        'views/ps_inventory_users_view.xml'
     ],
     'installable': True,
     'application': True,  # Set True if it's an app to be listed in the Apps menu

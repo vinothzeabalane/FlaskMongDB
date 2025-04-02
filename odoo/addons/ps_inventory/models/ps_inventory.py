@@ -21,6 +21,9 @@ class PlatFormServiceInventory(models.Model):
         ('9.21', 'lab 9.21')
     ], string='Lab Location', default='9.20', help='Select the location of the lab')
 
+    user_id = fields.Many2one('res.users', string='Assignee', help='User associated with this host')
+
+
     pdu_chewy = fields.Char(string='Chewy PDU', help='Enter the URL for the Power Distribution Unit')
     pdu_chewy_outlet = fields.Selection([
         ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'), 
@@ -66,3 +69,10 @@ class PlatFormServiceInventory(models.Model):
                 ip_regex = r'^(\d{1,3}\.){3}\d{1,3}$'
                 if not re.match(ip_regex, record.ip_address):
                     raise ValidationError('Invalid IP address format.')
+                
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    # Add a One2many field to show related hosts
+    host_ids = fields.One2many('ps.inventory', 'user_id', string='Hosts')
