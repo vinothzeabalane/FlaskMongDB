@@ -86,7 +86,22 @@
         <field name="res_model">ps.inventory</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="ps_inventory_tree_view" />
-        <field name="target">current</field>
+        <field name="domain">[]</field>  <!-- No default domain, shows all records initially -->
+        <field name="search_view_id" ref="ps_inventory_search_view"/>
+    </record>
+
+    <!-- Adding a search view for the custom filter -->
+    <record id="ps_inventory_search_view" model="ir.ui.view">
+        <field name="name">ps.inventory.search</field>
+        <field name="model">ps.inventory</field>
+        <field name="arch" type="xml">
+            <search>
+                <!-- Standard search filters -->
+                <filter name="active" string="Active" domain="[('active', '=', True)]" />
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]" />
+                <filter name="all" string="All" domain="[]"/>
+            </search>
+        </field>
     </record>
 
     <menuitem id="ps_inventory_menu" name="PS Inventory"
