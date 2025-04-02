@@ -6,7 +6,7 @@
     'summary': 'PS Inventory details - Chewy/ Yoda',
     'author': 'Omprakash Zeabalane',
     'website': 'http://www.yourcompany.com',
-    'depends': ['base'],  # List of dependencies (e.g., base, sale, stock, etc.)
+    'depends': ['base','mail'],  # List of dependencies (e.g., base, sale, stock, etc.)
     'data': [
         'security/ir.model.access.csv',
         'views/ps_inventory_view.xml',

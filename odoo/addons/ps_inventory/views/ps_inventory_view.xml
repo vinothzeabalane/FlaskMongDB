@@ -58,6 +58,11 @@
                     </notebook>
 
                 </sheet>
+                <form string="History">
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="mail_thread" />
+                    </div>
+                </form>
             </form>
         </field>
     </record>
@@ -69,6 +74,7 @@
         <field name="arch" type="xml">
             <tree string="PS Inventory">
                 <field name="name" />
+                <field name="ip_address" />
                 <field name="active" />
             </tree>
         </field>

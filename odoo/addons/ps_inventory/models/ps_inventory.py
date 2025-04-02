@@ -6,10 +6,16 @@ from odoo.exceptions import ValidationError
 class PlatFormServiceInventory(models.Model):
     _name = 'ps.inventory'  # The name of the model (i.e., the table name in the database)
     _description = 'Platform Service Team- Inventory details'
+    _inherit = ['mail.thread']  # Inherit from mail.thread to enable chatter
 
-    name = fields.Char(string='Hostname', required=True, unique=True, size=50)
+    _track = {
+        'name': {'ps_inventory.track_name': 'name'},
+        'drive_info': {'ps_inventory.track_drive_info': 'drive_info'},
+    }
+
+    name = fields.Char(string='Hostname', required=True, unique=True, size=50, tracking=True)
     ip_address = fields.Char(string='IP Address', help='Enter the IP address of the device')
-    drive_info = fields.Text(string='Drive Information')
+    drive_info = fields.Text(string='Drive Information', tracking=True)
     location = fields.Selection([
         ('9.20', 'lab 9.20'),
         ('9.21', 'lab 9.21')
