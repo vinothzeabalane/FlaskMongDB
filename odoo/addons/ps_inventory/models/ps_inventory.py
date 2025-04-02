@@ -11,6 +11,7 @@ class PlatFormServiceInventory(models.Model):
     _track = {
         'name': {'ps_inventory.track_name': 'name'},
         'drive_info': {'ps_inventory.track_drive_info': 'drive_info'},
+        'user_id': {'ps_inventory.track_userid' : 'user_id'}
     }
 
     name = fields.Char(string='Hostname', required=True, unique=True, size=50, tracking=True)
@@ -21,7 +22,7 @@ class PlatFormServiceInventory(models.Model):
         ('9.21', 'lab 9.21')
     ], string='Lab Location', default='9.20', help='Select the location of the lab')
 
-    user_id = fields.Many2one('res.users', string='Assignee', help='User associated with this host')
+    user_id = fields.Many2one('res.users', string='Assignee', help='User associated with this host', tracking=True)
 
 
     pdu_chewy = fields.Char(string='Chewy PDU', help='Enter the URL for the Power Distribution Unit')

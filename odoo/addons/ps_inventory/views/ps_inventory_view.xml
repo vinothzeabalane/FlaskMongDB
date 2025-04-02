@@ -106,7 +106,8 @@
         </field>
     </record>
 
-    <menuitem id="ps_inventory_menu" name="PS Inventory"
-        action="action_ps_inventory" />
+    <!-- Create the PS Inventory Menu Item -->
+    <menuitem id="ps_inventory_menu" name="PS Inventory"  
+              action="action_ps_inventory" sequence="1"/>
 
 </odoo>
