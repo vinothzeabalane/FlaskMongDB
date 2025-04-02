@@ -5,11 +5,59 @@
         <field name="model">ps.inventory</field>
         <field name="arch" type="xml">
             <form string="PS Inventory">
-                <group>
-                    <field name="name"/>
-                    <field name="description"/>
-                    <field name="active"/>
-                </group>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="ip_address" />
+                            <field name="location" />
+                        </group>
+                        <group>
+                            <field name="active" />
+                            <field name="drive_info" />
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="PDU Configuration">
+                            <group>
+                                <group>
+                                    <field name="pdu_chewy" widget="url" />
+                                    <field name="pdu_chewy_outlet" />
+                                </group>
+                                <group>
+                                    <field name="pdu_dstream" widget="url" />
+                                    <field name="pdu_dstream_outlet" />
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Hardware Connections">
+                            <group>
+                                <group>
+                                    <field name="has_dap" />
+                                    <field name="has_uart" />
+                                    <field name="has_pita" />
+                                    <field name="has_dstream" />
+                                    <field name="has_arm" />
+                                    <field name="has_dediprog" />
+                                    <field name="has_Flyswatter2" />
+                                    <field name="has_cooling_fan" />
+                                </group>
+                                <group>
+                                    <field name="image" widget="image" class="large-image" />
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Additional Info">
+                            <group>
+                                <field name="notes" />
+                            </group>
+                        </page>
+                    </notebook>
+
+                </sheet>
             </form>
         </field>
     </record>
@@ -20,8 +68,8 @@
         <field name="model">ps.inventory</field>
         <field name="arch" type="xml">
             <tree string="PS Inventory">
-                <field name="name"/>
-                <field name="active"/>
+                <field name="name" />
+                <field name="active" />
             </tree>
         </field>
     </record>
@@ -31,11 +79,11 @@
         <field name="name">PS Inventory</field>
         <field name="res_model">ps.inventory</field>
         <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="ps_inventory_tree_view"/>
+        <field name="view_id" ref="ps_inventory_tree_view" />
         <field name="target">current</field>
     </record>
 
     <menuitem id="ps_inventory_menu" name="PS Inventory"
-            action="action_ps_inventory"/>
+        action="action_ps_inventory" />
 
 </odoo>
