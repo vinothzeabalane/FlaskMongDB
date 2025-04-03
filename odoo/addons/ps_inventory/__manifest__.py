@@ -12,7 +12,6 @@
         'views/ps_inventory_view.xml',
         'views/ps_inventory_users_view.xml',
         'views/ps_login_templates_view.xml'
-        # 'views/ps_inventory_remove.xml'
     ],
     'assets': {
         'web.assets_backend': [
