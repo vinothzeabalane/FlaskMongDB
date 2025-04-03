@@ -25,3 +25,12 @@ a.o_channel_redirect {
     display: none !important;
 }
 
+/* Hide the o-mail-Chatter-topbar */
+.o-mail-Chatter-topbar {
+    display: none !important;
+}
+
+/* Hide the o_cp_action_menus */
+.o_cp_action_menus {
+    display: none !important;
+}
