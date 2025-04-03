@@ -14,3 +14,14 @@
     cursor: not-allowed;  /* Indicates the dropdown is disabled */
 }
 
+/* Hide the mail redirect and channel redirect buttons */
+a.o_mail_redirect,
+a.o_channel_redirect {
+    display: none !important;
+}
+
+/* Hide the mail discuss systray class */
+.o-mail-DiscussSystray-class {
+    display: none !important;
+}
+

@@ -16,7 +16,7 @@
     ],
     'assets': {
         'web.assets_backend': [
-            # 'ps_inventory/static/src/**/*',
+            'ps_inventory/static/src/**/*',
         ]
     },
     'installable': True,
