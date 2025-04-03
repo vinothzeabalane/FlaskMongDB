@@ -62,4 +62,9 @@ total 4
 drwxr-xr-x 12 remlab root 4096 Apr  2 19:02 _data
 root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo# sudo umount /home/remlab/ps-bpt/FlaskMongDB/odoo
 root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo# sudo mount --bind /var/lib/docker/volumes/dockers_seyon_odoo/_data /home/remlab/ps-bpt/FlaskMongDB/odoo
-root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo# 
+root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo#
+
+#Custom Odoo Environment:
+
+1. Deleted the Discuss Menu --> Go to Menu Items
+2. App --> linked with Group --> Admin  (Non-admin user can't access it)
