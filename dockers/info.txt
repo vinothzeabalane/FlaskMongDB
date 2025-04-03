@@ -31,6 +31,7 @@ odoo@0501972671b3:/usr/lib/python3/dist-packages/odoo$
 
 
 Rebuild and Restart the Containers: 
+docker-compose down -v  ( delete the volumes)
 docker-compose down
 docker-compose up -d --build
 
@@ -47,3 +48,6 @@ sudo umount /home/remlab/odoo_source
 
 Check the ip/ port connection:
 telnet 10.74.134.8 5432
+
+#Odoo manage db:
+http://10.74.134.8:8069/web/database/manager
