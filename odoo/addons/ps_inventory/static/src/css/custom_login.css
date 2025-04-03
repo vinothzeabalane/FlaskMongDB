@@ -34,3 +34,29 @@ a.o_channel_redirect {
 .o_cp_action_menus {
     display: none !important;
 }
+
+/* Hide Documentation */
+a[data-menu="documentation"] {
+    display: none !important;
+}
+
+/* Hide Support */
+a[data-menu="support"] {
+    display: none !important;
+}
+
+/* Hide Shortcuts */
+span[data-menu="shortcuts"] {
+    display: none !important;
+}
+
+/* Hide Preferences */
+span[data-menu="settings"] {
+    display: none !important;
+}
+
+/* Hide My Odoo.com account */
+span[data-menu="account"] {
+    display: none !important;
+}
+
