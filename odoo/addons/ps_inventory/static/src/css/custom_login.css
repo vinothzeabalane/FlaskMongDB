@@ -30,11 +30,6 @@ a.o_channel_redirect {
     display: none !important;
 }
 
-/* Hide the o_cp_action_menus */
-.o_cp_action_menus {
-    display: none !important;
-}
-
 /* Hide Documentation */
 a[data-menu="documentation"] {
     display: none !important;
