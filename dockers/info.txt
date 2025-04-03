@@ -8,7 +8,7 @@ dockers_db_1    docker-entrypoint.sh postgres   Up      5432/tcp
 dockers_web_1   /entrypoint.sh odoo             Up      0.0.0.0:8069->8069/tcp,:::8069->8069/tcp, 8071/tcp, 8072/tcp
 remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/dockers$ 
 
-Master Password:  yh6s-sg8x-i7pk
+Master Password:  yh6s-sg8x-i7pk / 4bs2-vfp4-xrar
 
 login: omprakash.aroumougam@gmail.com
 Password: 123456
@@ -51,3 +51,15 @@ telnet 10.74.134.8 5432
 
 #Odoo manage db:
 http://10.74.134.8:8069/web/database/manager
+
+#Fresh Odoo Environment"
+
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/dockers$ sudo su
+root@vc-ps-server-1:/home/remlab/ps-bpt/FlaskMongDB/dockers# cd /var/lib/docker/volumes/dockers_seyon_odoo/
+root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo# sudo chown -R remlab _data/
+root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo# ls -lrt
+total 4
+drwxr-xr-x 12 remlab root 4096 Apr  2 19:02 _data
+root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo# sudo umount /home/remlab/ps-bpt/FlaskMongDB/odoo
+root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo# sudo mount --bind /var/lib/docker/volumes/dockers_seyon_odoo/_data /home/remlab/ps-bpt/FlaskMongDB/odoo
+root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo# 
