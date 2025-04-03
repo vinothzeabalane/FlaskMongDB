@@ -1,0 +1,16 @@
+/* Hide the Home Menu */
+/* .o_navbar_apps_menu {
+    display: none !important;
+} */
+
+/* Disable the dropdown but keep the icon visible */
+.o_navbar_apps_menu {
+    pointer-events: none;  /* This makes the entire dropdown non-interactive */
+    opacity: 0.5;          /* Optional: Reduce opacity to indicate the dropdown is disabled */
+}
+
+/* Optionally, change the cursor to indicate that the menu is disabled */
+.o_navbar_apps_menu i {
+    cursor: not-allowed;  /* Indicates the dropdown is disabled */
+}
+
