@@ -11,7 +11,8 @@
         'security/ir.model.access.csv',
         'views/ps_inventory_view.xml',
         'views/ps_inventory_users_view.xml',
-        'views/ps_login_templates_view.xml'
+        'views/ps_login_templates_view.xml',
+        'views/ps_inventory_remove_signup.xml'
     ],
     'assets': {
         'web.assets_backend': [
