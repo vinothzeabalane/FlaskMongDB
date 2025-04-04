@@ -3,8 +3,8 @@ import re
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
-class PlatFormServiceInventory(models.Model):
-    _name = 'ps.inventory'  # The name of the model (i.e., the table name in the database)
+class PlatFormServiceInventoryHosts(models.Model):
+    _name = 'ps.inventory.hosts'  # The name of the model (i.e., the table name in the database)
     _description = 'Platform Service Team- Inventory details'
     _inherit = ['mail.thread']  # Inherit from mail.thread to enable chatter
 
@@ -76,4 +76,4 @@ class ResUsers(models.Model):
     _inherit = 'res.users'
 
     # Add a One2many field to show related hosts
-    host_ids = fields.One2many('ps.inventory', 'user_id', string='Hosts')
+    host_ids = fields.One2many('ps.inventory.hosts', 'user_id', string='Hosts')

@@ -3,13 +3,13 @@
     'name': 'Platform Service Inventory',
     'version': '1.0',
     'category': 'Inventory',
-    'summary': 'PS Inventory details - Chewy/ Yoda',
+    'summary': 'PS Inventory details - Chewy/ Yoda and SSD Drives',
     'author': 'Omprakash Zeabalane',
     'website': 'http://www.yourcompany.com',
     'depends': ['base','mail'],  # List of dependencies (e.g., base, sale, stock, etc.)
     'data': [
         'security/ir.model.access.csv',
-        'views/ps_inventory_view.xml',
+        'views/ps_inventory_hosts_view.xml',
         'views/ps_inventory_users_view.xml',
         'views/ps_login_templates_view.xml',
         'views/ps_inventory_remove_signup.xml'

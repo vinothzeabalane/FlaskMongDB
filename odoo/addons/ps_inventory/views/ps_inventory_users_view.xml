@@ -16,17 +16,4 @@
             </group>
         </field>
     </record>
-
-    <!-- <record id="action_ps_inventory_user" model="ir.actions.act_window">
-        <field name="name">PS Inventory User</field>
-        <field name="res_model">res.users</field>
-        <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="ps_inventory_users_form_inherit" />
-        <field name="target">current</field>
-    </record>
-
-
-    <menuitem id="ps_inventory_user_menu" name="PS Inventory User"
-        action="action_ps_inventory_user" /> -->
-
 </odoo>
