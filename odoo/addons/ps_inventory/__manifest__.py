@@ -14,7 +14,8 @@
         'views/ps_login_templates_view.xml',
         'views/ps_inventory_remove_signup.xml',
         'views/ps_inventory_users_view.xml',
-        'data/ps_inventory_remove_menu.xml'
+        'data/ps_inventory_remove_menu.xml',
+        'views/ps_inventory_menu.xml'
     ],
     'assets': {
         'web.assets_backend': [

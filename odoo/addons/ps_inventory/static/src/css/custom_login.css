@@ -4,10 +4,10 @@
 } */
 
 /* Disable the dropdown but keep the icon visible */
-/* .o_navbar_apps_menu {
+.o_navbar_apps_menu {
     pointer-events: none;  
     opacity: 0.5;          
-} */
+}
 
 /* Optionally, change the cursor to indicate that the menu is disabled */
 .o_navbar_apps_menu i {

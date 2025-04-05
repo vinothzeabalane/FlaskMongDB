@@ -85,12 +85,6 @@
         <field name="search_view_id" ref="ps_inventory_drives_search_view"/>
     </record>
     
-
-    <!-- Create the PS Inventory Menu Item -->
-    <menuitem id="ps_inventory_drives_menu" name="SSD Drives"  
-              action="action_ps_inventory_drives" sequence="1" />
-
-
     <record id="view_ps_inventory_product_code_form" model="ir.ui.view">
         <field name="name">ps.inventory.product.code.form</field>
         <field name="model">ps.inventory.product.code</field>
