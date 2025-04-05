@@ -4,7 +4,7 @@
         <field name="model">res.users</field>
         <field name="inherit_id" ref="base.view_users_simple_form" />
         <field name="arch" type="xml">
-            <group name="phone_numbers" position="after">
+            <group name="phone_numbers" position="replace">
                 <group>
                     <field name="host_ids">
                         <tree>
@@ -13,6 +13,14 @@
                         </tree>
                     </field>
                 </group>
+            </group>
+                <group>
+                    <field name="drive_ids">
+                        <tree>
+                            <field name="name" />
+                            <field name="density" />
+                        </tree>
+                    </field>
             </group>
         </field>
     </record>

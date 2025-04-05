@@ -5,7 +5,7 @@ from odoo.exceptions import ValidationError
 
 class PlatFormServiceInventoryHosts(models.Model):
     _name = 'ps.inventory.hosts'  # The name of the model (i.e., the table name in the database)
-    _description = 'Platform Service Team- Inventory details'
+    _description = 'Platform Service Team- Hosts'
     _inherit = ['mail.thread']  # Inherit from mail.thread to enable chatter
 
     _track = {
@@ -72,7 +72,7 @@ class PlatFormServiceInventoryHosts(models.Model):
                     raise ValidationError('Invalid IP address format.')
                 
 
-class ResUsers(models.Model):
+class PlatFormServiceInventoryHostsUsers(models.Model):
     _inherit = 'res.users'
 
     # Add a One2many field to show related hosts

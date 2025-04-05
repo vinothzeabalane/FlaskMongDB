@@ -1,0 +1,109 @@
+<odoo>
+    <!-- Define the Form View -->
+    <record id="ps_inventory_drives_form_view" model="ir.ui.view">
+        <field name="name">ps.inventory.drives.form</field>
+        <field name="model">ps.inventory.drives</field>
+        <field name="arch" type="xml">
+            <form string="PS Inventory">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="density" />
+                            <field name="program" />
+                            <field name="media_type" />
+                        </group>
+                        <group>
+                            <field name="user_id" string="User" />
+                            <field name="product_code_id" />
+                            <field name="source" />
+                            <field name="ssd_info" />
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="More Information">
+                            <group>
+                                <group>
+                                    <field name="image" widget="image" class="large-image" />
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Additional Info">
+                            <group>
+                                <field name="notes" />
+                            </group>
+                        </page>
+                    </notebook>
+
+                </sheet>
+                <form string="History">
+                    <div class="oe_chatter">
+                        <field name="message_ids" widget="mail_thread" />
+                    </div>
+                </form>
+            </form>
+        </field>
+    </record>
+
+    <!-- Define the Tree View -->
+    <record id="ps_inventory_drives_tree_view" model="ir.ui.view">
+        <field name="name">ps.inventory.drives.tree</field>
+        <field name="model">ps.inventory.drives</field>
+        <field name="arch" type="xml">
+            <tree string="PS Inventory">
+                <field name="name" />
+                <field name="density" />
+                <field name="product_code_id" />
+                <field name="user_id" />
+                <field name="active" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Adding a search view for the custom filter -->
+    <record id="ps_inventory_drives_search_view" model="ir.ui.view">
+        <field name="name">ps.inventory.drives.search</field>
+        <field name="model">ps.inventory.drives</field>
+        <field name="arch" type="xml">
+            <search>
+                <!-- Standard search filters -->
+                <filter name="active" string="Active" domain="[('active', '=', True)]" />
+                <filter name="inactive" string="Inactive" domain="[('active', '=', False)]" />
+                <filter name="all" string="All" domain="[]"/>
+            </search>
+        </field>
+    </record>
+    <!-- Define the Action for Inventory -->
+    <record id="action_ps_inventory_drives" model="ir.actions.act_window">
+        <field name="name">PS Inventory</field>
+        <field name="res_model">ps.inventory.drives</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="ps_inventory_drives_tree_view" />
+        <field name="domain">[]</field>  <!-- No default domain, shows all records initially -->
+        <field name="search_view_id" ref="ps_inventory_drives_search_view"/>
+    </record>
+    
+
+    <!-- Create the PS Inventory Menu Item -->
+    <menuitem id="ps_inventory_drives_menu" name="SSD Drives"  
+              action="action_ps_inventory_drives" sequence="1" />
+
+
+    <record id="view_ps_inventory_product_code_form" model="ir.ui.view">
+        <field name="name">ps.inventory.product.code.form</field>
+        <field name="model">ps.inventory.product.code</field>
+        <field name="arch" type="xml">
+            <form string="Product Code">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -106,7 +106,7 @@
     </record>
 
     <!-- Create the PS Inventory Menu Item -->
-    <menuitem id="ps_inventory_hosts_menu" name="PS Inventory"  
+    <menuitem id="ps_inventory_hosts_menu" name="Hosts"  
               action="action_ps_inventory_hosts" sequence="1"/>
 
 </odoo>

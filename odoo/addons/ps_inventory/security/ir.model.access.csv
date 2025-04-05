@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ps_inventory_hosts_user,access_ps_inventory_hosts_user,model_ps_inventory_hosts,base.group_user,1,1,1,1
-
+access_ps_inventory_hosts_user,PS- Hosts,model_ps_inventory_hosts,base.group_user,1,1,1,1
+access_ps_inventory_drives_user,PS- Drives,model_ps_inventory_drives,base.group_user,1,1,1,1
+access_ps_inventory_product_code_user,PS- Product Code,model_ps_inventory_product_code,base.group_user,1,1,1,1
