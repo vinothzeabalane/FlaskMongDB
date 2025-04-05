@@ -14,14 +14,19 @@
                     </field>
                 </group>
             </group>
-                <group>
-                    <field name="drive_ids">
-                        <tree>
-                            <field name="name" />
-                            <field name="density" />
-                        </tree>
-                    </field>
+            <group>
+                <field name="drive_ids">
+                    <tree>
+                        <field name="name" />
+                        <field name="density" />
+                    </tree>
+                </field>
             </group>
         </field>
+    </record>
+      
+     <!-- Link Groups to existing User  -->
+    <record id="base.menu_management" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4,ref('base.group_system'))]" />
     </record>
 </odoo>
