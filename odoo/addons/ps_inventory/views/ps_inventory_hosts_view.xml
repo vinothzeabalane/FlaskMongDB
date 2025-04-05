@@ -82,6 +82,33 @@
         </field>
     </record>
 
+    <!-- Define the Kanban View -->
+    <record id="ps_inventory_hosts_kanban_view" model="ir.ui.view">
+        <field name="name">ps.inventory.hosts.kanban</field>
+        <field name="model">ps.inventory.hosts</field>
+        <field name="arch" type="xml">
+            <kanban string="PS Inventory">
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <strong>
+                                    <field name="name" />
+                                </strong>
+                                <div>
+                                    <field name="ip_address" />
+                                </div>
+                                <div>
+                                    <field name="user_id" string="User" />
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <!-- Adding a search view for the custom filter -->
     <record id="ps_inventory_hosts_search_view" model="ir.ui.view">
         <field name="name">ps.inventory.hosts.search</field>
@@ -91,22 +118,22 @@
                 <!-- Standard search filters -->
                 <filter name="active" string="Active" domain="[('active', '=', True)]" />
                 <filter name="inactive" string="Inactive" domain="[('active', '=', False)]" />
-                <filter name="all" string="All" domain="[]"/>
+                <filter name="all" string="All" domain="[]" />
             </search>
         </field>
     </record>
+
     <!-- Define the Action for Inventory -->
     <record id="action_ps_inventory_hosts" model="ir.actions.act_window">
         <field name="name">PS Inventory</field>
         <field name="res_model">ps.inventory.hosts</field>
-        <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="ps_inventory_hosts_tree_view" />
+        <field name="view_mode">kanban,tree,form</field>  <!-- Set correct view modes -->
+        <field name="view_id" ref="ps_inventory_hosts_kanban_view" />  <!-- Default Kanban view -->
         <field name="domain">[]</field>  <!-- No default domain, shows all records initially -->
-        <field name="search_view_id" ref="ps_inventory_hosts_search_view"/>
+        <field name="search_view_id" ref="ps_inventory_hosts_search_view" />
     </record>
 
     <!-- Create the PS Inventory Menu Item -->
-    <menuitem id="ps_inventory_hosts_menu" name="Hosts"  
-              action="action_ps_inventory_hosts" sequence="1"/>
-
+    <menuitem id="ps_inventory_hosts_menu" name="Hosts"
+        action="action_ps_inventory_hosts" sequence="1" />
 </odoo>
