@@ -95,13 +95,25 @@
                                 <strong>
                                     <field name="name" />
                                 </strong>
+                                <!-- Display IP Address -->
                                 <div>
                                     <field name="ip_address" />
                                 </div>
-                                <div>
-                                    <field name="user_id" string="User" />
-                                </div>
                             </div>
+                            <footer class="pt-1">
+                                <!-- Create a flex container for left and right alignment -->
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <!-- User ID on the left -->
+                                    <div class="me-auto">
+                                        <field name="user_id" string="User" />
+                                    </div>
+                                    <!-- User Image on the right with larger size -->
+                                    <div class="ms-auto">
+                                        <field name="user_id" widget="many2one_avatar_user"
+                                            options="{'img_class': 'o_image_large'}" />
+                                    </div>
+                                </div>
+                            </footer>
                         </div>
                     </t>
                 </templates>
@@ -132,5 +144,4 @@
         <field name="domain">[]</field>  <!-- No default domain, shows all records initially -->
         <field name="search_view_id" ref="ps_inventory_hosts_search_view" />
     </record>
-
 </odoo>
