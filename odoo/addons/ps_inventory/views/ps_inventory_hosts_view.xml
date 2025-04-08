@@ -11,6 +11,7 @@
                             <field name="name" />
                             <field name="ip_address" />
                             <field name="location" />
+                            <field name="shelf_location"/>
                             <field name="active" />
                         </group>
                         <group>

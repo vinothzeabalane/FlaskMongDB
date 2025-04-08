@@ -21,6 +21,7 @@ class PlatFormServiceInventoryHosts(models.Model):
         ('9.20', 'lab 9.20'),
         ('9.21', 'lab 9.21')
     ], string='Lab Location', default='9.20', help='Select the location of the lab')
+    shelf_location = fields.Char(string='Shelf', size=50)
 
     user_id = fields.Many2one('res.users', string='Assignee', help='User associated with this host', tracking=True)
 
