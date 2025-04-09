@@ -68,3 +68,7 @@ root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo#
 
 1. Deleted the Discuss Menu --> Go to Menu Items
 2. App --> linked with Group --> Admin  (Non-admin user can't access it)
+
+
+#Odoo App page:
+http://10.74.134.8:8069/web?reload=true#action=38&model=ir.module.module&view_type=kanban&cids=1&menu_id=15

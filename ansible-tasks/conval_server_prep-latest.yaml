@@ -46,7 +46,7 @@
 
     - name: 4. Set firmware file variable
       set_fact:
-        firmware_file: "{{ firmware_files.files | selectattr('path', 'search', '.*?_MC0B.*\\.bin') | map(attribute='path') | first }}"
+        firmware_file: "{{ firmware_files.files | selectattr('path', 'search', '.*?MC0B.*\\.bin') | map(attribute='path') | first }}"
       when: firmware_files.files | length > 0
 
     - name: 5. Display firmware file path ( this step used to find firmware_version)
