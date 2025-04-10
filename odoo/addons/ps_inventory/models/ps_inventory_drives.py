@@ -12,8 +12,8 @@ class PlatFormServiceInventoryDrives(models.Model):
         'user_id': {'ps_inventory_drives.track_userid' : 'user_id'}
     }
 
-    name = fields.Char(string='SSN', required=True, unique=True, size=50, tracking=True)
-    density = fields.Char(string='Density', required=True,  size=10, help='SKU Size')
+    name = fields.Char(string='SSN', required=True, unique=True, size=50, tracking=True, index=True)
+    density = fields.Char(string='Density', required=True,  size=10, help='SKU Size', index=True)
     ssd_info = fields.Text(string='Other Information', tracking=True)
     program = fields.Char(string='Program', required=True,  size=25, help='Program ex: HDC/ HDR')
     media_type = fields.Char(string='Nand/Media', size=50)
@@ -22,7 +22,7 @@ class PlatFormServiceInventoryDrives(models.Model):
         ('secondary', 'SECONDARY SOURCE')
     ], string='Material Source', default='primary', help='Select the source type')
 
-    user_id = fields.Many2one('res.users', string='Assignee', help='User associated with this host', tracking=True)
+    user_id = fields.Many2one('res.users', string='Assignee', help='User associated with this host', tracking=True, index=True)
     product_code_id = fields.Many2one('ps.inventory.product.code', string='Product Code', help='Link to the Product Code')
     notes = fields.Text(string='Notes')
     image = fields.Binary(string="Image", help="Upload an image", attachment=True)

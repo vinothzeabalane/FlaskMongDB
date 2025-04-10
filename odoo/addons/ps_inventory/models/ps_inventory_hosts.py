@@ -14,8 +14,8 @@ class PlatFormServiceInventoryHosts(models.Model):
         'user_id': {'ps_inventory.track_userid' : 'user_id'}
     }
 
-    name = fields.Char(string='Hostname', required=True, unique=True, size=50, tracking=True)
-    ip_address = fields.Char(string='IP Address', help='Enter the IP address of the device')
+    name = fields.Char(string='Hostname', required=True, unique=True, size=50, tracking=True, index=True)
+    ip_address = fields.Char(string='IP Address', help='Enter the IP address of the device', index=True)
     drive_info = fields.Text(string='Drive Information', tracking=True)
     location = fields.Selection([
         ('9.20', 'lab 9.20'),
@@ -23,7 +23,7 @@ class PlatFormServiceInventoryHosts(models.Model):
     ], string='Lab Location', default='9.20', help='Select the location of the lab')
     shelf_location = fields.Char(string='Shelf', size=50)
 
-    user_id = fields.Many2one('res.users', string='Assignee', help='User associated with this host', tracking=True)
+    user_id = fields.Many2one('res.users', string='Assignee', help='User associated with this host', tracking=True, index=True)
 
 
     pdu_chewy = fields.Char(string='Chewy PDU', help='Enter the URL for the Power Distribution Unit')
@@ -51,6 +51,33 @@ class PlatFormServiceInventoryHosts(models.Model):
 
     notes = fields.Text(string='Notes')
     active = fields.Boolean(string='Active', default=True)
+
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        if name:
+            args = args or []
+            # Search in the 'name' field (hostname)
+            args += [('name', operator, name)]
+            # Search in the 'ip_address' field
+            args += [('ip_address', operator, name)]
+
+            # Search for users that match the search criteria
+            user_domain = [
+                '|', 
+                ('name', operator, name),  # Match user name
+                '|',
+                ('login', operator, name),  # Match user login
+                ('email', operator, name)   # Match user email
+            ]
+            # Search users and get their ids
+            user_ids = self.env['res.users'].search(user_domain).ids
+
+            # Add condition to filter by user_id (the user_ids returned from the search above)
+            if user_ids:
+                args += [('user_id', 'in', user_ids)]
+        
+        return super(PlatFormServiceInventoryHosts, self).name_search(name, args, operator, limit)
 
 
     @api.constrains('pdu_chewy', 'pdu_dstream')

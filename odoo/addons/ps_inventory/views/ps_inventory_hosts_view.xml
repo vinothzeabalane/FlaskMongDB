@@ -128,10 +128,14 @@
         <field name="model">ps.inventory.hosts</field>
         <field name="arch" type="xml">
             <search>
+                <field name="name" />
+                <field name="ip_address" />
+                <field name="user_id" />
                 <!-- Standard search filters -->
                 <filter name="active" string="Active" domain="[('active', '=', True)]" />
                 <filter name="inactive" string="Inactive" domain="[('active', '=', False)]" />
                 <filter name="all" string="All" domain="[]" />
+                <filter name="assigned_user" string="Assigned User" domain="[('user_id', '=', uid)]"/>
             </search>
         </field>
     </record>
