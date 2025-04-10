@@ -57,6 +57,7 @@
                 <field name="density" />
                 <field name="product_code_id" />
                 <field name="user_id" />
+                <field name="program"/>
                 <field name="active" />
             </tree>
         </field>
@@ -70,7 +71,9 @@
             <search>
                 <field name="name" />
                 <field name="density" />
+                <field name="program" />
                 <field name="user_id" />
+                <field name="active" />
                 <!-- Standard search filters -->
                 <filter name="active" string="Active" domain="[('active', '=', True)]" />
                 <filter name="inactive" string="Inactive" domain="[('active', '=', False)]" />
@@ -95,6 +98,9 @@
                                 </strong>
                                 <div>
                                     <field name="density" />
+                                </div>
+                                 <div>
+                                    <field name="program" />
                                 </div>
                             </div>
                             <footer class="pt-1">

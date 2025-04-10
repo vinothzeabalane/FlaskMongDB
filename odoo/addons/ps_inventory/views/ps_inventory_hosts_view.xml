@@ -78,6 +78,7 @@
                 <field name="name" />
                 <field name="ip_address" />
                 <field name="user_id" />
+                <field name="drive_info" /> 
                 <field name="active" />
             </tree>
         </field>
@@ -131,6 +132,7 @@
                 <field name="name" />
                 <field name="ip_address" />
                 <field name="user_id" />
+                <field name="drive_info" />
                 <!-- Standard search filters -->
                 <filter name="active" string="Active" domain="[('active', '=', True)]" />
                 <filter name="inactive" string="Inactive" domain="[('active', '=', False)]" />

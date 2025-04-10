@@ -16,7 +16,7 @@ class PlatFormServiceInventoryHosts(models.Model):
 
     name = fields.Char(string='Hostname', required=True, unique=True, size=50, tracking=True, index=True)
     ip_address = fields.Char(string='IP Address', help='Enter the IP address of the device', index=True)
-    drive_info = fields.Text(string='Drive Information', tracking=True)
+    drive_info = fields.Text(string='Drive Information', tracking=True, index=True)
     location = fields.Selection([
         ('9.20', 'lab 9.20'),
         ('9.21', 'lab 9.21')

@@ -15,7 +15,7 @@ class PlatFormServiceInventoryDrives(models.Model):
     name = fields.Char(string='SSN', required=True, unique=True, size=50, tracking=True, index=True)
     density = fields.Char(string='Density', required=True,  size=10, help='SKU Size', index=True)
     ssd_info = fields.Text(string='Other Information', tracking=True)
-    program = fields.Char(string='Program', required=True,  size=25, help='Program ex: HDC/ HDR')
+    program = fields.Char(string='Program', required=True,  size=25, help='Program ex: HDC/ HDR', index=True)
     media_type = fields.Char(string='Nand/Media', size=50)
     source = fields.Selection([
         ('primary', 'PRIMARY SOURCE'),
