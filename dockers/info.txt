@@ -1,3 +1,5 @@
+ docker-compose -p odoo_ts -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-odoo-test.yml' up -d
+
 remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/dockers$ docker-compose up -d
 Creating dockers_db_1 ... done
 Creating dockers_web_1 ... done
@@ -8,7 +10,8 @@ dockers_db_1    docker-entrypoint.sh postgres   Up      5432/tcp
 dockers_web_1   /entrypoint.sh odoo             Up      0.0.0.0:8069->8069/tcp,:::8069->8069/tcp, 8071/tcp, 8072/tcp
 remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/dockers$ 
 
-Master Password:  yh6s-sg8x-i7pk / 4bs2-vfp4-xrar
+Master Password:  4bs2-vfp4-xrar
+Odoo Test server :  mb45-j58n-4k84
 
 login: omprakash.aroumougam@gmail.com
 Password: 123456
@@ -36,17 +39,26 @@ docker-compose down
 docker-compose up -d --build
 
 
+docker-compose -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-odoo-test.yml' -p odoo_ts down
+docker-compose -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-odoo-test.yml' -p odoo_ts up -d --build
+
 Odoo Forum
 https://www.odoo.com/forum/help-1
 
-
+root@vc-ps-server-1:/var/lib/docker/volumes/dockers_zeabalane_odoo# sudo chown -R remlab _data/
 Mount source code:
-remlab@vc-ps-server-1:~/odoo_source$ sudo mount --bind /var/lib/docker/volumes/dockers_seyon_odoo/_data /home/remlab/ps-bpt/FlaskMongDB/odoo
+remlab@vc-ps-server-1:~/odoo_source$ sudo mount --bind /var/lib/docker/volumes//var/lib/docker/volumes/dockers_seyon_odoo/_data /home/remlab/ps-bpt/FlaskMongDB/odoo
 
 unmount
 sudo umount /home/remlab/odoo_source
 
-Check the ip/ port connection:
+#working
+remlab@vc-ps-server-1:~/ps-bpt$ sudo mount --bind /var/lib/docker/volumes/dockers_zeabalane_odoo/_data/ /home/remlab/ps-bpt/FlaskMongDB/odoo-ts
+remlab@vc-ps-server-1:~/ps-bpt$ sudo umount /home/remlab/ps-bpt/FlaskMongDB/odoo-ts 
+remlab@vc-ps-server-1:~/ps-bpt$ sudo chown -R remlab /var/lib/docker/volumes/odoo_ts_zeabalane_odoo/_data
+remlab@vc-ps-server-1:~/ps-bpt$ sudo mount --bind /var/lib/docker/volumes/odoo_ts_zeabalane_odoo/_data /home/remlab/ps-bpt/FlaskMongDB/odoo-ts
+
+Check the ip/ port connection:/
 telnet 10.74.134.8 5432
 
 #Odoo manage db:

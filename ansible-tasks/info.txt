@@ -25,8 +25,8 @@ ansible-playbook -i hosts conval_server_update_trenton.yaml -
 ansible-playbook -i hosts conval_server_update_ent_ssd_test.yaml -v
 
 # conval tag
-sudo python yet.py -w -q -t  HDC-NRT-PREFIRMWARE-2025WW14.4_171814  -f "/mnt/ydrive/fast-data/releases/CV/HuntsdaleC/Internal/HDC_M23_WW14.4_C0_B.23.59.tgz:FORCE_REMANUFACTURING" --fw-is-directory /home/remlab/fast-testing/test-plans/HuntsdaleC_PS/hdc-nrt-prefirmware-debug.yml
+sudo python yet.py -w -q -t  HDC-NRT-PREFIRMWARE-2025WW15.3_143237  -f "/mnt/ydrive/fast-data/releases/CV/HuntsdaleC/Internal/HDC_M24_WW15.4_C0_B.24.4.tgz:FORCE_REMANUFACTURING" --fw-is-directory /home/remlab/fast-testing/test-plans/HuntsdaleC_PS/hdc-nrt-prefirmware-debug.yml
 
-remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts conval_server_prep-latest.yaml -e "binary=HDC_M23_WW14.4_C0_B.23.59.tgz"  -v
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts conval_server_prep-latest.yaml -e "binary=HDC_M24_WW15.4_C0_B.24.4.tgz"  -v
 
 remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts conval_server_prep-one-wired.yaml -e "binary=HDC_M23_WW14.4_C0_B.23.59.tgz" -v
