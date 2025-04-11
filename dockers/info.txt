@@ -84,3 +84,5 @@ root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo#
 
 #Odoo App page:
 http://10.74.134.8:8069/web?reload=true#action=38&model=ir.module.module&view_type=kanban&cids=1&menu_id=15
+
+http://10.74.134.8:8059/web?reload=true#action=38&model=ir.module.module&view_type=kanban&cids=1&menu_id=15
