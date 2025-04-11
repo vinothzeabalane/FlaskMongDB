@@ -1,0 +1,56 @@
+/* Hide the Home Menu */
+/* .o_navbar_apps_menu {
+    display: none !important;
+} */
+
+/* Disable the dropdown but keep the icon visible */
+.o_navbar_apps_menu {
+    pointer-events: none;  
+    opacity: 0.5;          
+}
+
+/* Optionally, change the cursor to indicate that the menu is disabled */
+.o_navbar_apps_menu i {
+    cursor: not-allowed;  /* Indicates the dropdown is disabled */
+}
+
+/* Hide the mail redirect and channel redirect buttons */
+a.o_mail_redirect,
+a.o_channel_redirect {
+    display: none !important;
+}
+
+/* Hide the mail discuss systray class */
+.o-mail-DiscussSystray-class {
+    display: none !important;
+}
+
+/* Hide the o-mail-Chatter-topbar */
+.o-mail-Chatter-topbar {
+    display: none !important;
+}
+
+/* Hide Documentation */
+a[data-menu="documentation"] {
+    display: none !important;
+}
+
+/* Hide Support */
+a[data-menu="support"] {
+    display: none !important;
+}
+
+/* Hide Shortcuts */
+span[data-menu="shortcuts"] {
+    display: none !important;
+}
+
+/* Hide Preferences */
+span[data-menu="settings"] {
+    display: none !important;
+}
+
+/* Hide My Odoo.com account */
+span[data-menu="account"] {
+    display: none !important;
+}

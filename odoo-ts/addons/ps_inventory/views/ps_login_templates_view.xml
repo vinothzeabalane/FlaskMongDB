@@ -1,0 +1,13 @@
+<odoo>
+    <template id="ps_inventory_login_layout" inherit_id="web.login_layout">
+        <!-- Remove the Manage Databases link -->
+        <xpath expr="//a[contains(text(), 'Manage Databases')]" position="attributes">
+            <attribute name="style">display: none;</attribute>
+        </xpath>
+
+        <!-- Remove the Powered by Odoo section -->
+        <xpath expr="//a[contains(@href, 'https://www.odoo.com')]" position="attributes">
+            <attribute name="style">display: none;</attribute>
+        </xpath>
+    </template>
+</odoo>

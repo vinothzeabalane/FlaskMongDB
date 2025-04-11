@@ -1,0 +1,11 @@
+<odoo>
+    <data>
+        <!-- Inherit 'auth_signup.login' template -->
+        <template id="ps_inventory_signup_remove" inherit_id="auth_signup.login" name="Modify Sign Up - Reset Password">
+            <!-- XPath to target the <div> you want to remove and replace with nothing -->
+            <xpath expr="//div[contains(@class, 'justify-content-between mt-2 d-flex small')]" position="replace">
+                <!-- Leave it empty to remove the element -->
+            </xpath>
+        </template>
+    </data>
+</odoo>
