@@ -1,5 +1,7 @@
 
-from odoo import models, fields
+from odoo import models, fields, api, _
+from odoo.exceptions import AccessDenied
+
 
 class PlatFormServiceInventoryDrives(models.Model):
     _name = 'ps.inventory.drives'  # The name of the model (i.e., the table name in the database)
@@ -42,5 +44,28 @@ class PlatFormServiceInventoryProductCode(models.Model):
 class PlatFormServiceInventoryDrivesUsers(models.Model):
     _inherit = 'res.users'
 
-    # Add a One2many field to show related hosts
     drive_ids = fields.One2many('ps.inventory.drives', 'user_id', string='SSD')
+
+
+    # UPDATE res_users SET login = LOWER(login);
+    # Use this query to update the existing records from the Database
+    
+    @classmethod
+    def authenticate(cls, db, login, password, user_agent_env=None):
+        if isinstance(login, str):
+            login = login.lower()
+        return super().authenticate(db, login, password, user_agent_env)
+
+    @api.model
+    def create(self, vals):
+        if 'login' in vals and isinstance(vals['login'], str):
+            vals['login'] = vals['login'].lower()
+        return super().create(vals)
+
+    @api.model
+    def write(self, vals):
+        if 'login' in vals and isinstance(vals['login'], str):
+            vals['login'] = vals['login'].lower()
+        return super().write(vals)
+
+    
