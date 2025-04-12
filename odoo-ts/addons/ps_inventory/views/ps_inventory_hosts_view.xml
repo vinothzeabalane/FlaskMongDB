@@ -16,6 +16,7 @@
                         </group>
                         <group>
                             <field name="user_id" string="User" />
+                            <field name="drive_id" />
                             <field name="drive_info" />
                         </group>
                     </group>
@@ -78,6 +79,7 @@
                 <field name="name" />
                 <field name="ip_address" />
                 <field name="user_id" />
+                <field name="drive_id" />
                 <field name="drive_info" /> 
                 <field name="active" />
             </tree>
@@ -132,12 +134,14 @@
                 <field name="name" />
                 <field name="ip_address" />
                 <field name="user_id" />
+                <field name="drive_id" />
                 <field name="drive_info" />
                 <!-- Standard search filters -->
                 <filter name="active" string="Active" domain="[('active', '=', True)]" />
                 <filter name="inactive" string="Inactive" domain="[('active', '=', False)]" />
                 <filter name="all" string="All" domain="[]" />
-                <filter name="assigned_user" string="Assigned User" domain="[('user_id', '=', uid)]"/>
+                <filter name="assigned_user" string="Assigned to Me" domain="[('user_id', '=', uid)]"/>
+                <filter name="unassigned_user" string="Unassigned" domain="[('user_id', '=', False)]"/>
             </search>
         </field>
     </record>

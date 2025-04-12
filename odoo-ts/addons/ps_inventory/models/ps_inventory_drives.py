@@ -11,7 +11,8 @@ class PlatFormServiceInventoryDrives(models.Model):
     _track = {
         'name': {'ps_inventory_drives.track_name': 'name'},
         'ssd_info': {'ps_inventory.track_ssd_info': 'ssd_info'},
-        'user_id': {'ps_inventory_drives.track_userid' : 'user_id'}
+        'user_id': {'ps_inventory_drives.track_userid' : 'user_id'},
+        'host_id': {'ps_inventory.track_host_id' : 'host_id'}
     }
 
     name = fields.Char(string='SSN', required=True, unique=True, size=50, tracking=True, index=True)
@@ -29,6 +30,25 @@ class PlatFormServiceInventoryDrives(models.Model):
     notes = fields.Text(string='Notes')
     image = fields.Binary(string="Image", help="Upload an image", attachment=True)
     active = fields.Boolean(string='Active', default=True)
+
+    host_id = fields.Many2one('ps.inventory.hosts', string='Host', compute='_compute_host_id', inverse='_inverse_host_id', store=True, tracking=True)
+
+    # Reverse field (set on the host model)
+    host_ids = fields.One2many('ps.inventory.hosts', 'drive_id', string='Host Record')
+
+    @api.depends('host_ids')
+    def _compute_host_id(self):
+        for record in self:
+            record.host_id = record.host_ids[:1].id if record.host_ids else False
+
+    def _inverse_host_id(self):
+        for record in self:
+            # Remove old host links
+            if record.host_ids and record.host_ids[0] != record.host_id:
+                record.host_ids[0].drive_id = False
+            # Set new link
+            if record.host_id:
+                record.host_id.drive_id = record.id
                 
 
 class PlatFormServiceInventoryProductCode(models.Model):

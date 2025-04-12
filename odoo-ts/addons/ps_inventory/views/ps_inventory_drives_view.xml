@@ -17,6 +17,7 @@
                             <field name="user_id" string="User" />
                             <field name="product_code_id" />
                             <field name="source" />
+                            <field name="host_id" />
                             <field name="ssd_info" />
                         </group>
                     </group>
@@ -58,6 +59,7 @@
                 <field name="product_code_id" />
                 <field name="user_id" />
                 <field name="program"/>
+                <field name="host_id" />
                 <field name="active" />
             </tree>
         </field>
@@ -73,12 +75,14 @@
                 <field name="density" />
                 <field name="program" />
                 <field name="user_id" />
+                <field name="host_id" />
                 <field name="active" />
                 <!-- Standard search filters -->
                 <filter name="active" string="Active" domain="[('active', '=', True)]" />
                 <filter name="inactive" string="Inactive" domain="[('active', '=', False)]" />
                 <filter name="all" string="All" domain="[]"/>
-                <filter name="assigned_user" string="Assigned User" domain="[('user_id', '=', uid)]"/>
+                <filter name="assigned_user" string="Assigned to Me" domain="[('user_id', '=', uid)]"/>
+                <filter name="unassigned_user" string="Unassigned" domain="[('user_id', '=', False)]"/>
             </search>
         </field>
     </record>

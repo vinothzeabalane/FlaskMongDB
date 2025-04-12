@@ -11,7 +11,8 @@ class PlatFormServiceInventoryHosts(models.Model):
     _track = {
         'name': {'ps_inventory.track_name': 'name'},
         'drive_info': {'ps_inventory.track_drive_info': 'drive_info'},
-        'user_id': {'ps_inventory.track_userid' : 'user_id'}
+        'user_id': {'ps_inventory.track_userid' : 'user_id'},
+        'drive_id': {'ps_inventory.track_drive_id' : 'drive_id'}
     }
 
     name = fields.Char(string='Hostname', required=True, unique=True, size=50, tracking=True, index=True)
@@ -51,6 +52,13 @@ class PlatFormServiceInventoryHosts(models.Model):
 
     notes = fields.Text(string='Notes')
     active = fields.Boolean(string='Active', default=True)
+
+    drive_id = fields.Many2one('ps.inventory.drives', string='SSD Drive', tracking=True)  # regular field
+
+
+    _sql_constraints = [
+    ('unique_drive_id', 'unique(drive_id)', 'This drive is already assigned to another host.')
+    ]
 
 
     @api.model
