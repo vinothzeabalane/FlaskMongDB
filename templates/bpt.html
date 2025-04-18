@@ -189,6 +189,9 @@
                                     <th scope="col">View</th>
                                     <th scope="col">Download</th>
                                     <th scope="col">Commit ID</th>
+                                    <th scope="col">Pbl-Size</th>
+                                    <th scope="col">MainFW-Size</th>
+                                    <th scope="col">Unified-Size</th>
                                     <th scope="col">Date</th>
                                     <th scope="col" style="display: none;">Flow</th>
                                  </tr>
@@ -218,6 +221,9 @@
                                                      {% endif %}
                                                      {% if k == 'data' %}
                                                          <td>{{ v.commit_id }}</td>
+                                                         <td>{{ v.pbl_size }}</td>
+                                                         <td>{{ v.fw_main_size }}</td>
+                                                         <td>{{ v.unified_size }}</td>
                                                          {% if v.is_spiflow %}
                                                              <td class="spi">{{ v.date }}</td>
                                                              <td style="display: none;">spi</td>

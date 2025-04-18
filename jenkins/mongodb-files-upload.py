@@ -19,6 +19,9 @@ directory = '/mnt/udrive/ozeabalx/ps-bootprofile'
 #directory = 'C:/Users/ozeabala/OneDrive - NANDPS/Desktop/ps-bootprofile'
 csv_files = []
 commid_id = None
+pbl_size  = None
+fw_main_size = None
+unified_size = None
 last_updated = []
 pattern = r'\b\d{4}-\d{2}-\d{2}\b'
 
@@ -108,6 +111,15 @@ try:
         if file.startswith("commit_id"):
             commid_id = read_file(os.path.join(directory, file))
 
+        elif file.startswith("platform_bl"):
+            pbl_size = read_file(os.path.join(directory, file))
+        
+        elif file.startswith("fw_bl"):
+            fw_main_size = read_file(os.path.join(directory, file))
+        
+        elif file.startswith("unified_size"):
+            unified_size = read_file(os.path.join(directory, file))
+
         elif file.startswith("last_updated"):
             last_updated = re.findall(pattern, read_file(os.path.join(directory, file)))
 
@@ -137,7 +149,7 @@ try:
         today = date.today()
         date_string = today.strftime("%Y-%m-%d")
 
-        new_metadata = {"date": last_updated[0], "commit_id": commid_id, "is_spiflow": spiflow,
+        new_metadata = {"date": last_updated[0], "commit_id": commid_id, "pbl_size": pbl_size, "fw_main_size": fw_main_size, "unified_size": unified_size, "is_spiflow": spiflow,
             "is_eb0flow": eb0flow, 'file_uploaded_date': date_string }
 
         # Update metadata
