@@ -54,9 +54,9 @@
         msg: "Firmware file is located at: {{ firmware_file }}"
       when: firmware_file is defined
 
-    - name: 6. Extract and store the last 19 characters of the firmware file name
+    - name: 6. Extract and store the last 17 characters of the firmware file name
       set_fact:
-        firmware_version: "{{ firmware_file[-19:] }}"
+        firmware_version: "{{ firmware_file[-17:] }}"
       when: firmware_file is defined
 
     - name: Check if the firmware file exists
