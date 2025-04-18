@@ -1,0 +1,23 @@
+version: '3.3'
+
+services:
+  ollama:
+    image: ollama/ollama  # Official Ollama image
+    container_name: ollama
+    hostname: ps-ollama  # Custom hostname for the container
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama  # Persist models and config
+    restart: unless-stopped
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all  # Make sure all GPUs are accessible
+    networks:
+      - ollama-net  # Optional: specify a custom network
+
+volumes:
+  ollama-data:
+
+networks:
+  ollama-net:  # Optional: define a custom network if needed
+    driver: bridge
