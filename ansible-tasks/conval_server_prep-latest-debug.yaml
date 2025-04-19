@@ -59,9 +59,13 @@
         firmware_version: "{{ firmware_file[-17:] }}"
       when: firmware_file is defined
 
+    - name: Print the full path for firmware file check
+      debug:
+        msg: "The full path being checked is: /tmp/{{ binary | regex_replace('.tgz$', '') }}/trenton-kv7/fw_release_package/manufacturing_fw/{{ eeprom }}_{{ firmware_version }}"
+
     - name: Check if the firmware file exists
       stat:
-        path: "/tmp/{{ binary | regex_replace('.tgz$', '') }}/trenton-kv7/fw_release_package/manufacturing_fw/{{ eeprom }}{{ firmware_version }}"
+        path: "/tmp/{{ binary | regex_replace('.tgz$', '') }}/trenton-kv7/fw_release_package/manufacturing_fw/{{ eeprom }}_{{ firmware_version }}"
       register: firmware_file_check
 
     - name: Fail if firmware file is missing
@@ -71,7 +75,7 @@
 
     - name: 7. Run the firmware update process
       command: >
-        sudo ./dpcmd -z /tmp/{{ binary | regex_replace('.tgz', '') }}/trenton-kv7/fw_release_package/manufacturing_fw/{{ eeprom }}{{ firmware_version }}
+        sudo ./dpcmd -z /tmp/{{ binary | regex_replace('.tgz', '') }}/trenton-kv7/fw_release_package/manufacturing_fw/{{ eeprom }}_{{ firmware_version }}
       args:
         chdir: /home/remlab/Desktop/Dediprog-latest/SF100Linux
       when: firmware_file is defined
