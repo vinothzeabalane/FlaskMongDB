@@ -1,0 +1,19 @@
+version: '3.3'
+
+services:
+  ubuntu:
+    image: vinothzeabalane/ps-ubuntu:v3
+    hostname: seyon_ollama
+    container_name: seyon_ai
+    ports:
+      - "6070:6070"
+    volumes:
+      - /home/remlab/ps-bpt/PythonAI/platform-ai:/data
+    networks:
+      - ubuntu-network
+    restart: unless-stopped
+    command: ["/bin/bash", "-c", "tail -f /dev/null"]
+
+networks:
+  ubuntu-network:
+    driver: bridge
