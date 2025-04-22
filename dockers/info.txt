@@ -1,4 +1,10 @@
+ To Start Containers:
+ 
  docker-compose -p odoo_ts -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-odoo-test.yml' up -d
+ docker-compose -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-odoo.yml' -p odoo_ps up -d --build
+ docker-compose -p docker_n8n -f '/home/remlab/ps-bpt/PythonAI/docker/docker-compose.yml' up -d 
+
+
 
 remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/dockers$ docker-compose up -d
 Creating dockers_db_1 ... done
@@ -10,7 +16,7 @@ dockers_db_1    docker-entrypoint.sh postgres   Up      5432/tcp
 dockers_web_1   /entrypoint.sh odoo             Up      0.0.0.0:8069->8069/tcp,:::8069->8069/tcp, 8071/tcp, 8072/tcp
 remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/dockers$ 
 
-Master Password:  4bs2-vfp4-xrar
+Master Password:  4bs2-vfp4-xrar / b963-5bsd-pu3e / 3es4-gg8n-f5qu
 Odoo Test server :  mb45-j58n-4k84
 
 login: omprakash.aroumougam@gmail.com
@@ -40,6 +46,8 @@ docker-compose up -d --build
 
 
 docker-compose -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-odoo-test.yml' -p odoo_ts down
+docker-compose -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-odoo-test.yml' -p odoo_ts up -d --
+
 docker-compose -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-odoo-test.yml' -p odoo_ts up -d --build
 
 Odoo Forum
@@ -47,7 +55,7 @@ https://www.odoo.com/forum/help-1
 
 root@vc-ps-server-1:/var/lib/docker/volumes/dockers_zeabalane_odoo# sudo chown -R remlab _data/
 Mount source code:
-remlab@vc-ps-server-1:~/odoo_source$ sudo mount --bind /var/lib/docker/volumes//var/lib/docker/volumes/dockers_seyon_odoo/_data /home/remlab/ps-bpt/FlaskMongDB/odoo
+remlab@vc-ps-server-1:~/odoo_source$ sudo mount --bind /var/lib/docker/volumes/odoo_ps_seyon_odoo/_data /home/remlab/ps-bpt/FlaskMongDB/odoo
 
 unmount
 sudo umount /home/remlab/odoo_source

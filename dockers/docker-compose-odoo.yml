@@ -3,6 +3,8 @@ version: '3.3'
 services:
   web:
     image: odoo:17.0
+    container_name: docker_odoo_production
+    hostname: ps-odoo-server
     depends_on:
       - db
     ports:
