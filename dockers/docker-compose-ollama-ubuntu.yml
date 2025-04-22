@@ -6,7 +6,8 @@ services:
     hostname: seyon_ollama
     container_name: seyon_ai
     ports:
-      - "6070:6070"
+      - "6070:6070"    # Flask app port
+      - "11430:11434"  # Exposing Ollama's port
     volumes:
       - /home/remlab/ps-bpt/PythonAI/platform-ai:/data
     networks:

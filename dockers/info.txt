@@ -3,6 +3,10 @@
  docker-compose -p odoo_ts -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-odoo-test.yml' up -d
  docker-compose -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-odoo.yml' -p odoo_ps up -d --build
  docker-compose -p docker_n8n -f '/home/remlab/ps-bpt/PythonAI/docker/docker-compose.yml' up -d 
+ 
+
+ docker-compose -p seyon_ollama -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-ollama-ubuntu.yml' down
+docker-compose -p seyon_ollama -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-ollama-ubuntu.yml' up -d --build
 
 
 
