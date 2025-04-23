@@ -5,7 +5,7 @@
  docker-compose -p docker_n8n -f '/home/remlab/ps-bpt/PythonAI/docker/docker-compose.yml' up -d 
  
 
- docker-compose -p seyon_ollama -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-ollama-ubuntu.yml' down
+docker-compose -p seyon_ollama -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-ollama-ubuntu.yml' down
 docker-compose -p seyon_ollama -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-ollama-ubuntu.yml' up -d --build
 
 
@@ -98,3 +98,54 @@ root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo#
 http://10.74.134.8:8069/web?reload=true#action=38&model=ir.module.module&view_type=kanban&cids=1&menu_id=15
 
 http://10.74.134.8:8059/web?reload=true#action=38&model=ir.module.module&view_type=kanban&cids=1&menu_id=15
+
+docker update --restart always $(docker ps -a -q)
+
+
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ docker ps -a
+CONTAINER ID   IMAGE                          COMMAND                  CREATED        STATUS        PORTS                                                                                                    NAMES
+8417e2d68c6d   vinothzeabalane/ps-ubuntu:v3   "/bin/bash -c 'tail …"   28 hours ago   Up 28 hours   0.0.0.0:6070->6070/tcp, [::]:6070->6070/tcp, 9000/tcp, 0.0.0.0:11430->11434/tcp, [::]:11430->11434/tcp   seyon_ai
+a98c0e5d3e1f   odoo:17.0                      "/entrypoint.sh odoo"    30 hours ago   Up 30 hours   0.0.0.0:8069->8069/tcp, [::]:8069->8069/tcp, 8071-8072/tcp                                               docker_odoo_production
+bd0884668cd3   postgres:15                    "docker-entrypoint.s…"   30 hours ago   Up 30 hours   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp                                                              odoo_ps_db_1
+af19a12ad6be   odoo:17.0                      "/entrypoint.sh odoo"    2 days ago     Up 2 days     8071-8072/tcp, 0.0.0.0:8059->8069/tcp, [::]:8059->8069/tcp                                               docker_odoo_ts
+b85407b992a7   postgres:15                    "docker-entrypoint.s…"   2 days ago     Up 2 days     0.0.0.0:5452->5432/tcp, [::]:5452->5432/tcp                                                              docker_postgres_ts
+313ea99f3917   n8nio/n8n                      "tini -- /docker-ent…"   2 days ago     Up 2 days     0.0.0.0:5678->5678/tcp, [::]:5678->5678/tcp                                                              n8n
+0bfa0e9bca67   postgres:15                    "docker-entrypoint.s…"   2 days ago     Up 2 days     5432/tcp                                                                                                 n8n_postgres
+1368ae8d3994   ollama/ollama                  "/bin/ollama serve"      4 days ago     Up 4 days     0.0.0.0:11434->11434/tcp, [::]:11434->11434/tcp                                                          ollama
+1645998b703c   jasonrivers/nagios:latest      "/usr/local/bin/star…"   2 months ago   Up 3 weeks    5667/tcp, 10.74.134.8:8080->80/tcp                                                                       nagios4
+012c9493c55d   vinothzeabalane/ps-mongod:v1   "mongod --bind_ip_all"   2 months ago   Up 3 weeks    0.0.0.0:27017->27017/tcp, [::]:27017->27017/tcp                                                          ps-mongod
+15263a956085   vinothzeabalane/ps-ubuntu:v3   "/bin/bash"              2 months ago   Up 3 weeks    0.0.0.0:9000->9000/tcp, [::]:9000->9000/tcp                                                              ps-boot
+
+
+
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ for container in $(docker ps --format '{{.Names}}'); do
+>   docker inspect --format 'docker run -d --name {{.Name}} {{range .NetworkSettings.Ports}}{{.}}{{end}} {{.Config.Image}}' $container
+> done
+docker run -d --name /seyon_ai [{0.0.0.0 11430} {:: 11430}][{0.0.0.0 6070} {:: 6070}][] vinothzeabalane/ps-ubuntu:v3
+docker run -d --name /docker_odoo_production [{0.0.0.0 8069} {:: 8069}][][] odoo:17.0
+docker run -d --name /odoo_ps_db_1 [{0.0.0.0 5432} {:: 5432}] postgres:15
+docker run -d --name /docker_odoo_ts [{0.0.0.0 8059} {:: 8059}][][] odoo:17.0
+docker run -d --name /docker_postgres_ts [{0.0.0.0 5452} {:: 5452}] postgres:15
+docker run -d --name /n8n [{0.0.0.0 5678} {:: 5678}] n8nio/n8n
+docker run -d --name n8n -p 0.0.0.0:5678:5678 -p [::]:5678:5678 n8nio/n8n
+
+docker run -d --name /n8n_postgres [] postgres:15
+docker run -d --name /ollama [{0.0.0.0 11434} {:: 11434}] ollama/ollama
+docker run -d --name /nagios4 [][{10.74.134.8 8080}] jasonrivers/nagios:latest
+docker run -d --name /ps-mongod [{0.0.0.0 27017} {:: 27017}] vinothzeabalane/ps-mongod:v1
+docker run -d --name /ps-boot [{0.0.0.0 9000} {:: 9000}] vinothzeabalane/ps-ubuntu:v3
+
+
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ docker inspect --format '{{.Name}}: {{.HostConfig.RestartPolicy.Name}}' $(docker ps -a -q)
+/seyon_ai: always
+/docker_odoo_production: always
+/odoo_ps_db_1: always
+/docker_odoo_ts: always
+/docker_postgres_ts: always
+/n8n: always
+/n8n_postgres: always
+/ollama: always
+/nagios4: always
+/ps-mongod: always
+/ps-boot: always
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ 
