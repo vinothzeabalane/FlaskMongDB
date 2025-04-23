@@ -25,12 +25,12 @@ ansible-playbook -i hosts conval_server_update_trenton.yaml -
 ansible-playbook -i hosts conval_server_update_ent_ssd_test.yaml -v
 
 # conval tag
-sudo python yet.py -w -q -t  HDC-NRT-PREFIRMWARE-2025WW16.5_144922  -f "/mnt/ydrive/fast-data/releases/CV/HuntsdaleC/Internal/HDC_M24_WW16.5_C0_B.24.510.tgz:FORCE_REMANUFACTURING" --fw-is-directory /home/remlab/fast-testing/test-plans/HuntsdaleC_PS/hdc-nrt-prefirmware-release-performance.yml
+sudo python yet.py -w -q -t  HDC-NRT-PREFIRMWARE-2025WW17.2_165859  -f "/mnt/ydrive/fast-data/releases/CV/HuntsdaleC/Internal/HDC_M24_WW17.2_C0_B.24.512.tgz:FORCE_REMANUFACTURING" --fw-is-directory /home/remlab/fast-testing/test-plans/HuntsdaleC_PS/hdc-nrt-prefirmware-release-performance.yml
 
-sudo python yet.py -w -q -t  HDC-NRT-PREFIRMWARE-2025WW16.5_144922  -f "/mnt/ydrive/fast-data/releases/CV/HuntsdaleC/Internal/HDC_M24_WW16.5_C0_B.24.10.tgz:FORCE_REMANUFACTURING" --fw-is-directory /home/remlab/fast-testing/test-plans/HuntsdaleC_PS/hdc-nrt-prefirmware-debug.yml
+sudo python yet.py -w -q -t  HDC-NRT-PREFIRMWARE-2025WW17.2_165859  -f "/mnt/ydrive/fast-data/releases/CV/HuntsdaleC/Internal/HDC_M24_WW17.2_C0_B.24.12.tgz:FORCE_REMANUFACTURING" --fw-is-directory /home/remlab/fast-testing/test-plans/HuntsdaleC_PS/hdc-nrt-prefirmware-debug.yml
 
-remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts conval_server_prep-latest.yaml -e "binary=HDC_M24_WW16.5_C0_B.24.510.tgz"  -v
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts conval_server_prep-latest.yaml -e "binary=HDC_M24_WW17.2_C0_B.24.512.tgz"  -v
 
-remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts conval_server_prep-latest-debug.yaml -e "binary=HDC_M24_WW16.5_C0_B.24.10.tgz"  -v
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts conval_server_prep-latest-debug.yaml -e "binary=HDC_M24_WW17.2_C0_B.24.12.tgz"  -v
 
-remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts conval_server_prep-one-wired.yaml -e "binary=HDC_M24_WW16.5_C0_B.24.10.tgz" -v
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ ansible-playbook -i hosts conval_server_prep-one-wired.yaml -e "binary=HDC_M24_WW17.2_C0_B.24.12.tgz" -v
