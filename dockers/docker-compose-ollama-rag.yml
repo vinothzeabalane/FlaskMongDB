@@ -1,0 +1,20 @@
+version: '3.3'
+
+services:
+  ubuntu:
+    image: vinothzeabalane/ps-ubuntu:v3
+    hostname: seyon_ollama_rag
+    container_name: seyon_ai_rag
+    ports:
+      - "1212:1212"    # Flask app port
+      - "11431:11434"  # Exposing Ollama's port
+    volumes:
+      - /home/remlab/ps-bpt/PythonAIRAG:/data
+    networks:
+      - ubuntu-network
+    restart: unless-stopped
+    command: ["/bin/bash", "-c", "tail -f /dev/null"]
+
+networks:
+  ubuntu-network:
+    driver: bridge
