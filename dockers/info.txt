@@ -154,4 +154,18 @@ remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ docker inspect --forma
 /nagios4: always
 /ps-mongod: always
 /ps-boot: always
-remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$ 
+remlab@vc-ps-server-1:~/ps-bpt/FlaskMongDB/ansible-tasks$
+
+
+Odoo after restart the docker:
+
+root@vc-ps-server-1:/home/remlab/ps-bpt/FlaskMongDB# mount | grep odoo
+/dev/sda2 on /home/remlab/ps-bpt/FlaskMongDB/odoo-ts type ext4 (rw,relatime,errors=remount-ro)
+root@vc-ps-server-1:/home/remlab/ps-bpt/FlaskMongDB# sudo mount --bind /var/lib/docker/volumes/odoo_ps_seyon_odoo/_data /home/remlab/ps-bpt/FlaskMongDB/odoo
+root@vc-ps-server-1:/home/remlab/ps-bpt/FlaskMongDB# mount | grep odoo
+/dev/sda2 on /home/remlab/ps-bpt/FlaskMongDB/odoo-ts type ext4 (rw,relatime,errors=remount-ro)
+/dev/sda2 on /home/remlab/ps-bpt/FlaskMongDB/odoo type ext4 (rw,relatime,errors=remount-ro)
+root@vc-ps-server-1:/home/remlab/ps-bpt/FlaskMongDB# exit
+exit
+remlab@vc-ps-server-1:~/ps-bpt$ docker-compose -f '/home/remlab/ps-bpt/FlaskMongDB/dockers/docker-compose-odoo.yml' -p odoo_ps up -d --build
+Creating network "odoo_ps_odoo-network" with driver "bridge"
