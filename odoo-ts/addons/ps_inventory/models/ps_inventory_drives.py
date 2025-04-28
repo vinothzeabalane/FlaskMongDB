@@ -1,7 +1,5 @@
 
-from odoo import models, fields, api, _
-from odoo.exceptions import AccessDenied
-
+from odoo import models, fields
 
 class PlatFormServiceInventoryDrives(models.Model):
     _name = 'ps.inventory.drives'  # The name of the model (i.e., the table name in the database)
@@ -11,8 +9,7 @@ class PlatFormServiceInventoryDrives(models.Model):
     _track = {
         'name': {'ps_inventory_drives.track_name': 'name'},
         'ssd_info': {'ps_inventory.track_ssd_info': 'ssd_info'},
-        'user_id': {'ps_inventory_drives.track_userid' : 'user_id'},
-        'host_id': {'ps_inventory.track_host_id' : 'host_id'}
+        'user_id': {'ps_inventory_drives.track_userid' : 'user_id'}
     }
 
     name = fields.Char(string='SSN', required=True, unique=True, size=50, tracking=True, index=True)
@@ -30,25 +27,6 @@ class PlatFormServiceInventoryDrives(models.Model):
     notes = fields.Text(string='Notes')
     image = fields.Binary(string="Image", help="Upload an image", attachment=True)
     active = fields.Boolean(string='Active', default=True)
-
-    host_id = fields.Many2one('ps.inventory.hosts', string='Host', compute='_compute_host_id', inverse='_inverse_host_id', store=True, tracking=True)
-
-    # Reverse field (set on the host model)
-    host_ids = fields.One2many('ps.inventory.hosts', 'drive_id', string='Host Record')
-
-    @api.depends('host_ids')
-    def _compute_host_id(self):
-        for record in self:
-            record.host_id = record.host_ids[:1].id if record.host_ids else False
-
-    def _inverse_host_id(self):
-        for record in self:
-            # Remove old host links
-            if record.host_ids and record.host_ids[0] != record.host_id:
-                record.host_ids[0].drive_id = False
-            # Set new link
-            if record.host_id:
-                record.host_id.drive_id = record.id
                 
 
 class PlatFormServiceInventoryProductCode(models.Model):
@@ -64,28 +42,5 @@ class PlatFormServiceInventoryProductCode(models.Model):
 class PlatFormServiceInventoryDrivesUsers(models.Model):
     _inherit = 'res.users'
 
+    # Add a One2many field to show related hosts
     drive_ids = fields.One2many('ps.inventory.drives', 'user_id', string='SSD')
-
-
-    # UPDATE res_users SET login = LOWER(login);
-    # Use this query to update the existing records from the Database
-    
-    @classmethod
-    def authenticate(cls, db, login, password, user_agent_env=None):
-        if isinstance(login, str):
-            login = login.lower()
-        return super().authenticate(db, login, password, user_agent_env)
-
-    @api.model
-    def create(self, vals):
-        if 'login' in vals and isinstance(vals['login'], str):
-            vals['login'] = vals['login'].lower()
-        return super().create(vals)
-
-    @api.model
-    def write(self, vals):
-        if 'login' in vals and isinstance(vals['login'], str):
-            vals['login'] = vals['login'].lower()
-        return super().write(vals)
-
-    

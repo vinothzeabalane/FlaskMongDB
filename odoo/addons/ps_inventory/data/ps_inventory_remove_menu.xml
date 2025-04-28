@@ -1,4 +1,0 @@
-<odoo>
-    <!-- Delete the existing menu item -->
-    <delete id="mail.menu_root_discuss" model="ir.ui.menu"/>
-</odoo>

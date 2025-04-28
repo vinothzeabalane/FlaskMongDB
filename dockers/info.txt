@@ -90,6 +90,10 @@ root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo# sudo umount /hom
 root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo# sudo mount --bind /var/lib/docker/volumes/dockers_seyon_odoo/_data /home/remlab/ps-bpt/FlaskMongDB/odoo
 root@vc-ps-server-1:/var/lib/docker/volumes/dockers_seyon_odoo#
 
+#working - Apr 28th
+drwxr-xr-x 12 remlab root 4096 Apr 21 16:13 /var/lib/docker/volumes/odoo_ps_seyon_odoo/_data
+root@vc-ps-server-1:/var/lib/docker/volumes/odoo_ps_seyon_odoo# sudo mount --bind /var/lib/docker/volumes/odoo_ps_seyon_odoo/_data /home/remlab/ps-bpt/FlaskMongDB/odoo_ps
+
 #Custom Odoo Environment:
 
 1. Deleted the Discuss Menu --> Go to Menu Items
